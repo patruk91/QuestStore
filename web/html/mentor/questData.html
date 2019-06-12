@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest | View</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <p>Logged as: name(JS)</p>
+        <button type="button">Logout</button>
+        <h1>Quest Store</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="codecoolerData.html">Codecooler</a></li>
+            <li><a href="#">Quest</a></li>
+            <li><a href="artifact.html">Artifact</a></li>
+        </ul>
+    </nav>
+
+    <section id="quest-data">
+        <form action="#" method="POST">
+            <label for="quest-name">Quest name</label>
+            <input type="text" name="quest-name" id="quest-name">
+            <label for="category">Category</label>
+            <input type="text" name="category" id="category">
+            <label for="coins">Coins</label>
+            <input type="number" name="coins" id="coins">
+            <label for="quest-description">Description</label>
+            <textarea name="quest-description" id="quest-description"></textarea>
+            <input type="submit" value="accept">
+
+            <div class="form-buttons">
+                <input type="submit" value="Submit">
+                <input type="reset" value="Reset">
+                <input type="button" value="Cancel">
+            </div>
+        </form>
+
+        <aside>
+            <img src="../../images/quest.jpg" alt="Mentor picture">
+            <div id="buttons-update-status">
+                <input type="submit" value="add">
+                <input type="button" value="remove">
+            </div>
+        </aside>
+    </section>
+<footer>
+    <p>Chlur&Chlurs Company &copy; 2019</p>
+</footer>
+</body>
+</html>
