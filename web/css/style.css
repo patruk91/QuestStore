@@ -28,7 +28,6 @@ body {
 }
 
 header {
-    height: 12%;
     display: flex;
     flex-direction: row-reverse;
     align-items: flex-end;
@@ -40,6 +39,7 @@ header h1{
     font-size: 4em;
     color: #e3e3e3;
     max-width: 500px;
+    margin-top: 25px;
 }
 
 button {
@@ -64,7 +64,7 @@ footer {
 }
 
 .menu {
-    width: 80vw;
+    width: available;
     list-style: none;
     padding: 0 50px;
     margin: 0;
@@ -72,9 +72,6 @@ footer {
     justify-content: space-between;
     background: white;
 }
-
-
-
 
 @media only screen and (max-width: 425px) {
     header h1 {
@@ -106,11 +103,7 @@ label {
 }
 
 /*Admin*/
-.edit-options {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
+
 
 .eye {
     width: 30px;
@@ -127,4 +120,64 @@ label {
     background: #fff;
 }
 
+
+/*Section toolbar*/
+#tools {
+    align-self: flex-start;
+}
+
+/*Section logout*/
+#bar {
+    display: inline-flex;
+    align-self: flex-end;
+}
+
+#bar p {
+    margin-right: 30px;
+}
+
+
+/*Section mentor*/
+#content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.edit-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 auto;
+    width: inherit;
+    flex: 0 0 90%;
+}
+
+.mentor {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 0 0 25%;
+    padding: 0 20px;
+    margin: 20px auto;
+    background: #b9b9b9;
+
+}
+
+aside {
+    width: 50%;
+    flex: 0 0 40%;
+    margin-bottom: 25px;
+
+
+}
+
+.avatar-image{
+    width: 250px;
+    height: 250px;
+    flex: 0 0 55%;
+    margin: auto;
+
+}
 
