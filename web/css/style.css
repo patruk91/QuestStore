@@ -51,7 +51,16 @@ button {
     display: inline-block;
     border: none;
     font-weight: 900;
+}
 
+footer {
+    width: 100%;
+    padding-right: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-content: flex-end;
+    font: 200 0.8em sans-serif;
 }
 
 /*Login*/
@@ -82,26 +91,3 @@ label {
         font-size: 3em;
     }
 }
-
-
-
-
-
-
-
-
-/*body {*/
-/*    font-family: Helvetica, Arial, sans-serif;*/
-/*    font-size: 16px;*/
-/*    line-height: 1.2;*/
-/*    padding: 0;*/
-/*    margin: 0;*/
-/*    background-color: rgba(41, 63, 80, 0.9);*/
-/*}*/
-
-/*!*Global*!*/
-/*.container {*/
-/*    width: 80%;*/
-/*    margin: auto;*/
-/*    overflow: hidden;*/
-/*}*/
