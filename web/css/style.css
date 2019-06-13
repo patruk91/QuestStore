@@ -220,6 +220,10 @@ label {
     background-image: linear-gradient(to bottom, #FFD65E, #FEBF04);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFD65E, endColorstr=#FEBF04);
 }
 
+.wider {
+    flex: 0 0 20%;
+}
+
 .item:hover{
     border:1px solid #CE9A01;
     background-color: #FFC92B; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFC92B), to(#CE9A01));
