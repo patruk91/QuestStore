@@ -296,3 +296,16 @@ aside {
     height: 40px;   
     margin-bottom: 10px; 
 }
+
+.category-solo {
+    width: 40px;
+    height: 40px;
+    background-image: url("images/catagory-solo.png");
+}
+
+.category-group {
+    width: 40px;
+    height: 40px;
+    background-image: url("images/category-group.png");
+    background-repeat: no-repeat;
+}
