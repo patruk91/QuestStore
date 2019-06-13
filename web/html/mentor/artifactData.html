@@ -9,49 +9,53 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Artifact | Edit</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <p>Logged as: name(JS)</p>
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
             <button type="button">Logout</button>
-            <h1>Quest Store</h1>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
         </header>
         <nav>
-            <ul>
+            <ul class="menu">
                 <li><a href="codecoolerData.html">Codecooler</a></li>
                 <li><a href="#">Quest</a></li>
                 <li><a href="artifact.html">Artifact</a></li>
             </ul>
         </nav>
-
-        <section id="artifact-data">
-            <form action="#" method="POST">
-                <label for="artifact-name">Artifact name</label>
-                <input type="text" name="artifact-name" id="artifact-name">
-                <label for="category">Category</label>
-                <input type="text" name="category" id="category">
-                <label for="coins">Coins</label>
-                <input type="number" name="coins" id="coins">
-                <label for="artifact-description">Description</label>
-                <textarea name="artifact-description" id="artifact-description"></textarea>
-                <input type="submit" value="accept">
-
-                <div class="form-buttons">
-                    <input type="submit" value="Submit">
-                    <input type="reset" value="Reset">
-                    <input type="button" value="Cancel">
+        <div id="content">
+            <aside class="item column-full" id="mentor-aside">
+                <div class="mentor-pic">
+                    <img src="../../images/quest.jpg" alt="Mentor picture">
                 </div>
-            </form>
-
-            <aside>
-                <img src="../../images/quest.jpg" alt="Mentor picture">
-                <div id="buttons-update-status">
-                    <input type="submit" value="add">
-                    <input type="button" value="remove">
+                <div class="edit-options">
+                    <a href="mentorsData.html"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="mentorsData.html"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
                 </div>
             </aside>
-        </section>
+            <div class="form-fields item">
+                <form action="#" method="POST">
+                    <label for="artifact-name">Artifact name</label>
+                    <input type="text" name="artifact-name" id="artifact-name">
+                    <label for="category">Category</label>
+                    <input type="text" name="category" id="category">
+                    <label for="coins">Coins</label>
+                    <input type="number" name="coins" id="coins">
+                    <label for="artifact-description">Description</label>
+                    <textarea name="artifact-description" id="artifact-description"></textarea>
+
+                    <div class="edit-options sipmle" id="form-button-mentor">
+                        <button type="submit" value="Submit">Submit</button>
+                        <button type="reset" value="Reset">Reset</button>
+                        <button type="button" value="Cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>
         </footer>
