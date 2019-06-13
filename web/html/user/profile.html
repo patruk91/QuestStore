@@ -9,34 +9,42 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Quest Store | Codecooler</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <p>Logged as: name(JS)</p>
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
             <button type="button">Logout</button>
-            <h1>Quest Store</h1>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
         </header>
         <nav>
-            <ul>
+            <ul class="menu">
                 <li><a href="user.html">Store</a></li>
                 <li><a href="collection.html">Collection</a></li>
                 <li><a href="#">Profile</a></li>
             </ul>
         </nav>
-        <section class="experience">
-            <p>Level: 4</p>
-            <span id="progression-bar"></span>
-            <p id="exp-need">45%, steel needs 500 exp</p>
-            <p id="total-ext">Total exp: 4500</p>
-        </section>
-        <section class="result" id="result">
-            <h3>Artifacts userd</h3>
-            <p>1. artifact 1</p>
-            <p>2. artifact 2</p>
-            <p>3. artifact 3</p>
-            <p>4. artifact 4</p>
-            <p>5. artifact 5</p>
+        <section id="content">
+            <div class="user-stats item wider">
+               <p id="level">Level: 4</p>
+               <div class="progress-border">
+                    <div class="progress-bar" style="width: 30%" id="collectionID_1">30%</div> 
+                </div>
+                <p id="exp-need">45%, steel needs 500 exp</p>
+                <p id="total-ext">Total exp: 4500</p> 
+            </div>
+            
+            <div class="results item" id="result">
+                <h3>Artifacts userd</h3>
+                <p>1. artifact 1</p>
+                <p>2. artifact 2</p>
+                <p>3. artifact 3</p>
+                <p>4. artifact 4</p>
+                <p>5. artifact 5</p>
+            </div>
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>
