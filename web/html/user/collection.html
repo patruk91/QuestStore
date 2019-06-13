@@ -9,60 +9,99 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Collection | View</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <p>Logged as: name(JS)</p>
-            <button type="button">Logout</button>
-            <h1>Quest Store</h1>
-        </header>
+            <div id="logout">
+                <p>Logged as: name(JS) </p>
+                <button type="button">Logout</button>
+            </div>
+            <header>
+                <h1 >Quest Store</h1>
+            </header>
         <nav>
-            <ul>
+            <ul class="menu">
                 <li><a href="user.html">Store</a></li>
                 <li><a href="#">Collection</a></li>
                 <li><a href="profil.html">Profil</a></li>
-
             </ul>
         </nav>
-        <section id="artifact">
-            <div class="artifact">
+        <section id="content">
+            <div class="item wider">
                 <section class="artifact-head">
                     <h2>Quest Name</h2>
                     <h3>Title</h3>
-                    <img src="../../images/quest.jpg" alt="Quest XXX">
                     <p class="coins">22</p>
-                    <p>x% is funded. Still needs xxx coins</p>
-                    <p>History of contributions - optional</p>
-                    <span class="progress-bar">%%Progress bar%%</span>
-                    <label for="donate1">Donate</label>
-                    <input type="number" name="donate" id="donate1">
+                    <img src="../../images/quest.jpg" alt="Quest XXX">
+                    <div class="progress-border">
+                        <div class="progress-bar" style="width: 30%" id="collectionID_1">30%</div> 
+                    </div>
+                    <p>of xx coins</p>
+                    <input type="number" name="donate" id="donate1" placeholder="Coins amount">
+                    <button type="button">Donate</button>
                 </section>
                 <section class="artifact-description">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                         Aliquam animi asperiores consequatur doloribus harum maiores
-                        pariatur, quod repellat tenetur vero? Consectetur cumque doloribus
-                        et, ex nulla pariatur perspiciatis placeat vero!</p>
+                        pariatur, quod repellat tenetur vero?</p>
                 </section>
             </div>
-
-            <div class="artifact">
+            <div class="item wider">
                 <section class="artifact-head">
                     <h2>Quest Name</h2>
                     <h3>Title</h3>
-                    <img src="../../images/quest.jpg" alt="Quest XXX">
                     <p class="coins">22</p>
-                    <p>x% is funded. Still needs xxx coins</p>
-                    <p>History of contributions - optional</p>
-                    <span class="progress-bar">%%Progress bar%%</span>
-                    <label for="donate2">Donate</label>
-                    <input type="number" name="donate" id="donate2">
+                    <img src="../../images/quest.jpg" alt="Quest XXX">
+                    <div class="progress-border">
+                        <div class="progress-bar" style="width: 90%" id="collectionID_2">90%</div> 
+                    </div>
+                    <p>of xx coins</p>
+                    <input type="number" name="donate" id="donate1" placeholder="Coins amount">
+                    <button type="button">Donate</button>
                 </section>
                 <section class="artifact-description">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                         Aliquam animi asperiores consequatur doloribus harum maiores
-                        pariatur, quod repellat tenetur vero? Consectetur cumque doloribus
-                        et, ex nulla pariatur perspiciatis placeat vero!</p>
+                        pariatur, quod repellat tenetur vero?</p>
+                </section>
+            </div>
+            <div class="item wider">
+                <section class="artifact-head">
+                    <h2>Quest Name</h2>
+                    <h3>Title</h3>
+                    <p class="coins">22</p>
+                    <img src="../../images/quest.jpg" alt="Quest XXX">
+                    <div class="progress-border">
+                        <div class="progress-bar" style="width: 10%" id="collectionID_3">10%</div> 
+                    </div>
+                    <p>of xx coins</p>
+                    <input type="number" name="donate" id="donate1" placeholder="Coins amount">
+                    <button type="button">Donate</button>
+                </section>
+                <section class="artifact-description">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Aliquam animi asperiores consequatur doloribus harum maiores
+                        pariatur, quod repellat tenetur vero?</p>
+                </section>
+            </div>
+            <div class="item wider">
+                <section class="artifact-head">
+                    <h2>Quest Name</h2>
+                    <h3>Title</h3>
+                    <p class="coins">22</p>
+                    <img src="../../images/quest.jpg" alt="Quest XXX">
+                    <div class="progress-border">
+                        <div class="progress-bar" style="width: 20%" id="collectionID">20%</div> 
+                    </div>
+                    <p>of xx coins</p>
+                    <input type="number" name="donate" id="donate1" placeholder="Coins amount">
+                    <button type="button">Donate</button>
+                </section>
+                <section class="artifact-description">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Aliquam animi asperiores consequatur doloribus harum maiores
+                        pariatur, quod repellat tenetur vero?</p>
                 </section>
             </div>
         </section>

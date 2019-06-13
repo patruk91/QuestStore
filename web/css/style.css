@@ -54,6 +54,10 @@ button{
     text-transform: uppercase;
 }
 
+button:focus {
+    outline: none;
+}
+
 button:hover{
     border:1px solid #CE9A01;
     background-color: #FFC92B; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFC92B), to(#CE9A01));
@@ -215,6 +219,7 @@ label {
 .item {
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
     flex: 0 0 15%;
     margin: 20px 20px;
     justify-content: center;
@@ -348,5 +353,45 @@ aside {
     display: block;
     display: inline;
     display: inline-flex;
+}
 
+.category-solo {
+    width: 40px;
+    height: 40px;
+    background-image: url("images/catagory-solo.png");
+}
+
+.category-group {
+    width: 40px;
+    height: 40px;
+    background-image: url("images/category-group.png");
+    background-repeat: no-repeat;
+}
+
+.progress-border {
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    margin: 5px;
+    align-self: center;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: rgb(138, 135, 135);
+    text-align: right;
+    color: #000;
+}
+
+h2, h3 {
+    margin: 3px;
+}
+
+.user-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    width: 30%;
 }
