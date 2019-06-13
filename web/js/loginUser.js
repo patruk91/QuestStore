@@ -10,3 +10,7 @@ function loginUser() {
         alert("Invalid login");
     }
 }
+
+function logoutUser() {
+        window.location.href = "../../index.html";
+}
