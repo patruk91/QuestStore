@@ -54,6 +54,10 @@ button{
     text-transform: uppercase;
 }
 
+button:focus {
+    outline: none;
+}
+
 button:hover{
     border:1px solid #CE9A01;
     background-color: #FFC92B; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFC92B), to(#CE9A01));
@@ -215,6 +219,7 @@ label {
 .item {
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
     flex: 0 0 15%;
     margin: 20px 20px;
     border:1px solid #CE9A01;-webkit-box-shadow: #FFF563 0px 1px 0px inset;-moz-box-shadow: #FFF563 0px 1px 0px inset; box-shadow: #FFF563 0px 1px 0px inset; -webkit-border-radius: 10px; -moz-border-radius: 10px;border-radius: 10px;font-family:arial, helvetica, sans-serif; padding: 7px 14px 7px 14px; text-decoration:none; display:inline-flex;text-shadow: 0px 1px 0 rgba(255,255,255,0.44);font-weight:bold; color: #63460C;
@@ -308,4 +313,24 @@ aside {
     height: 40px;
     background-image: url("images/category-group.png");
     background-repeat: no-repeat;
+}
+
+.progress-border {
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    margin: 5px;
+    align-self: center;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: rgb(138, 135, 135);
+    text-align: right;
+    color: #000;
+}
+
+h2, h3 {
+    margin: 3px;
 }
