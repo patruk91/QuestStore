@@ -9,16 +9,19 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Quest Store | Admin</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <p>Logged as: name(JS)</p>
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
             <button type="button">Logout</button>
-            <h1>Quest Store</h1>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
         </header>
         <nav>
-            <ul>
+            <ul class="menu">
                 <li><a href="admin.html">Mentors</a></li>
                 <li><a href="#">Classes</a></li>
                 <li><a href="experienceLevels.html">Experience levels</a></li>
@@ -28,39 +31,42 @@
             <button type="button" class="add-button" onclick="location.href='classesData.html'">+</button>
         </section>
         <section id="content">
-            <div class="class-item">
+            <div class="item wider">
                 <div class="edit-options">
-                    <button type="button" class="view-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="edit-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="remove-button" onclick="location.href='classesData.html'"></button>
+                    <a href="classesData.html"><img class="eye" src="../../images/eye.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
                 </div>
                 <aside>
                     <p class="class-name">Name</p>
                     <p class="class-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, accusamus!</p>
                 </aside>
             </div>
-            <div class="class-item">
+
+            <div class="item wider">
                 <div class="edit-options">
-                    <button type="button" class="view-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="edit-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="remove-button" onclick="location.href='classesData.html'"></button>
+                    <a href="classesData.html"><img class="eye" src="../../images/eye.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
                 </div>
                 <aside>
                     <p class="class-name">Name</p>
                     <p class="class-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, accusamus!</p>
                 </aside>
             </div>
-            <div class="class-item">
+
+            <div class="item wider">
                 <div class="edit-options">
-                    <button type="button" class="view-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="edit-button" onclick="location.href='classesData.html'"></button>
-                    <button type="button" class="remove-button" onclick="location.href='classesData.html'"></button>
+                    <a href="classesData.html"><img class="eye" src="../../images/eye.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="classesData.html"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
                 </div>
                 <aside>
                     <p class="class-name">Name</p>
                     <p class="class-description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, accusamus!</p>
                 </aside>
             </div>
+
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>
