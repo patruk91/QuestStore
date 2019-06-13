@@ -42,7 +42,7 @@ header h1{
     margin-top: 25px;
 }
 
-button{
+button, select{
     border:1px solid #CE9A01;-webkit-box-shadow: #FFF563 0px 1px 0px inset;-moz-box-shadow: #FFF563 0px 1px 0px inset; box-shadow: #FFF563 0px 1px 0px inset; -webkit-border-radius: 10px; -moz-border-radius: 10px;border-radius: 10px;font-family:arial, helvetica, sans-serif; padding: 7px 14px 7px 14px; text-decoration:none; display:inline-block;text-shadow: 0px 1px 0 rgba(255,255,255,0.44);font-weight:bold; color: #63460C;
     background-color: #FFD65E; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFD65E), to(#FEBF04));
     background-image: -webkit-linear-gradient(top, #FFD65E, #FEBF04);
@@ -54,11 +54,23 @@ button{
     text-transform: uppercase;
 }
 
-button:focus {
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px auto;
+    text-align: center;
+    border:2px solid #000;
+}
+
+button:focus, select:focus {
     outline: none;
 }
 
-button:hover{
+button:hover, select:focus{
     border:1px solid #CE9A01;
     background-color: #FFC92B; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFC92B), to(#CE9A01));
     background-image: -webkit-linear-gradient(top, #FFC92B, #CE9A01);
@@ -67,6 +79,8 @@ button:hover{
     background-image: -o-linear-gradient(top, #FFC92B, #CE9A01);
     background-image: linear-gradient(to bottom, #FFC92B, #CE9A01);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFC92B, endColorstr=#CE9A01);
 }
+
+
 
 footer {
     padding-right: 20px;
@@ -222,7 +236,6 @@ label {
     justify-content: center;
     flex: 0 0 15%;
     margin: 20px 20px;
-    justify-content: center;
     border:1px solid #CE9A01;-webkit-box-shadow: #FFF563 0px 1px 0px inset;-moz-box-shadow: #FFF563 0px 1px 0px inset; box-shadow: #FFF563 0px 1px 0px inset; -webkit-border-radius: 10px; -moz-border-radius: 10px;border-radius: 10px;font-family:arial, helvetica, sans-serif; padding: 7px 14px 7px 14px; text-decoration:none; display:inline-flex;text-shadow: 0px 1px 0 rgba(255,255,255,0.44);font-weight:bold; color: #63460C;
     background-color: #FFD65E; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFD65E), to(#FEBF04));
     background-image: -webkit-linear-gradient(top, #FFD65E, #FEBF04);
@@ -351,8 +364,6 @@ aside {
     text-align: center;
     font-family: 'Indie Flower', cursive;
     display: block;
-    display: inline;
-    display: inline-flex;
 }
 
 .category-solo {

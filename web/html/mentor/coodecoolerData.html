@@ -9,52 +9,58 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Quest Store | Mentor</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <p>Logged as: name(JS)</p>
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
             <button type="button">Logout</button>
-            <h1>Quest Store</h1>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
         </header>
         <nav>
-            <ul>
-                <li><a href="mentor.html">Codecoolers</a></li>
-                <li><a href="quest.html">Quest</a></li>
-                <li><a href="artifacts.html">Artifact</a></li>
+            <ul class="menu">
+                <li><a href="admin.html">Mentors</a></li>
+                <li><a href="classes.html">Classes</a></li>
+                <li><a href="experienceLevels.html">Experience level</a></li>
             </ul>
         </nav>
         <section id="content">
-            <form action="#" method="POST">
-                <label for="class-name">Name</label>
-                <input type="text" name="class-name" id="class-name">
-                <label for="class-name">Name</label>
-                <input type="text" name="class-name" id="class-name">
-                <label for="class">Class</label>
-                <select name="class" id="class">
-                    <option value="basic">Basic</option>
-                    <option value="oop">OOP</option>
-                    <option value="web">Web</option>
-                    <option value="advance">Advance</option>
-                </select>
-                <label for="quests">Achieved quests</label>
-                <select multi name="quests" id="quests">
-                    <option value="quest1">quest1</option>
-                    <option value="quest2">quest2</option>
-                    <option value="quest3">quest3</option>
-                    <option value="quest4">quest4</option>
-                </select>
-                <label for="artifacts">Bought artifacts</label>
-                <select multi name="artifacts" id="artifacts">
-                    <option value="artifact1">artifact1</option>
-                    <option value="artifact2">artifact2</option>
-                    <option value="artifact3">artifact3</option>
-                    <option value="artifact4">artifact4</option>
-                </select>
-                <input type="submit" value="accept">
-                <input type="button" value="cancel">
-            </form>
-            <section class="results" id="results">
+            <div class="item wider">
+                <form action="#" method="POST">
+                    <label for="class-name">Name</label>
+                    <input type="text" name="class-name" id="class-name">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" name="last-name" id="last-name">
+                    <label for="class">Class</label>
+                    <select name="class" id="class">
+                        <option value="basic">Basic</option>
+                        <option value="oop">OOP</option>
+                        <option value="web">Web</option>
+                        <option value="advance">Advance</option>
+                    </select>
+                    <label for="quests">Achieved quests</label>
+                    <select multi name="quests" id="quests">
+                        <option value="quest1">quest1</option>
+                        <option value="quest2">quest2</option>
+                        <option value="quest3">quest3</option>
+                        <option value="quest4">quest4</option>
+                    </select>
+                    <label for="artifacts">Bought artifacts</label>
+                    <select multi name="artifacts" id="artifacts">
+                        <option value="artifact1">artifact1</option>
+                        <option value="artifact2">artifact2</option>
+                        <option value="artifact3">artifact3</option>
+                        <option value="artifact4">artifact4</option>
+                    </select>
+                    <button type="submit">Submit</button>
+                    <button type="button">Cancel</button>
+
+                </form>
+            </div>
+            <section class="results item" id="results">
                 <h3>Codecooler transactions:</h3>
                 <p>1. Artifact 1</p>
                 <p>2. Artifact 2</p>
