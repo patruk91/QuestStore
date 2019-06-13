@@ -217,6 +217,7 @@ label {
     flex-wrap: wrap;
     flex: 0 0 15%;
     margin: 20px 20px;
+    justify-content: center;
     border:1px solid #CE9A01;-webkit-box-shadow: #FFF563 0px 1px 0px inset;-moz-box-shadow: #FFF563 0px 1px 0px inset; box-shadow: #FFF563 0px 1px 0px inset; -webkit-border-radius: 10px; -moz-border-radius: 10px;border-radius: 10px;font-family:arial, helvetica, sans-serif; padding: 7px 14px 7px 14px; text-decoration:none; display:inline-flex;text-shadow: 0px 1px 0 rgba(255,255,255,0.44);font-weight:bold; color: #63460C;
     background-color: #FFD65E; background-image: -webkit-gradient(linear, left top, left bottom, from(#FFD65E), to(#FEBF04));
     background-image: -webkit-linear-gradient(top, #FFD65E, #FEBF04);
@@ -304,4 +305,28 @@ aside {
     display: flex;
     flex-direction: column;
     text-align: center;
+}
+#mentor-aside {
+    height: 300px;
+}
+
+.mentor-pic img{
+    margin-top: 10px;
+    width: 250px;
+    height: 250px;
+}
+
+#mentor-data {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+}
+
+.set-mentors {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }

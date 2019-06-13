@@ -29,43 +29,53 @@
             </ul>
         </nav>
 
-        <section id="content">
+        <section id="content" class="set-mentors">
+            <aside class="item" id="mentor-aside">
+                <span class="mentor-pic"><img src="../../images/mentor.png" alt="Mentor picture"></span>
+                <div class="edit-options">
+                    <a href="mentorsData.html"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="mentorsData.html"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
+                </div>
+            </aside>
+
             <form action="#" method="POST">
-                <div id="mentor-overall" class="item">
-                    <label for="name">Name</label>
-                    <input type="text" name="name" id="name">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" name="lastName" id="lastName">
-                    <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" name="dateOfBirth" id="dateOfBirth">
-                    <label for="employmentDate">Employment date</label>
-                    <input type="date" name="employmentDate" id="employmentDate">
-                    <label for="mentor-description">Employment date</label>
-                    <textarea name="mentor-description" id="mentor-description">Description</textarea>
-                </div>
+                <div id="mentor-data">
+                    <div id="mentor-overall" class="item">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" id="name">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" name="lastName" id="lastName">
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" name="dateOfBirth" id="dateOfBirth">
+                        <label for="employmentDate">Employment date</label>
+                        <input type="date" name="employmentDate" id="employmentDate">
+                        <label for="mentor-description">Employment date</label>
+                        <textarea name="mentor-description" id="mentor-description">Description</textarea>
+                    </div>
 
-                <div id="mentor-login" class="item">
-                    <label for="mentor-log">Login</label>
-                    <input type="text" name="mentor-log" id="mentor-log">
-                    <label for="mentor-password">Password</label>
-                    <input type="password" name="mentor-password" id="mentor-password">
-                    <label for="e-mail">Email</label>
-                    <input type="email" name="e-mail" id="e-mail">
-                    <label for="active">Acitve</label>
-                    <input type="checkbox" name="active" value="active" id="active">
-                </div>
+                    <div id="mentor-login" class="item">
+                        <label for="mentor-log">Login</label>
+                        <input type="text" name="mentor-log" id="mentor-log">
+                        <label for="mentor-password">Password</label>
+                        <input type="password" name="mentor-password" id="mentor-password">
+                        <label for="e-mail">Email</label>
+                        <input type="email" name="e-mail" id="e-mail">
+                        <label for="active">Acitve</label>
+                        <input type="checkbox" name="active" value="active" id="active">
+                    </div>
 
-                <div id="mentor-address" class="item">
-                    <label for="address">Address</label>
-                    <input type="text" name="address" id="address">
-                    <label for="street">Street</label>
-                    <input type="text" name="street" id="street">
-                    <label for="zip">Zip-Code</label>
-                    <input type="text" name="zip" id="zip">
-                    <label for="city">City</label>
-                    <input type="text" name="city" id="city">
-                    <label for="country">Country</label>
-                    <input type="text" name="country" id="country">
+                    <div id="mentor-address" class="item">
+                        <label for="address">Address</label>
+                        <input type="text" name="address" id="address">
+                        <label for="street">Street</label>
+                        <input type="text" name="street" id="street">
+                        <label for="zip">Zip-Code</label>
+                        <input type="text" name="zip" id="zip">
+                        <label for="city">City</label>
+                        <input type="text" name="city" id="city">
+                        <label for="country">Country</label>
+                        <input type="text" name="country" id="country">
+                    </div>
                 </div>
 
                 <div class="item" id="classes-choose">
@@ -84,17 +94,9 @@
                     <button type="submit" value="Cancel">Cancel</button>
                 </div>
             </form>
-
-            <aside>
-                <img src="../../images/mentor.png" alt="Mentor picture">
-                <div id="buttons-update-status">
-                    <input type="submit" value="add">
-                    <input type="button" value="remove">
-                </div>
-            </aside>
         </section>
 
-        <section class="results" id="results">
+        <section class="results item" id="results">
             <h3>Codecoolers in class:</h3>
             <p>Name Last Name</p>
             <p>Name Last Name</p>
