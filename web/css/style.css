@@ -296,3 +296,12 @@ aside {
     height: 40px;   
     margin-bottom: 10px; 
 }
+
+/*Mentor*/
+#mentor-overall, #mentor-login, #mentor-address, #classes-choose {
+    font-family: 'Indie Flower', cursive;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
