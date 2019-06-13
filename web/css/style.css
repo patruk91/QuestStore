@@ -248,5 +248,22 @@ aside {
     margin: 10px auto;
 }
 
+.artifact-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.artifact-head img {
+    width: 200px;
+}
 
-
+.coins {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url("images/coin.png");
+    width: 40px;
+    height: 40px;   
+    margin-bottom: 10px; 
+}
