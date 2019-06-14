@@ -10,11 +10,13 @@
     <title>Artifact | View</title>
     <link rel="stylesheet" href="../../css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="../../js/popup.js"></script>
+
 </head>
 <body>
     <div class="container">
         <div id="logout">
-            <p>Logged as: name(JS) </p>
+            <p>Logged as: name(JS)</p>
             <button type="button">Logout</button>
         </div>
         <header>
@@ -41,7 +43,16 @@
                     <h2>Artifact Name</h2>
                     <div class="coins"><p>22</p></div>
                     <img src="../../images/artifact.jpg" alt="Quest XXX" class="center">
-                    <span class="category"><a href="#">Pop up to buy</a></span>
+                    <button id="button-popup" onclick="displayPopUp()">Buy</button>
+
+                    <div id="modal" class="popup" onclick="closePopUpAnywhere()">
+                        <div class="popup-content">
+                            <span class="close" onclick="closePopUp()">&times;</span>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi aperiam dolorem
+                                eum facilis ipsum iure minima placeat sed ut, veniam!</p>
+                            <button id="start-collection">Start collection</button>
+                        </div>
+                    </div>
                 </section>
                 <section class="quest-description">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
