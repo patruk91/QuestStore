@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Artifact | Edit</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
+            <button type="button">Logout</button>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="mentor.html">Codecooler</a></li>
+                <li><a href="quest.html">Quest</a></li>
+                <li><a href="artifact.html">Artifact</a></li>
+            </ul>
+        </nav>
+        <div id="content">
+            <aside class="item column-full" id="mentor-aside">
+                <div class="mentor-pic">
+                    <img src="../../images/artifact.jpg" alt="Mentor picture">
+                </div>
+                <div class="edit-options">
+                    <a href="#"><img class="edit" src="../../images/pencil.png" alt="Link to view"></a>
+                    <a href="#"><img class="remove" src="../../images/remove.png" alt="Link to view"></a>
+                </div>
+            </aside>
+            <div class="form-fields item">
+                <form action="#" method="POST">
+                    <label for="artifact-name">Artifact name</label>
+                    <input type="text" name="artifact-name" id="artifact-name">
+                    <label for="category">Category</label>
+                    <input type="text" name="category" id="category">
+                    <label for="coins">Coins</label>
+                    <input type="number" name="coins" id="coins">
+                    <label for="artifact-description">Description</label>
+                    <textarea name="artifact-description" id="artifact-description"></textarea>
+
+                    <div class="edit-options sipmle" id="form-button-mentor">
+                        <button type="submit" value="Submit">Submit</button>
+                        <button type="reset" value="Reset">Reset</button>
+                        <button type="button" value="Cancel" onclick="location.href='artifact.html'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Mentor</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
+            <button type="button">Logout</button>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="mentor.html">Mentors</a></li>
+                <li><a href="quest.html">Quest</a></li>
+                <li><a href="artifact.html">Artifact</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            <div class="item wider">
+                <form action="#" method="POST">
+                    <label for="class-name">Name</label>
+                    <input type="text" name="class-name" id="class-name">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" name="last-name" id="last-name">
+                    <label for="class">Class</label>
+                    <select name="class" id="class">
+                        <option value="basic">Basic</option>
+                        <option value="oop">OOP</option>
+                        <option value="web">Web</option>
+                        <option value="advance">Advance</option>
+                    </select>
+                    <label for="quests">Achieved quests</label>
+                    <select multi name="quests" id="quests">
+                        <option value="quest1">quest1</option>
+                        <option value="quest2">quest2</option>
+                        <option value="quest3">quest3</option>
+                        <option value="quest4">quest4</option>
+                    </select>
+                    <label for="artifacts">Bought artifacts</label>
+                    <select multi name="artifacts" id="artifacts">
+                        <option value="artifact1">artifact1</option>
+                        <option value="artifact2">artifact2</option>
+                        <option value="artifact3">artifact3</option>
+                        <option value="artifact4">artifact4</option>
+                    </select>
+                    <button type="submit">Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='mentor.html'">Cancel</button>
+
+                </form>
+            </div>
+            <section class="results item" id="results">
+                <h3>Codecooler transactions:</h3>
+                <p>1. Artifact 1</p>
+                <p>2. Artifact 2</p>
+                <p>3. Artifact 3</p>
+                <p>4. Artifact 4</p>
+            </section>
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>

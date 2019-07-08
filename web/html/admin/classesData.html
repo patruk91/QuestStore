@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Admin</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: name(JS) </p>
+            <button type="button">Logout</button>
+        </div>
+        <header>
+            <h1>Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="admin.html">Mentors</a></li>
+                <li><a href="classes.html">Classes</a></li>
+                <li><a href="experienceLevels.html">Experience levels</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            <div class="item">
+                <form action="#" method="POST">
+                    <label for="class-name">Name</label>
+                    <input class="full-frame-width" type="text" name="class-name" id="class-name">
+                    <label for="class-description">Description</label>
+                    <textarea name="class-description" id="class-description" class="full-frame-width"></textarea>
+                    <button type="submit" value="accept">Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='classes.html'">Cancel</button>
+                </form>
+                <section class="results" id="results">
+                    <h3>Codecoolers in class:</h3>
+                    <p>* Name Last Name</p>
+                    <p>* Name Last Name</p>
+                    <p>* Name Last Name</p>
+                    <p>* Name Last Name</p>
+                </section>
+            </div>
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
