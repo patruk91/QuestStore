@@ -7,7 +7,6 @@ public class Student extends User {
         super(builder);
     }
 
-
     public static class StudentBuilder extends User.UserBuilder<StudentBuilder> {
         private Student studentToBuild;
 
@@ -19,6 +18,11 @@ public class Student extends User {
             Student buildUser = this.studentToBuild;
             this.studentToBuild = new Student(this);
             return buildUser;
+        }
+
+        @Override
+        StudentBuilder getThis() {
+            return this;
         }
 
         public StudentBuilder setId(int classId) {
@@ -35,8 +39,6 @@ public class Student extends User {
             this.studentToBuild.studentProfile.setExperience(experience);
             return this;
         }
-
-
     }
 
     public int getId() {
