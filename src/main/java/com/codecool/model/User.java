@@ -8,18 +8,25 @@ public class User {
     private String lastName;
     private String email;
 
-    private User() {}
+    protected User(UserBuilder<?> builder) {
+        int id = builder.userToBuild.id;
+        String type = builder.userToBuild.type;
+        UserCredentials userCredentials = builder.userToBuild.userCredentials;
+        String firstName = builder.userToBuild.firstName;
+        String lastName = builder.userToBuild.lastName;
+        String email = builder.userToBuild.email;
+    }
 
-    public static class UserBuilder {
+    protected static class UserBuilder<T extends  UserBuilder<T>> {
         private User userToBuild;
 
-        public UserBuilder() {
-            this.userToBuild = new User();
+        UserBuilder() {
+            this.userToBuild = new User(this);
         }
 
         public User build() {
             User buildUser = this.userToBuild;
-            this.userToBuild = new User();
+            this.userToBuild = new User(this);
             return buildUser;
         }
 
