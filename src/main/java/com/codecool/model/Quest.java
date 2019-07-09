@@ -5,15 +5,15 @@ public class Quest {
     private String name;
     private String description;
     private int price;
-    private String imageLing;
+    private String imageLink;
     private QuestCategoryEnum category;
 
-    public Quest(int id, String name, String description, int price, String imageLing, QuestCategoryEnum category) {
+    public Quest(int id, String name, String description, int price, String imageLink, QuestCategoryEnum category) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageLing = imageLing;
+        this.imageLink = imageLink;
         this.category = category;
     }
 
@@ -49,12 +49,12 @@ public class Quest {
         this.price = price;
     }
 
-    public String getImageLing() {
-        return imageLing;
+    public String getImageLink() {
+        return imageLink;
     }
 
-    public void setImageLing(String imageLing) {
-        this.imageLing = imageLing;
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public QuestCategoryEnum getCategory() {
