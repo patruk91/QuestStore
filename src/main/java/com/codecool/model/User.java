@@ -38,6 +38,17 @@ public class User {
             return this;
         }
 
+        public UserBuilder setUserLogin(String login) {
+            this.userToBuild.userCredentials.setLogin(login);
+            return this;
+        }
+
+        public UserBuilder setUserPassword(String password) {
+            this.userToBuild.userCredentials.setPassword(password);
+            return this;
+        }
+
+
         public UserBuilder setFirstName(String firstName) {
             this.userToBuild.firstName = firstName;
             return this;
@@ -70,8 +81,20 @@ public class User {
         this.type = type;
     }
 
-    public UserCredentials getUserCredentials() {
-        return userCredentials;
+    public String getLogin() {
+        return userCredentials.getLogin();
+    }
+
+    public String getPassword() {
+        return userCredentials.getPassword();
+    }
+
+    public void setLogin(String login) {
+        userCredentials.setLogin(login);
+    }
+
+    public void setPassword(String password) {
+        userCredentials.setPassword(password);
     }
 
     public void setUserCredentials(UserCredentials userCredentials) {
