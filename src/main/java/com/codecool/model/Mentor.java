@@ -5,7 +5,7 @@ public class Mentor extends User {
         super(builder);
     }
 
-    public static class MentorBuilder extends User.UserBuilder<Mentor.MentorBuilder> {
+    public static class MentorBuilder extends User.UserBuilder<MentorBuilder> {
         private Mentor mentorToBuild;
 
         public MentorBuilder() {
