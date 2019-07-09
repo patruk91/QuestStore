@@ -2,13 +2,15 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IClassDao;
 import com.codecool.model.ClassGroup;
+import com.codecool.model.Mentor;
+import com.codecool.model.Student;
 
 import java.util.List;
 
 public class ClassSQL implements IClassDao {
     @Override
     public void addClass(ClassGroup classGroup) {
-        
+
     }
 
     @Override
@@ -29,5 +31,25 @@ public class ClassSQL implements IClassDao {
     @Override
     public ClassGroup getClass(int classId) {
         return null;
+    }
+
+    @Override
+    public String getClassName(Student student) {
+        return null;
+    }
+
+    @Override
+    public void addStudentToClass(Student student) {
+
+    }
+
+    @Override
+    public void addMentorToClass(Mentor mentor) {
+
+    }
+
+    @Override
+    public void getAllStudentsFromClass(Mentor mentor) {
+
     }
 }

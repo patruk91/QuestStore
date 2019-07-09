@@ -11,5 +11,5 @@ public interface IQuestDao {
     public void deleteQuest(Quest quest);
     public List<Quest> getAllQuests();
     public Quest getQuest(int id);
-    public void asignQuest(Student student, int questId);
+    public void assignQuest(Student student, int questId);
 }

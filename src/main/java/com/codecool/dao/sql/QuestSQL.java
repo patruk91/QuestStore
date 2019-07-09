@@ -33,7 +33,7 @@ public class QuestSQL implements IQuestDao {
     }
 
     @Override
-    public void asignQuest(Student student, int questId) {
+    public void assignQuest(Student student, int questId) {
 
     }
 }
