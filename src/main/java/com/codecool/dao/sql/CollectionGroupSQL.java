@@ -15,4 +15,14 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
     public void donateToCollection(int amount, int idCollection) {
 
     }
+
+    @Override
+    public void createCollection(CollectionGroup collection) {
+        
+    }
+
+    @Override
+    public void removeCollection(CollectionGroup collection) {
+
+    }
 }
