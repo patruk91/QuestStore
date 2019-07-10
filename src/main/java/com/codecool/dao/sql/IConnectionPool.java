@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ConnectionPool {,
+public interface IConnectionPool {
     Connection getConnection() throws SQLException;
     boolean releaseConnection(Connection connection);
     List<Connection> getConnectionPool();

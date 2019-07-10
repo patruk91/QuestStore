@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicConnectionPool implements ConnectionPool{
+public class BasicConnectionPool implements IConnectionPool{
     private final String URL;
     private final String USER;
     private final String PASSWORD;
