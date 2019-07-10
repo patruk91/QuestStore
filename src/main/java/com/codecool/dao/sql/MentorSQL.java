@@ -6,6 +6,11 @@ import com.codecool.model.Mentor;
 import java.util.List;
 
 public class MentorSQL implements IMentorDao {
+    private BasicConnectionPool connectionPool;
+
+    public MentorSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
 
     @Override
     public List<Mentor> getAllMentors() {

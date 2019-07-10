@@ -18,16 +18,16 @@ public class QuestStore {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        IArtifactDao artifactDao = new ArtifactSQL();
-        IClassDao classDao = new ClassSQL();
-        ICollectionGroupDao collectionGroupDao = new CollectionGroupSQL();
-        IExpLevelDao expLevelDao = new ExpLevelSQL();
-        ILoginDao loginDao = new LoginSQL();
-        IMentorDao mentorDao = new MentorSQL();
-        IQuestDao questDao = new QuestSQL();
-        IStudentDao studentDao = new StudentSQL();
+        IArtifactDao artifactDao = new ArtifactSQL(connectionPool);
+        IClassDao classDao = new ClassSQL(connectionPool);
+        ICollectionGroupDao collectionGroupDao = new CollectionGroupSQL(connectionPool);
+        IExpLevelDao expLevelDao = new ExpLevelSQL(connectionPool);
+        ILoginDao loginDao = new LoginSQL(connectionPool);
+        IMentorDao mentorDao = new MentorSQL(connectionPool);
+        IQuestDao questDao = new QuestSQL(connectionPool);
+        IStudentDao studentDao = new StudentSQL(connectionPool);
 
-        Controller controller = new Controller(connectionPool, artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
+        Controller controller = new Controller(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
         controller.run();
 
     }

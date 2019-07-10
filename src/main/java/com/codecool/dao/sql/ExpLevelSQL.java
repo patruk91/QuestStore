@@ -6,6 +6,12 @@ import com.codecool.model.ExpLevel;
 import java.util.List;
 
 public class ExpLevelSQL implements IExpLevelDao {
+    private BasicConnectionPool connectionPool;
+
+    public ExpLevelSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
     @Override
     public void addExpLevel(ExpLevel expLevel) {
 
