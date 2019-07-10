@@ -1,22 +1,12 @@
 package com.codecool.dao.sql;
 
-import com.codecool.dao.IAbleToLearnDao;
 import com.codecool.dao.IStudentDao;
 import com.codecool.model.Mentor;
 import com.codecool.model.Student;
 
 import java.util.List;
 
-public class StudentSQL implements IStudentDao, IAbleToLearnDao {
-    @Override
-    public String getClassName(Student student) {
-        return null;
-    }
-
-    @Override
-    public void addStudentToClass(Student student) {
-
-    }
+public class StudentSQL implements IStudentDao{
 
     @Override
     public void addStudent(Student student) {
