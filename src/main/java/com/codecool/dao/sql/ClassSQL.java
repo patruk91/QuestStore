@@ -42,7 +42,27 @@ public class ClassSQL implements IClassDao {
 
     @Override
     public void updateClass(ClassGroup classGroup) {
+        String query = "UPDATE classes SET mentor_id = ?, class_name = ? WHERE id = ?";
 
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateClassData(query, connection, classGroup);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void updateClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, classGroup.getMentorId());
+            stmt.setString(2, classGroup.getClassName());
+            stmt.setInt(3, classGroup.getId());
+
+            stmt.executeUpdate();
+        }
     }
 
     @Override
