@@ -6,10 +6,7 @@ import com.codecool.model.Quest;
 import com.codecool.model.QuestCategoryEnum;
 import com.codecool.model.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +183,29 @@ public class QuestSQL implements IQuestDao {
     }
 
     @Override
-    public void assignQuest(Student student, int questId) {
+    public void assignQuest(Student student, Mentor mentor, int questId) {
+        String query = "INSERT INTO granted_quests (student_id, mentor_id, quest_id, date)" +
+                "VALUE (? ? ? ?)";
 
+        try {
+            Connection connection = connectionPool.getConnection();
+            insertGrentedQuestData(query, connection, questId, student, mentor);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void insertGrentedQuestData(String query, Connection connection, int questId, Student student, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, student.getId());
+            stmt.setInt(2, mentor.getId());
+            stmt.setInt(3, questId);
+            stmt.setDate(4, new Date(System.currentTimeMillis()));
+
+            stmt.executeUpdate();
+        }
     }
 }
