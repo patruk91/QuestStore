@@ -48,11 +48,37 @@ public class ArtifactSQL implements IArtifactDao {
 
     @Override
     public void updateArtifact(Artifact artifact) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateArtifactData(connection, artifact);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void updateArtifactData(Connection connection, Artifact artifact) throws SQLException {
+        try (PreparedStatement stmtUpdateUserData = connection.prepareStatement(
+                "UPDATE artifacts SET name = ?, description = ?, price = ?, image_link = ?, category = ? WHERE id = ?")) {
+            updateArtifactTable(stmtUpdateUserData, artifact);
+        }
+    }
+
+    private void updateArtifactTable(PreparedStatement stmtUpdateUserData, Artifact artifact) throws SQLException {
+        stmtUpdateUserData.setString(1, artifact.getName());
+        stmtUpdateUserData.setString(2, artifact.getDescription());
+        stmtUpdateUserData.setInt(3, artifact.getPrice());
+        stmtUpdateUserData.setString(4, artifact.getImageLink());
+        stmtUpdateUserData.setString(5, artifact.getCategory().toString());
+        stmtUpdateUserData.setInt(6, artifact.getId());
+        stmtUpdateUserData.executeUpdate();
     }
 
     @Override
     public void deleteArtifact(Artifact artifact) {
+        
 
     }
 
