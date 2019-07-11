@@ -2,11 +2,14 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IArtifactDao;
 import com.codecool.model.Artifact;
+import com.codecool.model.ArtifactCategoryEnum;
 import com.codecool.model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArtifactSQL implements IArtifactDao {
@@ -98,9 +101,45 @@ public class ArtifactSQL implements IArtifactDao {
 
     @Override
     public List<Artifact> getAllArtifacts() {
-        return null;
+        List<Artifact> artifacts = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            addArtifacts(artifacts, connection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return artifacts;
     }
 
+    private void addArtifacts(List<Artifact> artifacts, Connection connection) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM artifacts")) {
+            addArtifactsToList(stmt, artifacts);
+        }
+    }
+
+    private void addArtifactsToList(PreparedStatement stmt, List<Artifact> artifacts) throws SQLException {
+        try (ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                Artifact artifact = buildSingleArtifact(resultSet);
+                artifacts.add(artifact);
+            }
+        }
+    }
+
+    private Artifact buildSingleArtifact(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        String description = resultSet.getString("description");
+        int price = resultSet.getInt("price");
+        String image_link = resultSet.getString("image_link");
+        ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(resultSet.getString("category"));
+        return new Artifact(id, name, description, price, image_link, category);
+    }
+    
     @Override
     public Artifact getArtifact(int id) {
         return null;
