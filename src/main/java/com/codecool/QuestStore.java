@@ -29,6 +29,11 @@ public class QuestStore {
 
         Controller controller = new Controller(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
         controller.run();
+        try {
+            connectionPool.shutdown();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }
