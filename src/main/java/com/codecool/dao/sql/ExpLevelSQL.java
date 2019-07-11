@@ -135,12 +135,14 @@ public class ExpLevelSQL implements IExpLevelDao {
             Connection connection = connectionPool.getConnection();
             expLevel = getSingleExpLevel(connection, expLevelName);
             connectionPool.releaseConnection(connection);
+            return expLevel;
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-        return expLevel;
+        throw new RuntimeException("No experience level by that name!");
+
     }
 
     private ExpLevel getSingleExpLevel(Connection connection, String expLevelName) throws SQLException {
