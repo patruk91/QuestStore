@@ -5,10 +5,7 @@ import com.codecool.model.Artifact;
 import com.codecool.model.ArtifactCategoryEnum;
 import com.codecool.model.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,12 +172,56 @@ public class ArtifactSQL implements IArtifactDao {
 
     @Override
     public void buyArtifact(Student student, int artifactId) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            addArtifactToUserArtifacts(student, connection, artifactId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void addArtifactToUserArtifacts(Student student, Connection connection, int artifactId) throws SQLException {
+        try (PreparedStatement stmtInsertUserArtifactData = connection.prepareStatement(
+                "INSERT INTO user_artifacts(user_id, artifact_id, date, state) VALUES(?, ?, ?, ?)")) {
+            insertUserArtifactData(stmtInsertUserArtifactData, student, artifactId);
+        }
+    }
+
+    private void insertUserArtifactData(PreparedStatement stmtInsertUserArtifactData, Student student, int artifactId) throws SQLException {
+        stmtInsertUserArtifactData.setInt(1, student.getId());
+        stmtInsertUserArtifactData.setInt(2, artifactId);
+        stmtInsertUserArtifactData.setDate(3, new Date(System.currentTimeMillis()));
+        stmtInsertUserArtifactData.setBoolean(4, false);
+        stmtInsertUserArtifactData.executeUpdate();
     }
 
     @Override
     public void useArtifact(Student student, int artifactId) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateStateOfArtifact(student, artifactId, connection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void updateStateOfArtifact(Student student, int artifactId, Connection connection) throws SQLException {
+        try (PreparedStatement stmtArtifactData = connection.prepareStatement(
+                "UPDATE user_artifacts SET state = ? WHERE artifact_id = ? && user_id = ?")) {
+            updateStateInDatabase(stmtArtifactData, student, artifactId);
+        }
+    }
+
+    private void updateStateInDatabase(PreparedStatement stmtArtifactData, Student student, int artifactId) throws SQLException {
+        stmtArtifactData.setBoolean(1, true);
+        stmtArtifactData.setInt(2, student.getId());
+        stmtArtifactData.setInt(3, artifactId);
     }
 }
 
