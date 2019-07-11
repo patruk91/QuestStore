@@ -1,5 +1,6 @@
 package com.codecool.dao;
 
+import com.codecool.model.Mentor;
 import com.codecool.model.Quest;
 import com.codecool.model.Student;
 
@@ -11,5 +12,5 @@ public interface IQuestDao {
     public void deleteQuest(Quest quest);
     public List<Quest> getAllQuests();
     public Quest getQuest(int id);
-    public void assignQuest(Student student, int questId);
+    public void assignQuest(Student student, Mentor mentor, int questId);
 }
