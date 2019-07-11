@@ -125,8 +125,40 @@ public class MentorSQL implements IMentorDao {
 
     @Override
     public void updateMentor(Mentor mentor) {
-        String query = "INSERT INTO"
+        String usersQuery = "UPDATE users SET type = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?";
+        String credentialsQUery = "Update user_credentials SET password = ? WHERE login = ?";
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateMentorInUsersQuery(usersQuery, connection, mentor);
+            updateMentorInCredentialsQuery(credentialsQUery, connection, mentor);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
 
+    }
+
+    private void updateMentorInCredentialsQuery(String credentialsQUery, Connection connection, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(credentialsQUery)) {
+            stmt.setString(1, mentor.getPassword());
+            stmt.setString(2, mentor.getLogin());
+
+            stmt.executeUpdate();
+        }
+    }
+
+    private void updateMentorInUsersQuery(String query, Connection connection, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, mentor.getType());
+            stmt.setString(2, mentor.getFirstName());
+            stmt.setString(3, mentor.getLastName());
+            stmt.setString(4, mentor.getEmail());
+            stmt.setInt(5, mentor.getId());
+
+            stmt.executeUpdate();
+        }
     }
 
     @Override
