@@ -1,12 +1,16 @@
 package com.codecool.dao.sql;
 
 import com.codecool.dao.IQuestDao;
+import com.codecool.model.Mentor;
 import com.codecool.model.Quest;
+import com.codecool.model.QuestCategoryEnum;
 import com.codecool.model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuestSQL implements IQuestDao {
@@ -99,7 +103,44 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public List<Quest> getAllQuests() {
-        return null;
+        List<Quest> listOfQuests = new ArrayList<>();
+        String query = "SELECT * FROM quests";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareQuestsListQuery(listOfQuests, query, connection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+
+
+        return listOfQuests;
+    }
+
+    private void prepareQuestsListQuery(List<Quest> listOfQuests, String query, Connection connection) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            executeQuestsListQuery(listOfQuests, stmt);
+        }
+    }
+
+    private void executeQuestsListQuery(List<Quest> listOfQuests, PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("type");
+                String description = rs.getString("first_name");
+                int price = rs.getInt("last_name");
+                String imageLink = rs.getString("email");
+                QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("login"));
+
+                Quest quest = new Quest(id, name, description, price, imageLink, category);
+
+                listOfQuests.add(quest);
+            }
+        }
     }
 
     @Override
