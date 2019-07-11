@@ -163,11 +163,46 @@ public class MentorSQL implements IMentorDao {
 
     @Override
     public void addMentor(Mentor mentor) {
+        String usersQuery = "INSERT INTO users (type, first_name, last_name, email)" +
+                "VALUES (?, ?, ?, ?) returning id";
+        String usersCredentialsQuery = "INSERT INTO user_credentials (login, password) VALUES (?, ?, ?)";
 
+        try {
+            Connection connection = connectionPool.getConnection();
+            int newUserID = InsertMentorInUsersQuery(usersQuery, connection, mentor);
+            InsertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor, newUserID);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private int InsertMentorInUsersQuery(String usersQuery, Connection connection, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(usersQuery)) {
+            stmt.setString(1, mentor.getType());
+            stmt.setString(2, mentor.getFirstName());
+            stmt.setString(3, mentor.getLastName());
+            stmt.setString(4, mentor.getEmail());
+
+            return stmt.executeUpdate();
+        }
+    }
+
+    private void InsertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor, int newUserID) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setInt(2, newUserID);
+            stmt.setString(1, mentor.getPassword());
+            stmt.setString(2, mentor.getLogin());
+
+            stmt.executeUpdate();
+        }
     }
 
     @Override
     public void removeMentor(Mentor mentor) {
-
+        String removeMentorFromUsers = "DELETE FROM users WHERE id = ? CASCADE";
+        String removeMentorFromCredentials = "DELETE FROM user_credentials WHERE user_id = ?";
     }
 }
