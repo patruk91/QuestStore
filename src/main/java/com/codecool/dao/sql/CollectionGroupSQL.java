@@ -6,6 +6,12 @@ import com.codecool.model.CollectionGroup;
 import java.util.List;
 
 public class CollectionGroupSQL implements ICollectionGroupDao {
+    private BasicConnectionPool connectionPool;
+
+    public CollectionGroupSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
     @Override
     public List<CollectionGroup> getAllCollection() {
         return null;

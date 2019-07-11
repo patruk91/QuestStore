@@ -7,6 +7,11 @@ import com.codecool.model.Student;
 import java.util.List;
 
 public class StudentSQL implements IStudentDao{
+    private BasicConnectionPool connectionPool;
+
+    public StudentSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
 
     @Override
     public void addStudent(Student student) {

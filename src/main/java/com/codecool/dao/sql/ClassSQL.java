@@ -8,6 +8,12 @@ import com.codecool.model.Student;
 import java.util.List;
 
 public class ClassSQL implements IClassDao {
+    private BasicConnectionPool connectionPool;
+
+    public ClassSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
     @Override
     public void addClass(ClassGroup classGroup) {
 

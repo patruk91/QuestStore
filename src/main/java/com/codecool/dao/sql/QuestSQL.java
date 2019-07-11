@@ -7,6 +7,12 @@ import com.codecool.model.Student;
 import java.util.List;
 
 public class QuestSQL implements IQuestDao {
+    private BasicConnectionPool connectionPool;
+
+    public QuestSQL(BasicConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
     @Override
     public void addQuest(Quest quest) {
 
