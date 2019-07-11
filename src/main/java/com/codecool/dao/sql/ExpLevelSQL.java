@@ -3,10 +3,13 @@ package com.codecool.dao.sql;
 import com.codecool.dao.IExpLevelDao;
 import com.codecool.model.ExpLevel;
 import com.codecool.model.Student;
+import com.codecool.model.UserCredentials;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpLevelSQL implements IExpLevelDao {
@@ -91,11 +94,45 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     @Override
     public List<ExpLevel> getAllExpLevels() {
-        return null;
+        List<ExpLevel> expLevels = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            addExpLevels(expLevels, connection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return expLevels;
+    }
+
+    private void addExpLevels(List<ExpLevel> expLevels, Connection connection) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM experience_levels")) {
+            addExpLevelToList(stmt, expLevels);
+        }
+    }
+
+    private void addExpLevelToList(PreparedStatement stmt, List<ExpLevel> expLevels) throws SQLException{
+        try (ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                ExpLevel expLevel = getSingleExpLevel(resultSet);
+                expLevels.add(expLevel);
+            }
+        }
+    }
+
+    private ExpLevel getSingleExpLevel(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("name");
+        int experienceAmount = resultSet.getInt("experience_amount");
+        return new ExpLevel(name, experienceAmount);
     }
 
     @Override
     public ExpLevel getExpLevel(int expLevelId) {
         return null;
     }
+
+    
 }
