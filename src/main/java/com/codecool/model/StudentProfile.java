@@ -5,6 +5,12 @@ public class StudentProfile {
     private int experience;
     private int classId;
 
+    public StudentProfile(int coins, int experience, int classId) {
+        this.coins = coins;
+        this.experience = experience;
+        this.classId = classId;
+    }
+
     public int getCoins() {
         return coins;
     }
