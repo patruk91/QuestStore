@@ -20,7 +20,50 @@ public class StudentSQL implements IStudentDao{
 
     @Override
     public void addStudent(Student student) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            addStudentToDatabase(student, connection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void addStudentToDatabase(Student student, Connection connection) throws SQLException {
+        try (PreparedStatement stmtInsertUserData = connection.prepareStatement(
+            "INSERT INTO users(type, first_name, last_name, email) VALUES(?, ?, ?, ?) returning id");
+             PreparedStatement stmtInsertUserCredentials = connection.prepareStatement(
+                     "INSERT INTO user_credentials(user_id, login, password) VALUES(?, ?, ?)");
+             PreparedStatement stmtInsertStudentProfiles = connection.prepareStatement(
+                     "INSERT INTO students_profiles(class_id, coins, experience) VALUES(?, ?, ?)")) {
+            int newUserId = insertUserData(stmtInsertUserData, student);
+             stmtInsertUserCredentials(stmtInsertUserCredentials, student, newUserId);
+            insertStudentProfiles(stmtInsertStudentProfiles, student);
+        }
+    }
+
+    private int insertUserData(PreparedStatement stmtInsertUserData, Student student) throws SQLException {
+        stmtInsertUserData.setString(1, student.getType());
+        stmtInsertUserData.setString(2, student.getFirstName());
+        stmtInsertUserData.setString(3, student.getLastName());
+        stmtInsertUserData.setString(4, student.getEmail());
+        return stmtInsertUserData.executeUpdate();
+    }
+
+    private void stmtInsertUserCredentials(PreparedStatement stmtInsertUserCredentials, Student student, int newUserId) throws SQLException {
+        stmtInsertUserCredentials.setInt(1, newUserId);
+        stmtInsertUserCredentials.setString(2, student.getLogin());
+        stmtInsertUserCredentials.setString(3, student.getPassword());
+        stmtInsertUserCredentials.executeUpdate();
+    }
+
+    private void insertStudentProfiles(PreparedStatement stmtInsertStudentProfiles, Student student) throws SQLException {
+        stmtInsertStudentProfiles.setInt(1, student.getClassId());
+        stmtInsertStudentProfiles.setInt(2, student.getCoins());
+        stmtInsertStudentProfiles.setInt(3, student.getExperience());
+        stmtInsertStudentProfiles.executeUpdate();
     }
 
     @Override
@@ -50,7 +93,7 @@ public class StudentSQL implements IStudentDao{
 
     private void addStudents(List<Student> students, Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT users.id, users.type, users.credential_id, users.first_name, users.last_name,\n" +
+                "SELECT users.id, users.type, users.first_name, users.last_name,\n" +
                         "users.email, cred.login, cred.password, profile.coins, profile.experience,\n" +
                         "profile.class_id FROM users\n" +
                         "JOIN user_credentials AS cred ON users.id = cred.user_id\n" +
@@ -112,7 +155,7 @@ public class StudentSQL implements IStudentDao{
 
     private Student getSingleStudent(Connection connection, int id) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT users.id, users.type, users.credential_id, users.first_name, users.last_name,\n" +
+                "SELECT users.id, users.type, users.first_name, users.last_name,\n" +
                         "users.email, cred.login, cred.password, profile.coins, profile.experience,\n" +
                         "profile.class_id FROM users\n" +
                         "JOIN user_credentials AS cred ON users.id = cred.user_id\n" +
