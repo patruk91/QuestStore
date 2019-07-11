@@ -169,8 +169,8 @@ public class MentorSQL implements IMentorDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            int newUserID = InsertMentorInUsersQuery(usersQuery, connection, mentor);
-            InsertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor, newUserID);
+            int newUserID = insertMentorInUsersQuery(usersQuery, connection, mentor);
+            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor, newUserID);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -179,7 +179,7 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private int InsertMentorInUsersQuery(String usersQuery, Connection connection, Mentor mentor) throws SQLException {
+    private int insertMentorInUsersQuery(String usersQuery, Connection connection, Mentor mentor) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(usersQuery)) {
             stmt.setString(1, mentor.getType());
             stmt.setString(2, mentor.getFirstName());
@@ -190,7 +190,7 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void InsertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor, int newUserID) throws SQLException {
+    private void insertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor, int newUserID) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
             stmt.setInt(1, newUserID);
             stmt.setString(2, mentor.getPassword());
@@ -202,13 +202,11 @@ public class MentorSQL implements IMentorDao {
 
     @Override
     public void removeMentor(Mentor mentor) {
-        String removeMentorFromUsers = "DELETE FROM users WHERE id = ? CASCADE";
-        String removeMentorFromCredentials = "DELETE FROM user_credentials WHERE user_id = ?";
+        String removeMentorFromUsers = "DELETE FROM users WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            RemoveMentorFromUsersQuery(removeMentorFromUsers, connection, mentor);
-            RemoveMentorFromCredentialsQuery(removeMentorFromCredentials, connection, mentor);
+            removeMentorFromUsersQuery(removeMentorFromUsers, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -217,17 +215,9 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void RemoveMentorFromCredentialsQuery(String removeMentorFromCredentials, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromCredentials)) {
-            stmt.setInt(1, mentor.getId());
-
-            stmt.executeUpdate();
-        }
-    }
-
-    private void RemoveMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
+    private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromUsers)) {
-            stmt.setInt(2, mentor.getId());
+            stmt.setInt(1, mentor.getId());
 
             stmt.executeUpdate();
         }
