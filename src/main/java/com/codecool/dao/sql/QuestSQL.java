@@ -67,7 +67,7 @@ public class QuestSQL implements IQuestDao {
             stmt.setInt(3, quest.getPrice());
             stmt.setString(4, quest.getImageLink());
             stmt.setString(5, quest.getCategory().toString());
-            stmt.setInt(5, quest.getId());
+            stmt.setInt(6, quest.getId());
 
             stmt.executeUpdate();
         }
