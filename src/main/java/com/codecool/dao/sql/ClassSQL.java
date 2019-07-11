@@ -67,7 +67,25 @@ public class ClassSQL implements IClassDao {
 
     @Override
     public void removeClass(ClassGroup classGroup) {
+        String questsDataQuery = "DELETE FROM classes WHERE id = ?";
 
+        try {
+            Connection connection = connectionPool.getConnection();
+            deleteClassData(questsDataQuery, connection, classGroup);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void deleteClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, classGroup.getId());
+
+            stmt.executeUpdate();
+        }
     }
 
     @Override
