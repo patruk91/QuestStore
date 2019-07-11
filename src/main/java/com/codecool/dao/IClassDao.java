@@ -13,7 +13,7 @@ public interface IClassDao {
     public List<ClassGroup> getAllClasses();
     public ClassGroup getClass(int classId);
     public String getClassName(Student student);
-    public void addStudentToClass(Student student);
-    public void addMentorToClass(Mentor mentor);
-    public void getAllStudentsFromClass(Mentor mentor);
+    public void addStudentToClass(Student student, ClassGroup classGroup);
+    public void addMentorToClass(Mentor mentor, ClassGroup classGroup);
+    public List<Student> getAllStudentsFromClass(Mentor mentor);
 }
