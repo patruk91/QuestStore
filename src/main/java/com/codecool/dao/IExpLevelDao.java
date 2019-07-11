@@ -9,5 +9,5 @@ public interface IExpLevelDao {
     public void updateExpLevel(ExpLevel expLevel);
     public void removeLastExpLevel();
     public List<ExpLevel> getAllExpLevels();
-    public ExpLevel getExpLevel(int expLevelId);
+    public ExpLevel getExpLevel(String expLevelName);
 }

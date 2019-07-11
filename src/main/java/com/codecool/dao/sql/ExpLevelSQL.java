@@ -3,7 +3,6 @@ package com.codecool.dao.sql;
 import com.codecool.dao.IExpLevelDao;
 import com.codecool.model.ExpLevel;
 import com.codecool.model.Student;
-import com.codecool.model.UserCredentials;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -117,22 +116,48 @@ public class ExpLevelSQL implements IExpLevelDao {
     private void addExpLevelToList(PreparedStatement stmt, List<ExpLevel> expLevels) throws SQLException{
         try (ResultSet resultSet = stmt.executeQuery()) {
             while (resultSet.next()) {
-                ExpLevel expLevel = getSingleExpLevel(resultSet);
+                ExpLevel expLevel = getSingleExpLevelFromDatabase(resultSet);
                 expLevels.add(expLevel);
             }
         }
     }
 
-    private ExpLevel getSingleExpLevel(ResultSet resultSet) throws SQLException {
+    private ExpLevel getSingleExpLevelFromDatabase(ResultSet resultSet) throws SQLException {
         String name = resultSet.getString("name");
         int experienceAmount = resultSet.getInt("experience_amount");
         return new ExpLevel(name, experienceAmount);
     }
 
     @Override
-    public ExpLevel getExpLevel(int expLevelId) {
-        return null;
+    public ExpLevel getExpLevel(String expLevelName) {
+        ExpLevel expLevel = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            expLevel = getSingleExpLevel(connection, expLevelName);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return expLevel;
     }
 
-    
+    private ExpLevel getSingleExpLevel(Connection connection, String expLevelName) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM experience_levels WHERE name = ?")) {
+            stmt.setString(1, expLevelName);
+            return getSingleExpLevelData(stmt);
+        }
+    }
+
+    private ExpLevel getSingleExpLevelData(PreparedStatement stmt) throws SQLException {
+        ExpLevel expLevel = null;
+        try (ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                expLevel = getSingleExpLevelFromDatabase(resultSet);
+            }
+            return expLevel;
+        }
+    }
 }
