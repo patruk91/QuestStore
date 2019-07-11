@@ -192,9 +192,9 @@ public class MentorSQL implements IMentorDao {
 
     private void InsertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor, int newUserID) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
-            stmt.setInt(2, newUserID);
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
+            stmt.setInt(1, newUserID);
+            stmt.setString(2, mentor.getPassword());
+            stmt.setString(3, mentor.getLogin());
 
             stmt.executeUpdate();
         }
@@ -204,5 +204,32 @@ public class MentorSQL implements IMentorDao {
     public void removeMentor(Mentor mentor) {
         String removeMentorFromUsers = "DELETE FROM users WHERE id = ? CASCADE";
         String removeMentorFromCredentials = "DELETE FROM user_credentials WHERE user_id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            RemoveMentorFromUsersQuery(removeMentorFromUsers, connection, mentor);
+            RemoveMentorFromCredentialsQuery(removeMentorFromCredentials, connection, mentor);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void RemoveMentorFromCredentialsQuery(String removeMentorFromCredentials, Connection connection, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromCredentials)) {
+            stmt.setInt(1, mentor.getId());
+
+            stmt.executeUpdate();
+        }
+    }
+
+    private void RemoveMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromUsers)) {
+            stmt.setInt(2, mentor.getId());
+
+            stmt.executeUpdate();
+        }
     }
 }
