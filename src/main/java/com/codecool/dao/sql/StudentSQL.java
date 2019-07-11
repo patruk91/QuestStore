@@ -2,6 +2,7 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IStudentDao;
 import com.codecool.model.Student;
+import com.codecool.model.User;
 import com.codecool.model.UserCredentials;
 
 import java.sql.Connection;
@@ -68,7 +69,51 @@ public class StudentSQL implements IStudentDao{
 
     @Override
     public void updateStudent(Student student) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateStudentData(connection, student);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void updateStudentData(Connection connection, Student student) throws SQLException {
+        try (PreparedStatement stmtUpdateUserData = connection.prepareStatement(
+                "UPDATE users SET type = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?");
+             PreparedStatement stmtUpdateUserCredentials = connection.prepareStatement(
+                     "UPDATE user_credentials SET password = ? WHERE login = ?");
+             PreparedStatement stmtUpdateStudentProfile = connection.prepareStatement(
+                     "UPDATE students_profiles SET class_id = ?, coins = ?, experience = ? WHERE student_id = ?")) {
+            updateUserData(stmtUpdateUserData, student);
+            updateUserCredentials(stmtUpdateUserCredentials, student);
+            updateStudentProfile(stmtUpdateStudentProfile, student);
+        }
+    }
+
+    private void updateUserData(PreparedStatement stmtUpdateUserData, Student student) throws SQLException {
+        stmtUpdateUserData.setString(1, student.getType());
+        stmtUpdateUserData.setString(2, student.getFirstName());
+        stmtUpdateUserData.setString(3, student.getLastName());
+        stmtUpdateUserData.setString(4, student.getEmail());
+        stmtUpdateUserData.setInt(5, student.getId());
+        stmtUpdateUserData.executeUpdate();
+    }
+
+    private void updateUserCredentials(PreparedStatement stmtUpdateUserCredentials, Student student) throws SQLException {
+        stmtUpdateUserCredentials.setString(1, student.getPassword());
+        stmtUpdateUserCredentials.setString(2, student.getLogin());
+        stmtUpdateUserCredentials.executeUpdate();
+    }
+
+    private void updateStudentProfile(PreparedStatement stmtUpdateStudentProfile, Student student) throws SQLException {
+        stmtUpdateStudentProfile.setInt(1, student.getClassId());
+        stmtUpdateStudentProfile.setInt(1, student.getCoins());
+        stmtUpdateStudentProfile.setInt(1, student.getExperience());
+        stmtUpdateStudentProfile.setInt(4, student.getId());
+        stmtUpdateStudentProfile.executeUpdate();
     }
 
     @Override
