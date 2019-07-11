@@ -121,6 +121,24 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
 
     @Override
     public void removeCollection(CollectionGroup collection) {
+        String query = "DELETE FROM collections WHERE  id = ?";
 
+        try {
+            Connection connection = connectionPool.getConnection();
+            deleteCollectionData(query, connection, collection);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void deleteCollectionData(String query, Connection connection, CollectionGroup collection) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, collection.getCollectionId());
+
+            stmt.executeUpdate();
+        }
     }
 }
