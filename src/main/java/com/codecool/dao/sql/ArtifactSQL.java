@@ -78,8 +78,22 @@ public class ArtifactSQL implements IArtifactDao {
 
     @Override
     public void deleteArtifact(Artifact artifact) {
-        
+        try {
+            Connection connection = connectionPool.getConnection();
+            removeArtifactFromDatabase(connection, artifact);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
 
+    private void removeArtifactFromDatabase(Connection connection, Artifact artifact) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "DELETE FROM artifacts WHERE id = ?")) {
+            stmt.setInt(1, artifact.getId());
+        }
     }
 
     @Override
