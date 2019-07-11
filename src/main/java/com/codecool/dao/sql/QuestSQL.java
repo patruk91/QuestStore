@@ -130,11 +130,11 @@ public class QuestSQL implements IQuestDao {
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String name = rs.getString("type");
-                String description = rs.getString("first_name");
-                int price = rs.getInt("last_name");
-                String imageLink = rs.getString("email");
-                QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("login"));
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                int price = rs.getInt("price");
+                String imageLink = rs.getString("imageLink");
+                QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("category"));
 
                 Quest quest = new Quest(id, name, description, price, imageLink, category);
 
@@ -145,7 +145,44 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public Quest getQuest(int id) {
-        return null;
+        String query = "SELECT * WHERE id = ?";
+        Quest quest = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            quest = prepareMentorByIdQuery(quest, query, connection, id);
+            connectionPool.releaseConnection(connection);
+            return quest;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw  new RuntimeException("No quest by that id");
+    }
+
+    private Quest prepareMentorByIdQuery(Quest quest, String query, Connection connection, int quest_id) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, quest_id);
+            quest = executeMentorByIdQuery(quest, stmt);
+        }
+        return quest;
+    }
+
+    private Quest executeMentorByIdQuery(Quest quest, PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                int price = rs.getInt("price");
+                String imageLink = rs.getString("imageLink");
+                QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("category"));
+
+
+                quest = new Quest(id, name, description, price, imageLink, category);
+            }
+            return quest;
+        }
     }
 
     @Override
