@@ -133,10 +133,10 @@ public class StudentSQL implements IStudentDao{
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM users  WHERE id = ?")) {
             stmt.setInt(1, student.getId());
+            stmt.executeUpdate();
         }
     }
-
-
+    
     @Override
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
@@ -206,12 +206,13 @@ public class StudentSQL implements IStudentDao{
             Connection connection = connectionPool.getConnection();
             student = getSingleStudent(connection, id);
             connectionPool.releaseConnection(connection);
+            return student;
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-        return student;
+        throw new RuntimeException("No student by that id");
     }
 
     private Student getSingleStudent(Connection connection, int id) throws SQLException {
