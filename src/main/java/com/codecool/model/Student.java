@@ -25,7 +25,7 @@ public class Student extends User {
             return this;
         }
 
-        public StudentBuilder setId(int classId) {
+        public StudentBuilder setClassId(int classId) {
             this.studentToBuild.studentProfile.setClassId(classId);
             return this;
         }
@@ -41,7 +41,7 @@ public class Student extends User {
         }
     }
 
-    public int getId() {
+    public int getClassId() {
         return this.studentProfile.getClassId();
     }
 
@@ -53,7 +53,7 @@ public class Student extends User {
         return this.studentProfile.getExperience();
     }
 
-    public void setId(int classId) {
+    public void setClassId(int classId) {
         this.studentProfile.setClassId(classId);
     }
 

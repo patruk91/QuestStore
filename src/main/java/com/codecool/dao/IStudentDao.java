@@ -9,6 +9,6 @@ public interface IStudentDao {
     public void addStudent(Student student);
     public void updateStudent(Student student);
     public void deleteStudent(Student student);
-    public List<Student> getAllStudents(Mentor mentor);
+    public List<Student> getAllStudents();
     public Student getStudent(int id);
 }
