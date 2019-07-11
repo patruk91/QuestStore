@@ -213,7 +213,7 @@ public class ArtifactSQL implements IArtifactDao {
 
     private void updateStateOfArtifact(Student student, int artifactId, Connection connection) throws SQLException {
         try (PreparedStatement stmtArtifactData = connection.prepareStatement(
-                "UPDATE user_artifacts SET state = ? WHERE artifact_id = ? && user_id = ?")) {
+                "UPDATE user_artifacts SET state = ? WHERE artifact_id = ? AND user_id = ?")) {
             updateStateInDatabase(stmtArtifactData, student, artifactId);
         }
     }
