@@ -139,10 +139,38 @@ public class ArtifactSQL implements IArtifactDao {
         ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(resultSet.getString("category"));
         return new Artifact(id, name, description, price, image_link, category);
     }
-    
+
     @Override
     public Artifact getArtifact(int id) {
-        return null;
+        Artifact artifact = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            artifact = getSingleArtifact(connection, id);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return artifact;
+    }
+
+    private Artifact getSingleArtifact(Connection connection, int id) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM artifacts WHERE id = ?")) {
+            stmt.setInt(1, id);
+            return getSingleArtifactData(stmt);
+        }
+    }
+
+    private Artifact getSingleArtifactData(PreparedStatement stmt) throws SQLException {
+        Artifact artifact = null;
+        try (ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                artifact = buildSingleArtifact(resultSet);
+            }
+            return artifact;
+        }
     }
 
     @Override
@@ -155,3 +183,5 @@ public class ArtifactSQL implements IArtifactDao {
 
     }
 }
+
+
