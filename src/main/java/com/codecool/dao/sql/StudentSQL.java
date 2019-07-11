@@ -118,8 +118,24 @@ public class StudentSQL implements IStudentDao{
 
     @Override
     public void deleteStudent(Student student) {
-
+        try {
+            Connection connection = connectionPool.getConnection();
+            removeStudentFromDatabase(connection, student);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
     }
+
+    private void removeStudentFromDatabase(Connection connection, Student student) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "DELETE FROM users  WHERE id = ?")) {
+            stmt.setInt(1, student.getId());
+        }
+    }
+
 
     @Override
     public List<Student> getAllStudents() {
