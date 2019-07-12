@@ -2,11 +2,13 @@ package com.codecool.model;
 
 public class ExpLevel {
     private String name;
-    private int expAmount;
+    private int expAmountAtStart;
+    private int expAmountAtEnd;
 
-    public ExpLevel(String name, int expAmount) {
+    public ExpLevel(String name, int expAmountAtStart, int expAmountAtEnd) {
         this.name = name;
-        this.expAmount = expAmount;
+        this.expAmountAtStart = expAmountAtStart;
+        this.expAmountAtEnd = expAmountAtEnd;
     }
 
     public String getName() {
@@ -17,11 +19,19 @@ public class ExpLevel {
         this.name = name;
     }
 
-    public int getExpAmount() {
-        return expAmount;
+    public int getExpAmountAtStart() {
+        return expAmountAtStart;
     }
 
-    public void setExpAmount(int expAmount) {
-        this.expAmount = expAmount;
+    public void setExpAmountAtStart(int expAmountAtStart) {
+        this.expAmountAtStart = expAmountAtStart;
+    }
+
+    public int getExpAmountAtEnd() {
+        return expAmountAtEnd;
+    }
+
+    public void setExpAmountAtEnd(int expAmountAtEnd) {
+        this.expAmountAtEnd = expAmountAtEnd;
     }
 }

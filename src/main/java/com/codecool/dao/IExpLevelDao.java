@@ -5,9 +5,10 @@ import com.codecool.model.ExpLevel;
 import java.util.List;
 
 public interface IExpLevelDao {
-    public void addExpLevel(ExpLevel expLevel);
-    public void updateExpLevel(ExpLevel expLevel);
-    public void removeLastExpLevel();
-    public List<ExpLevel> getAllExpLevels();
-    public ExpLevel getExpLevel(String expLevelName);
+    void addExpLevel(ExpLevel expLevel);
+    void updateExpLevel(ExpLevel expLevel);
+    void removeLastExpLevel();
+    List<ExpLevel> getAllExpLevels();
+    ExpLevel getExpLevel(String expLevelName);
+    String getExpLevelName(int expAmount);
 }

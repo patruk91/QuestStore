@@ -33,14 +33,15 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void addExpLevelToDatabase(ExpLevel expLevel, Connection connection) throws SQLException {
         try (PreparedStatement stmtInsertExpLevelData = connection.prepareStatement(
-                "INSERT INTO experience_levels(name, experience_amount) VALUES(?, ?)")) {
+                "INSERT INTO experience_levels(name, exp_amount_at_start, exp_amount_at_end) VALUES(?, ?, ?)")) {
             insertExpLevel(stmtInsertExpLevelData, expLevel);
         }
     }
 
     private void insertExpLevel(PreparedStatement stmtInsertExpLevelData, ExpLevel expLevel) throws SQLException {
         stmtInsertExpLevelData.setString(1, expLevel.getName());
-        stmtInsertExpLevelData.setString(2, expLevel.getName());
+        stmtInsertExpLevelData.setInt(2, expLevel.getExpAmountAtStart());
+        stmtInsertExpLevelData.setInt(3, expLevel.getExpAmountAtEnd());
         stmtInsertExpLevelData.executeUpdate();
     }
 
@@ -59,14 +60,15 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void updateExpLevelData(Connection connection, ExpLevel expLevel) throws SQLException {
         try (PreparedStatement stmtUpdateExpLevelData = connection.prepareStatement(
-                "UPDATE experience_levels SET experience_amount = ? WHERE name = ?")) {
+                "UPDATE experience_levels SET exp_amount_at_start = ?, exp_amount_at_end = ? WHERE name = ?")) {
             updateExpLevelInDatabase(stmtUpdateExpLevelData, expLevel);
         }
     }
 
     private void updateExpLevelInDatabase(PreparedStatement stmtUpdateExpLevelData, ExpLevel expLevel) throws SQLException {
-        stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmount());
-        stmtUpdateExpLevelData.setString(2, expLevel.getName());
+        stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmountAtStart());
+        stmtUpdateExpLevelData.setInt(2, expLevel.getExpAmountAtEnd());
+        stmtUpdateExpLevelData.setString(3, expLevel.getName());
     }
 
     @Override
@@ -84,8 +86,8 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void removeLevelFromDatabase(Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "DELETE FROM users  WHERE id = (SELECT * FROM experience_levels\n" +
-                        "ORDER BY name DESC\n" +
+                "DELETE FROM experience_levels  WHERE exp_id = (SELECT * FROM experience_levels\n" +
+                        "ORDER BY exp_id DESC\n" +
                         "LIMIT 1)")) {
             stmt.executeUpdate();
         }
@@ -124,8 +126,9 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private ExpLevel getSingleExpLevelFromDatabase(ResultSet resultSet) throws SQLException {
         String name = resultSet.getString("name");
-        int experienceAmount = resultSet.getInt("experience_amount");
-        return new ExpLevel(name, experienceAmount);
+        int experienceAmountAtStart = resultSet.getInt("exp_amount_at_start");
+        int experienceAmountAtEnd = resultSet.getInt("exp_amount_at_end");
+        return new ExpLevel(name, experienceAmountAtStart, experienceAmountAtEnd);
     }
 
     @Override
@@ -160,6 +163,40 @@ public class ExpLevelSQL implements IExpLevelDao {
                 expLevel = getSingleExpLevelFromDatabase(resultSet);
             }
             return expLevel;
+        }
+    }
+
+    @Override
+    public String getExpLevelName(int expAmount) {
+        String expLevelName;
+        try {
+            Connection connection = connectionPool.getConnection();
+            expLevelName = getName(connection, expAmount);
+            connectionPool.releaseConnection(connection);
+            return expLevelName;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw new RuntimeException("No experience level name!");
+    }
+
+    private String getName(Connection connection, int expAmount) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT name FROM experience_levels WHERE ? BETWEEN exp_amount_at_start AND exp_amount_at_end;")) {
+            stmt.setInt(1, expAmount);
+            return getNameFromDataBase(stmt);
+        }
+    }
+
+    private String getNameFromDataBase(PreparedStatement stmt) throws SQLException {
+        String expLevelName = null;
+        try (ResultSet resultSet = stmt.executeQuery()) {
+            while (resultSet.next()) {
+                expLevelName = resultSet.getString("name");
+            }
+            return expLevelName;
         }
     }
 }
