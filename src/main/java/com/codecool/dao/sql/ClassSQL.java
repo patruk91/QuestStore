@@ -256,7 +256,7 @@ public class ClassSQL implements IClassDao {
                         "profile.class_id FROM users\n" +
                         "JOIN user_credentials AS cred ON users.id = cred.user_id\n" +
                         "JOIN students_profiles AS profile on users.id = profile.student_id\n" +
-                        "WHERE IN ((SELECT id FROM classes WHERE mentor_id = ?))")) {
+                        "WHERE profile.class_id IN ((SELECT id FROM classes WHERE mentor_id = ?))")) {
             stmt.setInt(1, mentor.getId());
             addStudentToList(stmt, students);
         }
@@ -272,28 +272,7 @@ public class ClassSQL implements IClassDao {
     }
 
     private Student buildSingleStudent(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        String type = resultSet.getString("type");
-        String login = resultSet.getString("login");
-        String password = resultSet.getString("password");
-        UserCredentials userCredentials = new UserCredentials(login, password);
-        String firstName = resultSet.getString("first_name");
-        String lastName = resultSet.getString("last_name");
-        String email = resultSet.getString("email");
-        int coins = resultSet.getInt("coins");
-        int experience = resultSet.getInt("experience");
-        int classId = resultSet.getInt("experience");
-
-        Student.StudentBuilder studentBuilder = new Student.StudentBuilder();
-        return studentBuilder
-                .setId(id)
-                .setType(type)
-                .setUserCredentials(userCredentials)
-                .setFirstName(firstName)
-                .setLastName(lastName)
-                .setEmail(email)
-                .setClassId(coins)
-                .setCoins(experience)
-                .setExperience(classId).build();
+        UserBuilder userBuilder = new UserBuilder();
+        return userBuilder.buildSingleStudent(resultSet);
     }
 }
