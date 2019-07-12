@@ -41,7 +41,26 @@ public class LoginSQL implements ILoginDao {
 
     @Override
     public int getUserId(String login) {
-        return 0;
+        int userId = 0;
+        try {
+            Connection connection = connectionPool.getConnection();
+            userId = getUserIdByLogin(login, connection);
+            connectionPool.releaseConnection(connection);
+            return userId;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw new RuntimeException("No user by that id");
+    }
+
+    private int getUserIdByLogin(String login, Connection connection) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT user_id FROM user_credentials WHERE login = ?")) {
+            stmt.setString(1, login);
+            return stmt.executeUpdate();
+        }
     }
 
     @Override
