@@ -7,69 +7,69 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private StudentProfile studentProfile;
 
     protected User(UserBuilder<?> builder) {
-        int id = builder.userToBuild.id;
-        String type = builder.userToBuild.type;
-        UserCredentials userCredentials = builder.userToBuild.userCredentials;
-        String firstName = builder.userToBuild.firstName;
-        String lastName = builder.userToBuild.lastName;
-        String email = builder.userToBuild.email;
+        id = builder.id;
+        type = builder.type;
+        userCredentials = builder.userCredentials;
+        firstName = builder.firstName;
+        lastName = builder.lastName;
+        email = builder.email;
     }
 
     protected abstract static class UserBuilder<T extends  UserBuilder<T>> {
-        private User userToBuild;
+        private int id;
+        private String type;
+        private UserCredentials userCredentials;
+        private String firstName;
+        private String lastName;
+        private String email;
 
-        UserBuilder() {
-            this.userToBuild = new User(this);
-        }
+        UserBuilder() {}
 
         public User build() {
-            User buildUser = this.userToBuild;
-            this.userToBuild = new User(this);
-            return buildUser;
+            return new User(this);
         }
 
         abstract T getThis();
 
         public T setId(int id) {
-            this.userToBuild.id = id;
+            this.id = id;
             return getThis();
         }
 
         public T setType(String type) {
-            this.userToBuild.type = type;
+            this.type = type;
             return getThis();
         }
 
         public T setUserCredentials(UserCredentials userCredentials) {
-            this.userToBuild.userCredentials = userCredentials;
+            this.userCredentials = userCredentials;
             return getThis();
         }
 
         public T setUserLogin(String login) {
-            this.userToBuild.userCredentials.setLogin(login);
+            this.userCredentials.setLogin(login);
             return getThis();
         }
 
         public T setUserPassword(String password) {
-            this.userToBuild.userCredentials.setPassword(password);
+            this.userCredentials.setPassword(password);
             return getThis();
         }
 
         public T setFirstName(String firstName) {
-            this.userToBuild.firstName = firstName;
+            this.firstName = firstName;
             return getThis();
         }
 
         public T setLastName(String lastName) {
-            this.userToBuild.lastName = lastName;
+            this.lastName = lastName;
             return getThis();
         }
 
         public T setEmail(String email) {
-            this.userToBuild.email = email;
+            this.email = email;
             return getThis();
         }
     }

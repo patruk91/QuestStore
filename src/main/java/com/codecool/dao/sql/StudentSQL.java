@@ -2,6 +2,7 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IStudentDao;
 import com.codecool.model.Student;
+import com.codecool.model.StudentProfile;
 import com.codecool.model.User;
 import com.codecool.model.UserCredentials;
 
@@ -185,6 +186,7 @@ public class StudentSQL implements IStudentDao{
         int coins = resultSet.getInt("coins");
         int experience = resultSet.getInt("experience");
         int classId = resultSet.getInt("experience");
+        StudentProfile studentProfile = new StudentProfile(coins, experience, classId);
 
         Student.StudentBuilder studentBuilder = new Student.StudentBuilder();
         return studentBuilder
@@ -194,9 +196,8 @@ public class StudentSQL implements IStudentDao{
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setEmail(email)
-                .setClassId(coins)
-                .setCoins(experience)
-                .setExperience(classId).build();
+                .setStudentProfile(studentProfile)
+                .build();
     }
 
     @Override

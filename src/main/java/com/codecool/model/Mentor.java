@@ -4,17 +4,12 @@ public class Mentor extends User {
     protected Mentor(UserBuilder<?> builder) {
         super(builder);
     }
-    public static class MentorBuilder extends User.UserBuilder<MentorBuilder> {
-        private Mentor mentorToBuild;
 
-        public MentorBuilder() {
-            this.mentorToBuild = new Mentor(this);
-        }
+    public static class MentorBuilder extends User.UserBuilder<MentorBuilder> {
+        public MentorBuilder() {}
 
         public Mentor build() {
-            Mentor buildUser = this.mentorToBuild;
-            this.mentorToBuild = new Mentor(this);
-            return buildUser;
+            return new Mentor(this);
         }
 
         @Override
