@@ -2,6 +2,7 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IStudentDao;
 import com.codecool.model.Student;
+import com.codecool.model.StudentProfile;
 import com.codecool.model.User;
 import com.codecool.model.UserCredentials;
 
@@ -133,10 +134,10 @@ public class StudentSQL implements IStudentDao{
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM users  WHERE id = ?")) {
             stmt.setInt(1, student.getId());
+            stmt.executeUpdate();
         }
     }
-
-
+    
     @Override
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
@@ -185,6 +186,7 @@ public class StudentSQL implements IStudentDao{
         int coins = resultSet.getInt("coins");
         int experience = resultSet.getInt("experience");
         int classId = resultSet.getInt("experience");
+        StudentProfile studentProfile = new StudentProfile(coins, experience, classId);
 
         Student.StudentBuilder studentBuilder = new Student.StudentBuilder();
         return studentBuilder
@@ -194,9 +196,8 @@ public class StudentSQL implements IStudentDao{
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setEmail(email)
-                .setClassId(coins)
-                .setCoins(experience)
-                .setExperience(classId).build();
+                .setStudentProfile(studentProfile)
+                .build();
     }
 
     @Override
@@ -206,12 +207,13 @@ public class StudentSQL implements IStudentDao{
             Connection connection = connectionPool.getConnection();
             student = getSingleStudent(connection, id);
             connectionPool.releaseConnection(connection);
+            return student;
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-        return student;
+        throw new RuntimeException("No student by that id");
     }
 
     private Student getSingleStudent(Connection connection, int id) throws SQLException {

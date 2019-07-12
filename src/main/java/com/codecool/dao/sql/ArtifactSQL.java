@@ -93,6 +93,7 @@ public class ArtifactSQL implements IArtifactDao {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM artifacts WHERE id = ?")) {
             stmt.setInt(1, artifact.getId());
+            stmt.executeUpdate();
         }
     }
 
@@ -144,12 +145,14 @@ public class ArtifactSQL implements IArtifactDao {
             Connection connection = connectionPool.getConnection();
             artifact = getSingleArtifact(connection, id);
             connectionPool.releaseConnection(connection);
+            return artifact;
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-        return artifact;
+        throw new RuntimeException("No artifact by that id");
+
     }
 
     private Artifact getSingleArtifact(Connection connection, int id) throws SQLException {

@@ -3,21 +3,18 @@ package com.codecool.model;
 public class Student extends User {
     private StudentProfile studentProfile;
 
-    protected Student(UserBuilder<?> builder) {
+    protected Student(StudentBuilder builder) {
         super(builder);
+        studentProfile = builder.studentProfile;
     }
 
     public static class StudentBuilder extends User.UserBuilder<StudentBuilder> {
-        private Student studentToBuild;
+        private StudentProfile studentProfile;
 
-        public StudentBuilder() {
-            this.studentToBuild =  new Student(this);
-        }
+        public StudentBuilder() {}
 
         public Student build() {
-            Student buildUser = this.studentToBuild;
-            this.studentToBuild = new Student(this);
-            return buildUser;
+            return new Student(this);
         }
 
         @Override
@@ -26,17 +23,22 @@ public class Student extends User {
         }
 
         public StudentBuilder setClassId(int classId) {
-            this.studentToBuild.studentProfile.setClassId(classId);
+            studentProfile.setClassId(classId);
             return this;
         }
 
         public StudentBuilder setCoins(int coins) {
-            this.studentToBuild.studentProfile.setCoins(coins);
+            studentProfile.setCoins(coins);
             return this;
         }
 
         public StudentBuilder setExperience(int experience) {
-            this.studentToBuild.studentProfile.setExperience(experience);
+            studentProfile.setExperience(experience);
+            return this;
+        }
+
+        public StudentBuilder setStudentProfile(StudentProfile studentProfile) {
+            this.studentProfile = studentProfile;
             return this;
         }
     }
