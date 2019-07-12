@@ -175,29 +175,8 @@ public class StudentSQL implements IStudentDao{
     }
 
     private Student buildSingleStudent(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        String type = resultSet.getString("type");
-        String login = resultSet.getString("login");
-        String password = resultSet.getString("password");
-        UserCredentials userCredentials = new UserCredentials(login, password);
-        String firstName = resultSet.getString("first_name");
-        String lastName = resultSet.getString("last_name");
-        String email = resultSet.getString("email");
-        int coins = resultSet.getInt("coins");
-        int experience = resultSet.getInt("experience");
-        int classId = resultSet.getInt("experience");
-        StudentProfile studentProfile = new StudentProfile(coins, experience, classId);
-
-        Student.StudentBuilder studentBuilder = new Student.StudentBuilder();
-        return studentBuilder
-                .setId(id)
-                .setType(type)
-                .setUserCredentials(userCredentials)
-                .setFirstName(firstName)
-                .setLastName(lastName)
-                .setEmail(email)
-                .setStudentProfile(studentProfile)
-                .build();
+        UserBuilder userBuilder = new UserBuilder();
+        return userBuilder.buildSingleStudent(resultSet);
     }
 
     @Override

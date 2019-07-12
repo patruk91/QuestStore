@@ -22,21 +22,6 @@ public class Student extends User {
             return this;
         }
 
-        public StudentBuilder setClassId(int classId) {
-            studentProfile.setClassId(classId);
-            return this;
-        }
-
-        public StudentBuilder setCoins(int coins) {
-            studentProfile.setCoins(coins);
-            return this;
-        }
-
-        public StudentBuilder setExperience(int experience) {
-            studentProfile.setExperience(experience);
-            return this;
-        }
-
         public StudentBuilder setStudentProfile(StudentProfile studentProfile) {
             this.studentProfile = studentProfile;
             return this;

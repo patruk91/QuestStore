@@ -1,9 +1,6 @@
 package com.codecool.dao.sql;
 
-import com.codecool.model.Admin;
-import com.codecool.model.Mentor;
-import com.codecool.model.Student;
-import com.codecool.model.UserCredentials;
+import com.codecool.model.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +18,7 @@ class UserBuilder {
         int coins = resultSet.getInt("coins");
         int experience = resultSet.getInt("experience");
         int classId = resultSet.getInt("experience");
+        StudentProfile studentProfile = new StudentProfile(coins, experience, classId);
 
         Student.StudentBuilder studentBuilder = new Student.StudentBuilder();
         return studentBuilder
@@ -30,9 +28,8 @@ class UserBuilder {
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 .setEmail(email)
-                .setClassId(coins)
-                .setCoins(experience)
-                .setExperience(classId).build();
+                .setStudentProfile(studentProfile)
+                .build();
     }
 
     Mentor buildSingleMentor(ResultSet resultSet) throws SQLException {
