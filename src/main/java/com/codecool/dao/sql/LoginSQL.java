@@ -17,7 +17,26 @@ public class LoginSQL implements ILoginDao {
 
     @Override
     public boolean checkIfCredentialsAreCorrect(String login, String password) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            boolean exists = checkCredentials(login, password, connection);
+            connectionPool.releaseConnection(connection);
+            return exists;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
         return false;
+    }
+
+    private boolean checkCredentials(String login, String password, Connection connection) throws SQLException{
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT exists (SELECT true from user_credentials WHERE login = ? AND password = ?)")) {
+            stmt.setString(1, login);
+            stmt.setString(2, password);
+            return stmt.execute();
+        }
     }
 
     @Override
