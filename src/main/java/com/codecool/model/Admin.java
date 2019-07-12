@@ -6,16 +6,10 @@ public class Admin extends User {
     }
 
     public static class AdminBuilder extends User.UserBuilder<AdminBuilder> {
-        private Admin adminToBuild;
-
-        public AdminBuilder() {
-            this.adminToBuild = new Admin(this);
-        }
+        public AdminBuilder() {}
 
         public Admin build() {
-            Admin buildUser = this.adminToBuild;
-            this.adminToBuild = new Admin(this);
-            return buildUser;
+            return new Admin(this);
         }
 
         @Override
