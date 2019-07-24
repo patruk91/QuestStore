@@ -1,5 +1,6 @@
 package com.codecool.server;
 
+import com.codecool.server.helpers.MimeTypeResolver;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -63,5 +64,5 @@ public class StaticHandler implements HttpHandler {
             os.write(buffer,0,count);
         }
         os.close();
-    } {
+    }
 }
