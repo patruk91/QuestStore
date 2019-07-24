@@ -3,6 +3,7 @@ package com.codecool;
 import com.codecool.controller.Controller;
 import com.codecool.dao.*;
 import com.codecool.dao.sql.*;
+import com.codecool.server.Server;
 
 import java.sql.SQLException;
 
@@ -18,6 +19,7 @@ public class QuestStore {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         IArtifactDao artifactDao = new ArtifactSQL(connectionPool);
         IClassDao classDao = new ClassSQL(connectionPool);
         ICollectionGroupDao collectionGroupDao = new CollectionGroupSQL(connectionPool);
@@ -27,7 +29,9 @@ public class QuestStore {
         IQuestDao questDao = new QuestSQL(connectionPool);
         IStudentDao studentDao = new StudentSQL(connectionPool);
 
-        Controller controller = new Controller(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
+        Server server = new Server(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
+
+        Controller controller = new Controller(server);
         controller.run();
         try {
             connectionPool.shutdown();
