@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class QuestStore {
     public static void main( String[] args ) {
-        final String URL = "jdbc:postgresql://192.168.10.171:5432/queststore";
+        final String URL = "jdbc:postgresql://192.168.10.140:5432/queststore";
         final String USER = "queststore";
         final String PASSWORD = "queststore";
 
