@@ -8,9 +8,12 @@ import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpCookie;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginHandler implements HttpHandler {
     private ISessionDao sessionDao;
@@ -47,16 +50,24 @@ public class LoginHandler implements HttpHandler {
                 } else {
                     response = getLoginFrom();
                     httpExchange.sendResponseHeaders(200, response.length());
-
                 }
             } else {
                 response = getLoginFrom();
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
-
             }
             sendResponse(httpExchange, response);
         }
 
+        if (method.equalsIgnoreCase("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+
+            Map<String, String> inputs = parseFormData(formData);
+            String login = inputs.get("login");
+            String password = inputs.get("password");
+            loginDao.
+        }
 
 
     }
@@ -78,5 +89,16 @@ public class LoginHandler implements HttpHandler {
         OutputStream os = httpExchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
+    }
+
+    private Map<String, String> parseFormData(String formData) throws UnsupportedEncodingException {
+        Map<String, String> map = new HashMap<>();
+        String[] pairs = formData.split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            String value = new URLDecoder().decode(keyValue[1], "UTF-8");
+            map.put(keyValue[0], value);
+        }
+        return map;
     }
 }

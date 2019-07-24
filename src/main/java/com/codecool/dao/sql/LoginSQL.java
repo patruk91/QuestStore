@@ -14,12 +14,7 @@ public class LoginSQL implements ILoginDao {
     public LoginSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
-
-    @Override
-    public boolean checkIfCredentialsAreCorrect(String login, String password) {
-        return false;
-    }
-
+    
     @Override
     public int getUserId(String login) {
         int userId = 0;
@@ -111,5 +106,64 @@ public class LoginSQL implements ILoginDao {
             }
         }
         throw new RuntimeException("d");
+    }
+
+    @Override
+    public boolean checkIfLoginIsCorrect(String login) {
+        boolean exists = false;
+        try {
+            Connection connection = connectionPool.getConnection();
+            exists = checkIfLoginExists(connection, login);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+
+        return exists;
+    }
+
+    private boolean checkIfLoginExists(Connection connection, String login) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT exists(SELECT 'exists' FROM user_credentials WHERE login = ?) AS result")) {
+            stmt.setString(1, login);
+            return isExists(stmt);
+        }
+    }
+
+    private boolean isExists(PreparedStatement stmt) throws SQLException {
+        boolean result = false;
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                result = rs.getBoolean("result");
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkIfPasswordIsCorrect(String login, String password) {
+        boolean check = false;
+        try {
+            Connection connection = connectionPool.getConnection();
+            check = checkPassword(connection, login, password);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+
+        return check;
+    }
+
+    private boolean checkPassword(Connection connection, String login, String password) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT exists(SELECT 'exists' FROM user_credentials WHERE login = ? AND password = ?) AS result")) {
+            stmt.setString(1, login);
+            stmt.setString(2, password);
+            return isExists(stmt);
+        }
     }
 }
