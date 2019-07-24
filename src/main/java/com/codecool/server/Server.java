@@ -32,6 +32,7 @@ public class Server {
     public void startServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
+        server.createContext("/static", new StaticHandler());
         server.createContext("/", new LoginHandler());
         server.setExecutor(null);
 
