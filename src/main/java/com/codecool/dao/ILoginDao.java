@@ -3,7 +3,7 @@ package com.codecool.dao;
 import com.codecool.model.User;
 
 public interface ILoginDao {
-    public boolean checkIfCredentialsAreCorrect(String login, String password);
-    public int getUserId(String login);
-    public User getUserById(int userId);
+    boolean checkIfCredentialsAreCorrect(String login, String password);
+    int getUserId(String login);
+    <T extends User> T getUserById(int userId);
 }
