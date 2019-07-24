@@ -34,4 +34,13 @@ public class StudentProfile {
     public void setClassId(int classId) {
         this.classId = classId;
     }
+
+    @Override
+    public String toString() {
+        return "StudentProfile{" +
+                "coins=" + coins +
+                ", experience=" + experience +
+                ", classId=" + classId +
+                '}';
+    }
 }
