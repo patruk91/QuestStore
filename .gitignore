@@ -33,6 +33,8 @@ Test.java
 *.list*
 
 images
+!src/main/resources/static/images
+!src/main/resources/static/css/images
 
 documentation/
 *.mdj
