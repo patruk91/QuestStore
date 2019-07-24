@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class LoginSQL implements ILoginDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public LoginSQL(BasicConnectionPool connectionPool) {
+    public LoginSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 

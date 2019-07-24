@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CollectionGroupSQL implements ICollectionGroupDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public CollectionGroupSQL(BasicConnectionPool connectionPool) {
+    public CollectionGroupSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
