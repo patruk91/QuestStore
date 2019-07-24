@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicConnectionPool implements IConnectionPool{
+
+public class ConnectionPool implements IConnectionPool{
     private final String URL;
     private final String USER;
     private final String PASSWORD;
@@ -15,19 +16,19 @@ public class BasicConnectionPool implements IConnectionPool{
     private static final int INITIAL_POOL_SIZE = 10;
     private final int MAX_POOL_SIZE = 20;
 
-    private BasicConnectionPool(String URL, String USER, String PASSWORD, List<Connection> connectionPool) {
+    private ConnectionPool(String URL, String USER, String PASSWORD, List<Connection> connectionPool) {
         this.URL = URL;
         this.USER = USER;
         this.PASSWORD = PASSWORD;
         this.connectionPool = connectionPool;
     }
 
-    public static BasicConnectionPool create(String URL, String USER, String PASSWORD) throws SQLException {
+    public static ConnectionPool create(String URL, String USER, String PASSWORD) throws SQLException {
         List<Connection> pool = new ArrayList<>(INITIAL_POOL_SIZE);
         for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
             pool.add(createConnection(URL, USER, PASSWORD));
         }
-        return new BasicConnectionPool(URL, USER, PASSWORD, pool);
+        return new ConnectionPool(URL, USER, PASSWORD, pool);
     }
 
     private static Connection createConnection(String URL, String USER, String PASSWORD) throws SQLException {

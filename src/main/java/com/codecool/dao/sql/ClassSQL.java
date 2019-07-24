@@ -4,7 +4,6 @@ import com.codecool.dao.IClassDao;
 import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
 import com.codecool.model.Student;
-import com.codecool.model.UserCredentials;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassSQL implements IClassDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public ClassSQL(BasicConnectionPool connectionPool) {
+    public ClassSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 

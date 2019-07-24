@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MentorSQL implements IMentorDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public MentorSQL(BasicConnectionPool connectionPool) {
+    public MentorSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
