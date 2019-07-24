@@ -28,8 +28,9 @@ public class QuestStore {
         IMentorDao mentorDao = new MentorSQL(connectionPool);
         IQuestDao questDao = new QuestSQL(connectionPool);
         IStudentDao studentDao = new StudentSQL(connectionPool);
+        ISessionDao sessionDao = new SessionSQL(connectionPool);
 
-        Server server = new Server(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao);
+        Server server = new Server(artifactDao, classDao, collectionGroupDao, expLevelDao, loginDao, mentorDao, questDao, studentDao, sessionDao);
 
         Controller controller = new Controller(server);
         controller.run();
