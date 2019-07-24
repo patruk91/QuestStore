@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestSQL implements IQuestDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public QuestSQL(BasicConnectionPool connectionPool) {
+    public QuestSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 

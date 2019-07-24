@@ -2,7 +2,6 @@ package com.codecool.dao.sql;
 
 import com.codecool.dao.IExpLevelDao;
 import com.codecool.model.ExpLevel;
-import com.codecool.model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpLevelSQL implements IExpLevelDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public ExpLevelSQL(BasicConnectionPool connectionPool) {
+    public ExpLevelSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 

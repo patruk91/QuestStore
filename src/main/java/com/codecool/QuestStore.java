@@ -13,9 +13,9 @@ public class QuestStore {
         final String USER = "queststore";
         final String PASSWORD = "queststore";
 
-        BasicConnectionPool connectionPool = null;
+        ConnectionPool connectionPool = null;
         try {
-            connectionPool = BasicConnectionPool.create(URL, USER, PASSWORD);
+            connectionPool = ConnectionPool.create(URL, USER, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
         }

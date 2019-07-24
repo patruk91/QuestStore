@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArtifactSQL implements IArtifactDao {
-    private BasicConnectionPool connectionPool;
+    private ConnectionPool connectionPool;
 
-    public ArtifactSQL(BasicConnectionPool connectionPool) {
+    public ArtifactSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
