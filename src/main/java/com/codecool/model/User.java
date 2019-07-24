@@ -48,16 +48,6 @@ public class User {
             return getThis();
         }
 
-        public T setUserLogin(String login) {
-            this.userCredentials.setLogin(login);
-            return getThis();
-        }
-
-        public T setUserPassword(String password) {
-            this.userCredentials.setPassword(password);
-            return getThis();
-        }
-
         public T setFirstName(String firstName) {
             this.firstName = firstName;
             return getThis();
@@ -132,5 +122,17 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", userCredentials=" + userCredentials +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

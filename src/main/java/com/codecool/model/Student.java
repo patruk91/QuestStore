@@ -52,4 +52,10 @@ public class Student extends User {
         this.studentProfile.setExperience(experience);
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "Student{" +
+                "studentProfile=" + studentProfile+
+                '}';
+    }
 }
