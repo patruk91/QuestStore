@@ -2,6 +2,7 @@ package com.codecool.server;
 
 import com.codecool.dao.ILoginDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.User;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
@@ -13,9 +14,11 @@ import java.net.HttpCookie;
 
 public class LoginHandler implements HttpHandler {
     private ISessionDao sessionDao;
+    private ILoginDao loginDao;
 
-    public LoginHandler(ISessionDao sessionDao) {
+    public LoginHandler(ISessionDao sessionDao, ILoginDao loginDao) {
         this.sessionDao = sessionDao;
+        this.loginDao = loginDao;
     }
 
     @Override
@@ -24,23 +27,43 @@ public class LoginHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
+        if (method.equalsIgnoreCase("GET")) {
+            if (cookieStr != null) {
+                cookie = HttpCookie.parse(cookieStr).get(0);
+                if (sessionDao.isCurrentSession(cookie.getValue())) {
+                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                    String userType = loginDao.getUserById(userId).getType();
+                    switch (userType) {
+                        case "admin":
+                            redirectToUserPage(httpExchange, "/admin");
+                            break;
+                        case "mentor":
+                            redirectToUserPage(httpExchange, "/mentor");
+                            break;
+                        case "student":
+                            redirectToUserPage(httpExchange, "/student");
+                            break;
+                    }
+                } else {
+                    response = getLoginFrom();
+                    httpExchange.sendResponseHeaders(200, response.length());
 
-        if (cookieStr != null) {
-            cookie = HttpCookie.parse(cookieStr).get(0);
-            if (sessionDao.isCurrentSession(cookie.getValue())) {
-                //redirect to website part(admin, mentor, student)
+                }
             } else {
                 response = getLoginFrom();
-                httpExchange.sendResponseHeaders(200, response.length());
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
 
             }
-        } else {
-            response = getLoginFrom();
-            httpExchange.sendResponseHeaders(200, response.getBytes().length);
-
+            sendResponse(httpExchange, response);
         }
-        sendResponse(httpExchange, response);
 
+
+
+    }
+
+    private void redirectToUserPage(HttpExchange httpExchange, String s) throws IOException {
+        httpExchange.getResponseHeaders().set("Location", s);
+        httpExchange.sendResponseHeaders(303, -1);
     }
 
     private String getLoginFrom() {

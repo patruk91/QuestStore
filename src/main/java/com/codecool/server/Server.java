@@ -35,7 +35,7 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         server.createContext("/static", new StaticHandler());
-        server.createContext("/", new LoginHandler(sessionDao));
+        server.createContext("/", new LoginHandler(sessionDao, loginDao));
         server.setExecutor(null);
 
         server.start();
