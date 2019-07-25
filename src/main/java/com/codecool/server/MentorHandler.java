@@ -31,26 +31,24 @@ public class MentorHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        private void handleSessionRecognition(HttpExchange httpExchange) throws IOException {
-            String response = "";
-            String method = httpExchange.getRequestMethod();
-            String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
-            HttpCookie cookie;
-            if (method.equals("GET")) {
-                if (cookieStr != null) {
-                    cookie = HttpCookie.parse(cookieStr).get(0);
-                    if (sessionDao.isCurrentSession(cookie.getValue())) {
-                        int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                        response = handleRequest(httpExchange, userId, method);
-                    } else {
-                        commonHelper.redirectToUserPage(httpExchange, "/");
-                    }
+        String response = "";
+        String method = httpExchange.getRequestMethod();
+        String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
+        HttpCookie cookie;
+        if (method.equals("GET")) {
+            if (cookieStr != null) {
+                cookie = HttpCookie.parse(cookieStr).get(0);
+                if (sessionDao.isCurrentSession(cookie.getValue())) {
+                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                    response = handleRequest(httpExchange, userId, method);
                 } else {
                     commonHelper.redirectToUserPage(httpExchange, "/");
                 }
+            } else {
+                commonHelper.redirectToUserPage(httpExchange, "/");
             }
-            commonHelper.sendResponse(httpExchange, response);
         }
+        commonHelper.sendResponse(httpExchange, response);
     }
 
     private String handleRequest(HttpExchange httpExchange, int userId, String method) throws IOException {
