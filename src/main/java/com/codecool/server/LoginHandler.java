@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class LoginHandler implements HttpHandler {
     private ISessionDao sessionDao;
@@ -30,23 +31,12 @@ public class LoginHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equalsIgnoreCase("GET")) {
+        if (method.equals("GET")) {
             if (cookieStr != null) {
                 cookie = HttpCookie.parse(cookieStr).get(0);
                 if (sessionDao.isCurrentSession(cookie.getValue())) {
                     int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    String userType = loginDao.getUserById(userId).getType();
-                    switch (userType) {
-                        case "admin":
-                            redirectToUserPage(httpExchange, "/admin");
-                            break;
-                        case "mentor":
-                            redirectToUserPage(httpExchange, "/mentor");
-                            break;
-                        case "student":
-                            redirectToUserPage(httpExchange, "/student");
-                            break;
-                    }
+                    redirectToUserLandPage(httpExchange, userId);
                 } else {
                     response = getLoginFrom();
                     httpExchange.sendResponseHeaders(200, response.length());
@@ -55,10 +45,10 @@ public class LoginHandler implements HttpHandler {
                 response = getLoginFrom();
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
             }
-            sendResponse(httpExchange, response);
         }
 
-        if (method.equalsIgnoreCase("POST")) {
+
+        if (method.equals("POST")) {
             InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String formData = bufferedReader.readLine();
@@ -66,10 +56,42 @@ public class LoginHandler implements HttpHandler {
             Map<String, String> inputs = parseFormData(formData);
             String login = inputs.get("login");
             String password = inputs.get("password");
-            loginDao.
+            if (loginDao.checkIfLoginIsCorrect(login)) {
+                if (loginDao.checkIfPasswordIsCorrect(login, password)) {
+                    int userId = loginDao.getUserId(login);
+                    UUID uuid = UUID.randomUUID();
+                    cookie = new HttpCookie("sessionId", String.valueOf(uuid));
+                    httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+                    sessionDao.insertSessionId(uuid.toString(), userId);
+
+                    redirectToUserLandPage(httpExchange, userId);
+                    httpExchange.sendResponseHeaders(303, response.getBytes().length);
+
+                } else {
+                    response = getLoginFrom();
+                    httpExchange.sendResponseHeaders(200, response.getBytes().length);
+                }
+            } else {
+                response = getLoginFrom();
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
+            }
         }
+        sendResponse(httpExchange, response);
+    }
 
-
+    private void redirectToUserLandPage(HttpExchange httpExchange, int userId) throws IOException {
+        String userType = loginDao.getUserById(userId).getType();
+        switch (userType) {
+            case "admin":
+                redirectToUserPage(httpExchange, "/admin");
+                break;
+            case "mentor":
+                redirectToUserPage(httpExchange, "/mentor");
+                break;
+            case "student":
+                redirectToUserPage(httpExchange, "/student");
+                break;
+        }
     }
 
     private void redirectToUserPage(HttpExchange httpExchange, String s) throws IOException {
@@ -81,7 +103,6 @@ public class LoginHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/index.twig");
         JtwigModel model = JtwigModel.newModel();
         String response = template.render(model);
-        System.out.println(response);
         return response;
     }
 
