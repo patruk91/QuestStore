@@ -61,7 +61,7 @@ public class AdminHandler implements HttpHandler {
         }
         switch (action) {
             case "index":
-                response = index();
+                response = index(userId);
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "add":
@@ -81,11 +81,14 @@ public class AdminHandler implements HttpHandler {
     }
 
 
-    private String index() {
+    private String index(int userId) {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/admin.twig");
         JtwigModel model = JtwigModel.newModel();
         List<Mentor> mentors = mentorDao.getAllMentors();
         model.with("mentors", mentors);
+        model.with("fullName", fullName);
         String response = template.render(model);
         return response;
     }
