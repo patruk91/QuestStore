@@ -46,7 +46,7 @@ public class Server {
 
         server.createContext("/mentor", new MentorHandler());
         server.createContext("/student", new StudentHandler());
-        server.createContext("/logout", new LogoutHandler());
+        server.createContext("/logout", new LogoutHandler(sessionDao, commonHelper));
         server.setExecutor(null);
 
         server.start();

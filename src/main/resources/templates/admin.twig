@@ -15,7 +15,9 @@
     <div class="container">
         <div id="logout">
             <p>Logged as: {{ userName }} </p>
-            <button type="button" formaction="/logout">Logout</button>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
         </div>
         <header>
             <h1 >Quest Store</h1>
