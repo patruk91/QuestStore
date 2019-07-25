@@ -8,7 +8,6 @@
     <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Quest Store | Log in</title>
-    <link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -17,10 +16,10 @@
             <h1>Quest Store</h1>
         </header>
         <section id="login">
-            <form>
+            <form method = "POST">
                 <h2>Quest Store Login</h2>
                 <label for="login-name">Login:</label>
-                <input type="text" name="loginNme" id="login-name" class="full-frame-width">
+                <input type="text" name="login" id="login-name" class="full-frame-width">
                 <label for="password">Password:</label>
                 <input type="password" name="password" id="password" class="full-frame-width">
                 <button type="submit">Login</button>
