@@ -4,29 +4,25 @@ import com.codecool.dao.IClassDao;
 import com.codecool.dao.IExpLevelDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.util.HashMap;
+
 import java.util.Map;
 
 public class AdminHandler implements HttpHandler {
-    private IClassDao classDao;
-    private IExpLevelDao expLevelDao;
     private IMentorDao mentorDao;
     private ISessionDao sessionDao;
+    private CommonHelper commonHelper;
 
-    public AdminHandler(IClassDao classDao, IExpLevelDao expLevelDao, IMentorDao mentorDao, ISessionDao sessionDao) {
-        this.classDao = classDao;
-        this.expLevelDao = expLevelDao;
+    public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper) {
         this.mentorDao = mentorDao;
         this.sessionDao = sessionDao;
+        this.commonHelper = commonHelper;
     }
 
     @Override
@@ -42,10 +38,10 @@ public class AdminHandler implements HttpHandler {
                     handleRequest(httpExchange, userId, method);
 
                 } else {
-                    redirectToUserPage(httpExchange, "/");
+                    commonHelper.redirectToUserPage(httpExchange, "/");
                 }
             } else {
-                redirectToUserPage(httpExchange, "/");
+                commonHelper.redirectToUserPage(httpExchange, "/");
 
             }
         }
@@ -54,7 +50,7 @@ public class AdminHandler implements HttpHandler {
     private void handleRequest(HttpExchange httpExchange, int userId, String method) throws IOException {
         String response = "";
         URI uri = httpExchange.getRequestURI();
-        Map<String, String> parsedUri = parseURI(uri.getPath());
+        Map<String, String> parsedUri = commonHelper.parseURI(uri.getPath());
         String action = "index";
         int mentorId = 0;
         if(!parsedUri.isEmpty()) {
@@ -79,49 +75,7 @@ public class AdminHandler implements HttpHandler {
                 index();
                 break;
         }
-        sendResponse(httpExchange, response);
-    }
-
-
-    private Map<String, String> parseURI (String uri) {
-        Map<String, String> parsedURI = new HashMap<>();
-        String[] uriParts = uri.split("/");
-        String action;
-        String data;
-        if(uriParts.length > 3) {
-            action = uriParts[2];
-            data = uriParts[3];
-            parsedURI.put(action, data);
-
-        } else if(uriParts.length > 2) {
-            action = uriParts[2];
-            data = "0";
-            parsedURI.put(action, data);
-        }
-
-        return parsedURI;
-    }
-
-    private static Map<String, String> parseFormData(String formData) throws UnsupportedEncodingException {
-        Map<String, String> map = new HashMap<>();
-        String[] pairs = formData.split("&");
-        for(String pair : pairs){
-            String[] keyValue = pair.split("=");
-            String value = new URLDecoder().decode(keyValue[1], "UTF-8");
-            map.put(keyValue[0], value);
-        }
-        return map;
-    }
-
-    private void sendResponse(HttpExchange httpExchange, String response) throws IOException {
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
-    private void redirectToUserPage(HttpExchange httpExchange, String s) throws IOException {
-        httpExchange.getResponseHeaders().set("Location", s);
-        httpExchange.sendResponseHeaders(303, -1);
+        commonHelper.sendResponse(httpExchange, response);
     }
 
 

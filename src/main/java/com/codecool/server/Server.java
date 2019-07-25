@@ -1,6 +1,7 @@
 package com.codecool.server;
 
 import com.codecool.dao.*;
+import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class Server {
     private IQuestDao questDao;
     private IStudentDao studentDao;
     private ISessionDao sessionDao;
+    private CommonHelper commonHelper;
 
     public Server(IArtifactDao artifactDao, IClassDao classDao, ICollectionGroupDao collectionGroupDao,
                   IExpLevelDao expLevelDao, ILoginDao loginDao, IMentorDao mentorDao, IQuestDao questDao,
@@ -29,17 +31,18 @@ public class Server {
         this.questDao = questDao;
         this.studentDao = studentDao;
         this.sessionDao = sessionDao;
+        this.commonHelper = new CommonHelper();
     }
 
     public void startServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
-        server.createContext("/", new LoginHandler(sessionDao, loginDao));
+        server.createContext("/", new LoginHandler(sessionDao, loginDao, commonHelper));
         server.createContext("/static", new StaticHandler());
 
-        server.createContext("/admin", new AdminHandler(classDao, expLevelDao, mentorDao, sessionDao));
-        server.createContext("/admin/classes", new AdminClassesHandler(classDao, expLevelDao, mentorDao, sessionDao));
-        server.createContext("/admin/explevels", new AdminExpLevelsHandler(classDao, expLevelDao, mentorDao, sessionDao));
+        server.createContext("/admin", new AdminHandler(mentorDao, sessionDao, commonHelper));
+        server.createContext("/admin/classes", new AdminClassesHandler(classDao, sessionDao, commonHelper));
+        server.createContext("/admin/explevels", new AdminExpLevelsHandler(expLevelDao, sessionDao, commonHelper));
 
         server.createContext("/mentor", new MentorHandler());
         server.createContext("/student", new StudentHandler());

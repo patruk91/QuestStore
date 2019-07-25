@@ -3,6 +3,7 @@ package com.codecool.server;
 import com.codecool.dao.ILoginDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.model.User;
+import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
@@ -19,10 +20,12 @@ import java.util.UUID;
 public class LoginHandler implements HttpHandler {
     private ISessionDao sessionDao;
     private ILoginDao loginDao;
+    private CommonHelper commonHelper;
 
-    public LoginHandler(ISessionDao sessionDao, ILoginDao loginDao) {
+    public LoginHandler(ISessionDao sessionDao, ILoginDao loginDao, CommonHelper commonHelper) {
         this.sessionDao = sessionDao;
         this.loginDao = loginDao;
+        this.commonHelper = commonHelper;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class LoginHandler implements HttpHandler {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String formData = bufferedReader.readLine();
 
-            Map<String, String> inputs = parseFormData(formData);
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
             String login = inputs.get("login");
             String password = inputs.get("password");
             if (loginDao.checkIfLoginIsCorrect(login)) {
@@ -76,50 +79,29 @@ public class LoginHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
             }
         }
-        sendResponse(httpExchange, response);
+        commonHelper.sendResponse(httpExchange, response);
     }
 
     private void redirectToUserLandPage(HttpExchange httpExchange, int userId) throws IOException {
         String userType = loginDao.getUserById(userId).getType();
         switch (userType) {
             case "admin":
-                redirectToUserPage(httpExchange, "/admin");
+                commonHelper.redirectToUserPage(httpExchange, "/admin");
                 break;
             case "mentor":
-                redirectToUserPage(httpExchange, "/mentor");
+                commonHelper.redirectToUserPage(httpExchange, "/mentor");
                 break;
             case "student":
-                redirectToUserPage(httpExchange, "/student");
+                commonHelper.redirectToUserPage(httpExchange, "/student");
                 break;
         }
     }
 
-    private void redirectToUserPage(HttpExchange httpExchange, String s) throws IOException {
-        httpExchange.getResponseHeaders().set("Location", s);
-        httpExchange.sendResponseHeaders(303, -1);
-    }
 
     private String getLoginFrom() {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/index.twig");
         JtwigModel model = JtwigModel.newModel();
         String response = template.render(model);
         return response;
-    }
-
-    private void sendResponse(HttpExchange httpExchange, String response) throws IOException {
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
-    private Map<String, String> parseFormData(String formData) throws UnsupportedEncodingException {
-        Map<String, String> map = new HashMap<>();
-        String[] pairs = formData.split("&");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            String value = new URLDecoder().decode(keyValue[1], "UTF-8");
-            map.put(keyValue[0], value);
-        }
-        return map;
     }
 }

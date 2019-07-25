@@ -1,4 +1,4 @@
-package com.codecool.server.helpers;
+package com.codecool.server.helper;
 
 // Copyright (c) 2003-2009, Jodd Team (jodd.org). All Rights Reserved.
 
