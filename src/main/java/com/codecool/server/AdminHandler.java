@@ -1,17 +1,19 @@
 package com.codecool.server;
 
-import com.codecool.dao.IClassDao;
-import com.codecool.dao.IExpLevelDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.Mentor;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
 
+import java.util.List;
 import java.util.Map;
 
 public class AdminHandler implements HttpHandler {
@@ -27,6 +29,7 @@ public class AdminHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        String response = "";
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
@@ -35,19 +38,18 @@ public class AdminHandler implements HttpHandler {
                 cookie = HttpCookie.parse(cookieStr).get(0);
                 if (sessionDao.isCurrentSession(cookie.getValue())) {
                     int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    handleRequest(httpExchange, userId, method);
-
+                    response = handleRequest(httpExchange, userId, method);
                 } else {
                     commonHelper.redirectToUserPage(httpExchange, "/");
                 }
             } else {
                 commonHelper.redirectToUserPage(httpExchange, "/");
-
             }
         }
+        commonHelper.sendResponse(httpExchange, response);
     }
 
-    private void handleRequest(HttpExchange httpExchange, int userId, String method) throws IOException {
+    private String handleRequest(HttpExchange httpExchange, int userId, String method) throws IOException {
         String response = "";
         URI uri = httpExchange.getRequestURI();
         Map<String, String> parsedUri = commonHelper.parseURI(uri.getPath());
@@ -60,7 +62,7 @@ public class AdminHandler implements HttpHandler {
         switch (action) {
             case "index":
                 response = index();
-                httpExchange.sendResponseHeaders(200, response.length());
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "add":
                 response = add(method, httpExchange);
@@ -72,15 +74,20 @@ public class AdminHandler implements HttpHandler {
                 delete(mentorId, httpExchange);
                 break;
             default:
-                index();
+                response = index();
                 break;
         }
-        commonHelper.sendResponse(httpExchange, response);
+        return response;
     }
 
 
     private String index() {
-        return "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/admin.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<Mentor> mentors = mentorDao.getAllMentors();
+        model.with("mentors", mentors);
+        String response = template.render(model);
+        return response;
     }
 
     private String classes() {
