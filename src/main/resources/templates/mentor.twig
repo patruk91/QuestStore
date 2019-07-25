@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Mentor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+            <div id="logout">
+                <p>Logged as: {{ fullName }}  </p>
+                <form method="GET">
+                    <button type="submit" formaction="/logout">Logout</button>
+                </form>
+            </div>
+            <header>
+                <h1 >Quest Store</h1>
+            </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/mentor">Codecooler</a></li>
+                <li><a href="mentor/quest">Quest</a></li>
+                <li><a href="/mentor/artifact">Artifact</a></li>
+            </ul>
+        </nav>
+        <section id="tools">
+            <form method="GET">
+                <button type="submit" formaction="/mentor/add">+</button>
+            </form>
+        </section>
+        <section id="content">
+            {% for student in students %}
+                <div class="item wider">
+                        <div class="edit-options">
+                                <a href="/mentor/view/{{ student.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
+                                <a href="/mentor/edit/{{ student.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
+                                <a href="/delete/view/{{ student.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
+                            </div>
+                    <aside>
+                        <p class="name">First name: {{ student.getFirstName() }}</p>
+                        <p class="last-name">Last Name: {{ student.getLastName() }}</p>
+                        <p class="class">Class: {{ student.getClassId() }} </p>
+                    </aside>
+                    <div class="coins"><p>{{ student.getCoins() }}</p></div>
+                </div>
+            {% endfor %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
