@@ -74,7 +74,7 @@ public class AdminHandler implements HttpHandler {
                 delete(mentorId, httpExchange);
                 break;
             default:
-                response = index();
+                response = index(userId);
                 break;
         }
         return response;
