@@ -14,7 +14,7 @@
 <body>
     <div class="container">
         <div id="logout">
-            <p>Logged as: {{ userName }} </p>
+            <p>Logged as: {{ fullName }} </p>
             <form method="GET">
                 <button type="submit" formaction="/logout">Logout</button>
             </form>
@@ -30,16 +30,18 @@
             </ul>
         </nav>
         <section id="tools">
-            <button type="submit" formaction="/admin/add">+</button>
+            <form method="GET">
+                <button type="submit" formaction="/admin/add">+</button>
+            </form>
         </section>
         <section id="content">
             {% for mentor in mentors %}
                 <div class="item">
                     <img class="avatar-image" src="/static/images/mentor.png" alt="Mentor XXX">
                     <div class="edit-options">
-                        <a href="mentorsData.html"><img class="eye" src="/static/images/eye.png" alt="Link to view"></a>
-                        <a href="mentorsData.html"><img class="edit" src="/static/images/pencil.png" alt="Link to view"></a>
-                        <a href="#"><img class="remove" src="/static/images/remove.png" alt="Link to view"></a>
+                        <a href="/admin/view/{{ mentor.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
+                        <a href="/admin/edit/{{ mentor.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
+                        <a href="/admin/delete/{{ mentor.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
                     </div>
                     <aside>
                         <p class="name">First name: {{ mentor.getFirstName() }}</p>
