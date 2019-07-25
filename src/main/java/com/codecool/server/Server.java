@@ -36,7 +36,11 @@ public class Server {
 
         server.createContext("/", new LoginHandler(sessionDao, loginDao));
         server.createContext("/static", new StaticHandler());
-        server.createContext("/admin", new AdminHandler());
+
+        server.createContext("/admin", new AdminHandler(classDao, expLevelDao, mentorDao, sessionDao));
+        server.createContext("/admin/classes", new AdminClassesHandler(classDao, expLevelDao, mentorDao, sessionDao));
+        server.createContext("/admin/explevels", new AdminExpLevelsHandler(classDao, expLevelDao, mentorDao, sessionDao));
+
         server.createContext("/mentor", new MentorHandler());
         server.createContext("/student", new StudentHandler());
         server.createContext("/logout", new LogoutHandler());
