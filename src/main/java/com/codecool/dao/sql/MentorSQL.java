@@ -74,7 +74,7 @@ public class MentorSQL implements IMentorDao {
     @Override
     public Mentor getMentor(int id) throws IllegalArgumentException {
         String query = "SELECT u.id, u.type, u.first_name, u.last_name, u.email, c.login, " +
-                "c.password FROM users AS u JOIN user_credentials AS c ON u.id = c.user_id WHERE id = ? AND u.type = 'mentor'";
+                "c.password FROM users AS u JOIN user_credentials AS c ON u.id = c.user_id WHERE id = ?";
         Mentor mentor = null;
         try {
             Connection connection = connectionPool.getConnection();
