@@ -1,6 +1,6 @@
 package com.codecool.server;
 
-import com.codecool.server.helpers.MimeTypeResolver;
+import com.codecool.server.helper.MimeTypeResolver;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

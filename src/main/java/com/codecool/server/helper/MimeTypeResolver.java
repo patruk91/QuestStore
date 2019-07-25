@@ -1,4 +1,4 @@
-package com.codecool.server.helpers;
+package com.codecool.server.helper;
 
 import java.io.File;
 import java.util.regex.Matcher;
