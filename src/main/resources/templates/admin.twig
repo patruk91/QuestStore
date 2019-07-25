@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ userName }} </p>
+            <button type="button" formaction="/logout">Logout</button>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/admin">Mentors</a></li>
+                <li><a href="/admin/classes">Classes</a></li>
+                <li><a href="/admin/experienceLevels">Experience level</a></li>
+            </ul>
+        </nav>
+        <section id="tools">
+            <button type="submit" formaction="/admin/add">+</button>
+        </section>
+        <section id="content">
+            {% for mentor in mentors %}
+                <div class="item">
+                    <img class="avatar-image" src="/static/images/mentor.png" alt="Mentor XXX">
+                    <div class="edit-options">
+                        <a href="mentorsData.html"><img class="eye" src="/static/images/eye.png" alt="Link to view"></a>
+                        <a href="mentorsData.html"><img class="edit" src="/static/images/pencil.png" alt="Link to view"></a>
+                        <a href="#"><img class="remove" src="/static/images/remove.png" alt="Link to view"></a>
+                    </div>
+                    <aside>
+                        <p class="name">{{ mentor.getFirstName() }}</p>
+                        <p class="last-name">{{ mentor.getLastName() }}</p>
+                    </aside>
+                </div>
+            {% endfor %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
