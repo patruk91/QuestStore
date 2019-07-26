@@ -2,6 +2,7 @@ package com.codecool.server;
 
 import com.codecool.dao.ILoginDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.hasher.PasswordHasher;
 import com.codecool.model.User;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -60,7 +61,10 @@ public class LoginHandler implements HttpHandler {
             String login = inputs.get("login");
             String password = inputs.get("password");
             if (loginDao.checkIfLoginIsCorrect(login)) {
-                if (loginDao.checkIfPasswordIsCorrect(login, password)) {
+                String salt = loginDao.getSaltByLogin(login);
+                PasswordHasher passwordHasher = new PasswordHasher();
+                String hashedPassword = passwordHasher.hashPassword(salt + password);
+                if (loginDao.checkIfPasswordIsCorrect(login, hashedPassword)) {
                     int userId = loginDao.getUserId(login);
                     UUID uuid = UUID.randomUUID();
                     cookie = new HttpCookie("sessionId", String.valueOf(uuid));
