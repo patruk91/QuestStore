@@ -30,17 +30,17 @@
         </nav>
         <section id="content">
             {% for artifact in artifacts %}
-            <div class="item wider">
-                <section class="artifact-head">
-                    <h2>{{ artifact.getName() }}</h2>
-                    <p class="coins">{{ artifact.getPrice() }}</p>
-                    <img src="{{ artifact.getImageLink() }}"  alt="Quest XXX">
-                    <button id="button-popup" class="category"><a href="#">{{ artifact.getCategory() }}</a></button>
-                </section>
-                <section class="quest-description">
-                    <p>{{ artifact.getDescription() }}</p>
-                </section>
-            </div>
+                <div class="item wider">
+                    <section class="artifact-head">
+                        <h2>{{ artifact.getName() }}</h2>
+                        <p class="coins">{{ artifact.getPrice() }}</p>
+                        <img src="{{ artifact.getImageLink() }}"  alt="{{ artifact.getName() }}">
+                        <button id="button-popup" class="category"><a href="#">{{ artifact.getCategory() }}</a></button>
+                    </section>
+                    <section class="quest-description">
+                        <p>{{ artifact.getDescription() }}</p>
+                    </section>
+                </div>
             {% endfor %}
         </section>
         <footer>
