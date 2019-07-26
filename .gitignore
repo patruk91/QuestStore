@@ -33,6 +33,7 @@ Test.java
 *.list*
 
 images
+web
 !src/main/resources/static/images
 !src/main/resources/static/css/images
 
