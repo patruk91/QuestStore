@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Codecooler</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+            <div id="logout">
+                <p>Logged as: {{ fullName }} </p>
+                <form method="GET">
+                    <button type="submit" formaction="/logout">Logout</button>
+                </form>
+            </div>
+            <header>
+                <h1 >Quest Store</h1>
+            </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/student">Store</a></li>
+                <li><a href="student/collection">Collection</a></li>
+                <li><a href="/student/profile">Profile</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            {% for artifact in artifacts %}
+                <div class="item wider">
+                    <section class="artifact-head">
+                        <h2>{{ artifact.getName() }}</h2>
+                        <p class="coins">{{ artifact.getPrice() }}</p>
+                        <img src="{{ artifact.getImageLink() }}"  alt="{{ artifact.getName() }}">
+                        <button id="button-popup" class="category"><a href="#">{{ artifact.getCategory() }}</a></button>
+                    </section>
+                    <section class="quest-description">
+                        <p>{{ artifact.getDescription() }}</p>
+                    </section>
+                </div>
+            {% endfor %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
