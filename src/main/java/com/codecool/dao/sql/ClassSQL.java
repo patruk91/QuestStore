@@ -229,7 +229,7 @@ public class ClassSQL implements IClassDao {
 
     @Override
     public void addMentorToClass(int mentorId, int classId) {
-        String query = "UPDATE classes SET mentor_id = ? WHERE class_id = ?";
+        String query = "UPDATE classes SET mentor_id = ? WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();

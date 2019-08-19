@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +28,15 @@ public class AdminHandler implements HttpHandler {
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
     private IClassDao classDao;
+    private PasswordHasher passwordHasher;
+
 
     public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper, IClassDao classDao) {
         this.mentorDao = mentorDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.classDao = classDao;
-        PasswordHasher passwordHasher = new PasswordHasher();
+        this.passwordHasher = new PasswordHasher();
     }
 
     @Override
@@ -126,14 +129,23 @@ public class AdminHandler implements HttpHandler {
             InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String formData = bufferedReader.readLine();
-
+            List<Integer> mentorClasses = new ArrayList<>();
             Map<String, String> inputs = commonHelper.parseFormData(formData);
+            for (Map.Entry<String, String> entry : inputs.entrySet()) {
+                if (entry.getKey().matches("class.")) {
+                    mentorClasses.add(Integer.parseInt(entry.getValue()));
+                }
+            }
+
             String firstName = inputs.get("firstName");
             String lastName = inputs.get("lastName");
             String type = inputs.get("type");
             String mentorLogin = inputs.get("mentorLogin");
             String mentorPassword = inputs.get("mentorPassword");
             String email = inputs.get("email");
+
+            String salt = passwordHasher.getRandomSalt();
+            mentorPassword = passwordHasher.hashPassword(mentorPassword + salt);
 
             UserCredentials userCredentials = new UserCredentials(mentorLogin, mentorPassword);
             Mentor mentor = new Mentor.MentorBuilder()
@@ -143,12 +155,14 @@ public class AdminHandler implements HttpHandler {
                     .setUserCredentials(userCredentials)
                     .setEmail(email).build();
             mentorDao.addMentor(mentor);
+            mentorDao.insertMentorInCredentialsQuery(mentor, salt);
 
-            int getMentorId = mentorDao.getNewMentorId();
-            
+            int mentorId = mentorDao.getNewMentorId();
+            for (int classId : mentorClasses) {
+                classDao.addMentorToClass(mentorId, classId);
+            }
+            commonHelper.redirectToUserPage(httpExchange, "/admin");
         }
-
-
     return response;
     }
 
