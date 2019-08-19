@@ -168,12 +168,12 @@ public class MentorSQL implements IMentorDao {
     public void addMentor(Mentor mentor) {
         String usersQuery = "INSERT INTO users (type, first_name, last_name, email)" +
                 "VALUES (?, ?, ?, ?)";
-        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, password) VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?)";
+
 
         try {
             Connection connection = connectionPool.getConnection();
             insertMentorInUsersQuery(usersQuery, connection, mentor);
-            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
+//            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -192,12 +192,21 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void insertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
+    public void insertMentorInCredentialsQuery(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, salt, password) " +
+                "VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?, ?)";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, mentor.getLogin());
+            stmt.setString(2,salt);
+            stmt.setString(3, mentor.getPassword());
 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
         }
     }
 

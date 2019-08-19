@@ -12,4 +12,5 @@ public interface IMentorDao {
     public void addMentor(Mentor mentor);
     public void removeMentor(Mentor mentor);
     public int getNewMentorId() throws SQLException;
+    public void insertMentorInCredentialsQuery(Mentor mentor, String salt);
 }
