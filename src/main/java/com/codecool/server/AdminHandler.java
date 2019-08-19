@@ -3,8 +3,10 @@ package com.codecool.server;
 import com.codecool.dao.IClassDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.hasher.PasswordHasher;
 import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
+import com.codecool.model.UserCredentials;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -31,7 +33,7 @@ public class AdminHandler implements HttpHandler {
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.classDao = classDao;
-
+        PasswordHasher passwordHasher = new PasswordHasher();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class AdminHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET")) {
+        if (method.equals("GET") || method.equals("POST")) {
             if (cookieStr != null) {
                 cookie = HttpCookie.parse(cookieStr).get(0);
                 if (sessionDao.isCurrentSession(cookie.getValue())) {
@@ -120,6 +122,32 @@ public class AdminHandler implements HttpHandler {
             response = template.render(model);
         }
 
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+            String firstName = inputs.get("firstName");
+            String lastName = inputs.get("lastName");
+            String type = inputs.get("type");
+            String mentorLogin = inputs.get("mentorLogin");
+            String mentorPassword = inputs.get("mentorPassword");
+            String email = inputs.get("email");
+
+            UserCredentials userCredentials = new UserCredentials(mentorLogin, mentorPassword);
+            Mentor mentor = new Mentor.MentorBuilder()
+                    .setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setType(type)
+                    .setUserCredentials(userCredentials)
+                    .setEmail(email).build();
+            mentorDao.addMentor(mentor);
+
+            int getMentorId = mentorDao.getNewMentorId();
+            
+        }
+
 
     return response;
     }
@@ -131,4 +159,5 @@ public class AdminHandler implements HttpHandler {
     private String delete(int mentorId, HttpExchange httpExchange) {
         return "";
     }
+
 }

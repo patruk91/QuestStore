@@ -34,11 +34,11 @@
                 <aside class="item" id="mentor-aside">
                     <span class="mentor-pic"><img src="/static/images/mentor.png" alt="Mentor picture"></span>
                 </aside>
-                <form action="#" method="POST">
+                <form method="POST">
                     <div id="mentor-data">
                         <div id="mentor-overall" class="item">
-                            <label for="name">First Name</label>
-                            <input type="text" name="name" id="name">
+                            <label for="firstName">First Name</label>
+                            <input type="text" name="firstName" id="name">
                             <label for="lastName">Last Name</label>
                             <input type="text" name="lastName" id="lastName">
                             <label for="type">Type</label>
@@ -46,26 +46,25 @@
                         </div>
 
                         <div id="mentor-login" class="item">
-                            <label for="mentor-log">Login</label>
-                            <input type="text" name="mentor-log" id="mentor-log">
-                            <label for="mentor-password">Password</label>
-                            <input type="password" name="mentor-password" id="mentor-password">
-                            <label for="e-mail">Email</label>
-                            <input type="email" name="e-mail" id="e-mail">
+                            <label for="mentorLogin">Login</label>
+                            <input type="text" name="mentorLogin" id="mentorLogin">
+                            <label for="mentorPassword">Password</label>
+                            <input type="password" name="mentorPassword" id="mentorPassword">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email">
                         </div>
                     </div>
 
                     <div class="item" id="classes">
                         <label for="classes-id">Classes</label>
                         {% for class in classes %}
-                            <input type="checkbox" name="likes" value="{{ class.getId() }}" id="classes-id"> {{ class.getClassName() }}
+                            <input type="checkbox" name="class{{ class.getId() }}" value="{{ class.getId() }}" id="classes-id"> {{ class.getClassName() }}
                         {% endfor %}
-
                     </div>
 
                     <div class="edit-options" id="form-button-mentor">
-                        <button type="submit" value="Submit">Submit</button>
-                        <button type="submit" value="Reset">Reset</button>
+                        <button type="submit" formaction="/admin/add">Submit</button>
+                        <button type="reset" value="Reset">Reset</button>
                         <button type="button" value="Cancel" onclick="location.href='admin.html'">Cancel</button>
 
                     </div>
