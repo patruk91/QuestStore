@@ -97,20 +97,38 @@ public class ClassSQL implements IClassDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            prepareClassesListQuery(listOfClasses, query, connection);
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                executeClassesListQuery(listOfClasses, stmt);
+            }
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-
-
         return listOfClasses;
     }
 
-    private void prepareClassesListQuery(List<ClassGroup> listOfClasses, String query, Connection connection) throws SQLException {
+    @Override
+    public List<ClassGroup> getAllMentorClassesAndWithNoMentorClasses(int mentorId) {
+        List<ClassGroup> listOfClasses = new ArrayList<>();
+        String query = "SELECT * FROM classes WHERE mentor_id = ? OR mentor_id is null";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareClassesListQuery(listOfClasses, query, connection, mentorId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfClasses;
+    }
+
+    private void prepareClassesListQuery(List<ClassGroup> listOfClasses, String query, Connection connection, int mentorId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, mentorId);
             executeClassesListQuery(listOfClasses, stmt);
         }
     }
