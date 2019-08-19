@@ -15,6 +15,6 @@ public interface IClassDao {
     public ClassGroup getClass(int classId);
     public String getClassName(Student student);
     public void addStudentToClass(Student student, ClassGroup classGroup);
-    public void addMentorToClass(Mentor mentor, ClassGroup classGroup);
+    public void addMentorToClass(int mentorId, int classId);
     public List<Student> getAllStudentsFromClass(Mentor mentor);
 }
