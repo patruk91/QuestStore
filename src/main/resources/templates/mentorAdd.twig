@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Add Mentor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} </p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/admin">Mentors</a></li>
+                <li><a href="/admin/classes">Classes</a></li>
+                <li><a href="/admin/experienceLevels">Experience level</a></li>
+            </ul>
+        </nav>
+
+        <div id="mentor-content">
+            <section id="content" class="set-mentors">
+                <aside class="item" id="mentor-aside">
+                    <span class="mentor-pic"><img src="/static/images/mentor.png" alt="Mentor picture"></span>
+                </aside>
+                <form action="#" method="POST">
+                    <div id="mentor-data">
+                        <div id="mentor-overall" class="item">
+                            <label for="name">First Name</label>
+                            <input type="text" name="name" id="name">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" name="lastName" id="lastName">
+                            <label for="type">Type</label>
+                            <input type="text" name="type" id="type">
+                        </div>
+
+                        <div id="mentor-login" class="item">
+                            <label for="mentor-log">Login</label>
+                            <input type="text" name="mentor-log" id="mentor-log">
+                            <label for="mentor-password">Password</label>
+                            <input type="password" name="mentor-password" id="mentor-password">
+                            <label for="e-mail">Email</label>
+                            <input type="email" name="e-mail" id="e-mail">
+                        </div>
+                    </div>
+
+                    <div class="item" id="classes">
+                        <label for="classes-id">Classes</label>
+                        {% for class in classes %}
+                            <input type="checkbox" name="likes" value="{{ class.getId() }}" id="classes-id"> {{ class.getClassName() }}
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="edit-options" id="form-button-mentor">
+                        <button type="submit" value="Submit">Submit</button>
+                        <button type="submit" value="Reset">Reset</button>
+                        <button type="button" value="Cancel" onclick="location.href='admin.html'">Cancel</button>
+
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <section class="results item" id="results">
+            <h3>Students in class:</h3>
+            {% for student in students %}
+                <p>{{ student.getFirstName() }} {{ student.getLastName() }}</p>
+            {% endfor %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
+
+

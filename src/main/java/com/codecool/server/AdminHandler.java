@@ -1,7 +1,9 @@
 package com.codecool.server;
 
+import com.codecool.dao.IClassDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -22,11 +24,14 @@ public class AdminHandler implements HttpHandler {
     private IMentorDao mentorDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IClassDao classDao;
 
-    public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+    public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper, IClassDao classDao) {
         this.mentorDao = mentorDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.classDao = classDao;
+
     }
 
     @Override
@@ -105,14 +110,18 @@ public class AdminHandler implements HttpHandler {
 
     private String add(String method, HttpExchange httpExchange) throws IOException {
         String response = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/addMentor.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
         JtwigModel model = JtwigModel.newModel();
+        final int EMPTY_MENTOR = -1;
+        List<ClassGroup> classes = classDao.getAllMentorClassesAndWithNoMentorClasses(EMPTY_MENTOR);
+        model.with("classes", classes);
         if (method.equals("GET")) {
             httpExchange.sendResponseHeaders(200, response.length());
             response = template.render(model);
         }
 
 
+    return response;
     }
 
     private String edit(int mentorId, String method, HttpExchange httpExchange) {
