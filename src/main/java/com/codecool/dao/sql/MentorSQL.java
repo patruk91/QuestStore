@@ -216,6 +216,22 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
+    @Override
+    public int getNewMentorId() throws SQLException {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                "SELECT id FROM users ORDER BY id DESC limit 1")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                int id = 1;
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+
+                return id;
+            }
+        }
+    }
+
     private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromUsers)) {
             stmt.setInt(1, mentor.getId());
