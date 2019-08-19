@@ -168,12 +168,12 @@ public class MentorSQL implements IMentorDao {
     public void addMentor(Mentor mentor) {
         String usersQuery = "INSERT INTO users (type, first_name, last_name, email)" +
                 "VALUES (?, ?, ?, ?)";
-        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, password) VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?)";
+
 
         try {
             Connection connection = connectionPool.getConnection();
             insertMentorInUsersQuery(usersQuery, connection, mentor);
-            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
+//            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -192,12 +192,21 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void insertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
+    public void insertMentorInCredentialsQuery(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, salt, password) " +
+                "VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?, ?)";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, mentor.getLogin());
+            stmt.setString(2,salt);
+            stmt.setString(3, mentor.getPassword());
 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
         }
     }
 
@@ -214,6 +223,25 @@ public class MentorSQL implements IMentorDao {
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
+    }
+
+    @Override
+    public int getNewMentorId() {
+        int id = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                "SELECT id FROM users ORDER BY id DESC limit 1")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return id;
     }
 
     private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {

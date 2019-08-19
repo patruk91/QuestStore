@@ -97,20 +97,38 @@ public class ClassSQL implements IClassDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            prepareClassesListQuery(listOfClasses, query, connection);
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                executeClassesListQuery(listOfClasses, stmt);
+            }
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
         }
-
-
         return listOfClasses;
     }
 
-    private void prepareClassesListQuery(List<ClassGroup> listOfClasses, String query, Connection connection) throws SQLException {
+    @Override
+    public List<ClassGroup> getAllMentorClassesAndWithNoMentorClasses(int mentorId) {
+        List<ClassGroup> listOfClasses = new ArrayList<>();
+        String query = "SELECT * FROM classes WHERE mentor_id = ? OR mentor_id is null";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareClassesListQuery(listOfClasses, query, connection, mentorId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfClasses;
+    }
+
+    private void prepareClassesListQuery(List<ClassGroup> listOfClasses, String query, Connection connection, int mentorId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, mentorId);
             executeClassesListQuery(listOfClasses, stmt);
         }
     }
@@ -191,7 +209,7 @@ public class ClassSQL implements IClassDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            updateStudentClassId(query, connection, classGroup, student);
+            updateMentorIdInClass(query, connection, classGroup, student);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -200,7 +218,7 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void updateStudentClassId(String query, Connection connection, ClassGroup classGroup, Student student) throws SQLException {
+    private void updateMentorIdInClass(String query, Connection connection, ClassGroup classGroup, Student student) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, classGroup.getId());
             stmt.setInt(2, student.getId());
@@ -210,12 +228,12 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
-    public void addMentorToClass(Mentor mentor, ClassGroup classGroup) {
-        String query = "UPDATE classes SET mentor_id = ? WHERE class_id = ?";
+    public void addMentorToClass(int mentorId, int classId) {
+        String query = "UPDATE classes SET mentor_id = ? WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            updateStudentClassId(query, connection, classGroup, mentor);
+            updateMentorIdInClass(query, connection, classId, mentorId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -224,10 +242,10 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void updateStudentClassId(String query, Connection connection, ClassGroup classGroup, Mentor mentor) throws SQLException {
+    private void updateMentorIdInClass(String query, Connection connection, int classId, int mentorId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, mentor.getId());
-            stmt.setInt(2, classGroup.getId());
+            stmt.setInt(1, mentorId);
+            stmt.setInt(2, classId);
 
             stmt.executeUpdate();
         }

@@ -1,8 +1,12 @@
 package com.codecool.server;
 
+import com.codecool.dao.IClassDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.hasher.PasswordHasher;
+import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
+import com.codecool.model.UserCredentials;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -15,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +27,16 @@ public class AdminHandler implements HttpHandler {
     private IMentorDao mentorDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IClassDao classDao;
+    private PasswordHasher passwordHasher;
 
-    public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+
+    public AdminHandler(IMentorDao mentorDao, ISessionDao sessionDao, CommonHelper commonHelper, IClassDao classDao) {
         this.mentorDao = mentorDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.classDao = classDao;
+        this.passwordHasher = new PasswordHasher();
     }
 
     @Override
@@ -35,7 +45,7 @@ public class AdminHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET")) {
+        if (method.equals("GET") || method.equals("POST")) {
             if (cookieStr != null) {
                 cookie = HttpCookie.parse(cookieStr).get(0);
                 if (sessionDao.isCurrentSession(cookie.getValue())) {
@@ -105,14 +115,55 @@ public class AdminHandler implements HttpHandler {
 
     private String add(String method, HttpExchange httpExchange) throws IOException {
         String response = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/addMentor.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
         JtwigModel model = JtwigModel.newModel();
+        final int EMPTY_MENTOR = -1;
+        List<ClassGroup> classes = classDao.getAllMentorClassesAndWithNoMentorClasses(EMPTY_MENTOR);
+        model.with("classes", classes);
         if (method.equals("GET")) {
             httpExchange.sendResponseHeaders(200, response.length());
             response = template.render(model);
         }
 
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            List<Integer> mentorClasses = new ArrayList<>();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+            for (Map.Entry<String, String> entry : inputs.entrySet()) {
+                if (entry.getKey().matches("class.")) {
+                    mentorClasses.add(Integer.parseInt(entry.getValue()));
+                }
+            }
 
+            String firstName = inputs.get("firstName");
+            String lastName = inputs.get("lastName");
+            String type = inputs.get("type");
+            String mentorLogin = inputs.get("mentorLogin");
+            String mentorPassword = inputs.get("mentorPassword");
+            String email = inputs.get("email");
+
+            String salt = passwordHasher.getRandomSalt();
+            mentorPassword = passwordHasher.hashPassword(mentorPassword + salt);
+
+            UserCredentials userCredentials = new UserCredentials(mentorLogin, mentorPassword);
+            Mentor mentor = new Mentor.MentorBuilder()
+                    .setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setType(type)
+                    .setUserCredentials(userCredentials)
+                    .setEmail(email).build();
+            mentorDao.addMentor(mentor);
+            mentorDao.insertMentorInCredentialsQuery(mentor, salt);
+
+            int mentorId = mentorDao.getNewMentorId();
+            for (int classId : mentorClasses) {
+                classDao.addMentorToClass(mentorId, classId);
+            }
+            commonHelper.redirectToUserPage(httpExchange, "/admin");
+        }
+    return response;
     }
 
     private String edit(int mentorId, String method, HttpExchange httpExchange) {
@@ -122,4 +173,5 @@ public class AdminHandler implements HttpHandler {
     private String delete(int mentorId, HttpExchange httpExchange) {
         return "";
     }
+
 }
