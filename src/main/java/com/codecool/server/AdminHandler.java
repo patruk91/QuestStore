@@ -6,6 +6,7 @@ import com.codecool.dao.ISessionDao;
 import com.codecool.hasher.PasswordHasher;
 import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
+import com.codecool.model.Student;
 import com.codecool.model.UserCredentials;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -79,6 +80,9 @@ public class AdminHandler implements HttpHandler {
             case "add":
                 response = add(method, httpExchange);
                 break;
+            case "view":
+                response = view(mentorId, httpExchange);
+                break;
             case "edit":
                 response = edit(mentorId, method, httpExchange);
                 break;
@@ -89,6 +93,24 @@ public class AdminHandler implements HttpHandler {
                 response = index(userId);
                 break;
         }
+        return response;
+    }
+
+    private String view(int mentorId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        final int EMPTY_MENTOR = -1;
+        String disabled = "disabled";
+        Mentor mentor = mentorDao.getMentor(mentorId);
+        List<Student> students = classDao.getAllStudentsFromClass(mentor);
+        List<ClassGroup> classes = classDao.getMentorClasses(mentorId);
+        model.with("classes", classes);
+        model.with("mentor", mentor);
+        model.with("students", students);
+        model.with("disabled", disabled);
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
         return response;
     }
 
@@ -115,7 +137,7 @@ public class AdminHandler implements HttpHandler {
 
     private String add(String method, HttpExchange httpExchange) throws IOException {
         String response = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
         JtwigModel model = JtwigModel.newModel();
         final int EMPTY_MENTOR = -1;
         List<ClassGroup> classes = classDao.getAllMentorClassesAndWithNoMentorClasses(EMPTY_MENTOR);
