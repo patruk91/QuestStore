@@ -71,7 +71,7 @@ public class AdminExpLevelsHandler implements HttpHandler {
 //                response = add(method, httpExchange);
                 break;
             case "view":
-//                response = view(expLevelName, httpExchange);
+                response = view(expLevelName, httpExchange);
                 break;
             case "edit":
 //                response = edit(expLevelName, method, httpExchange);
@@ -96,6 +96,19 @@ public class AdminExpLevelsHandler implements HttpHandler {
         model.with("expLevels", expLevels);
         model.with("fullName", fullName);
         String response = template.render(model);
+        return response;
+    }
+
+    private String view(String expLevelName, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/experienceLevelsForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        String disabled = "disabled";
+        ExpLevel expLevel = expLevelDao.getExpLevel(expLevelName);
+        model.with("expLevel", expLevel);
+        model.with("disabled", disabled);
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
         return response;
     }
 }
