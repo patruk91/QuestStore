@@ -20,12 +20,12 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
-    public void addClass(ClassGroup classGroup) {
+    public void addClass(String className) {
         String query = "INSERT INTO classes (class_name) VALUES (?)";
 
         try {
             Connection connection = connectionPool.getConnection();
-            insertClassData(query, connection, classGroup);
+            insertClassData(query, connection, className);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -34,10 +34,9 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void insertClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+    private void insertClassData(String query, Connection connection, String className) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, classGroup.getClassName());
-
+            stmt.setString(1, className);
             stmt.executeUpdate();
         }
     }
@@ -62,18 +61,17 @@ public class ClassSQL implements IClassDao {
             stmt.setInt(1, classGroup.getMentorId());
             stmt.setString(2, classGroup.getClassName());
             stmt.setInt(3, classGroup.getId());
-
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void removeClass(ClassGroup classGroup) {
-        String questsDataQuery = "DELETE FROM classes WHERE id = ?";
+    public void updateClass(String className, int classId) {
+        String query = "UPDATE classes SET class_name = ? WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            deleteClassData(questsDataQuery, connection, classGroup);
+            updateClassData(query, connection, className, classId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -82,9 +80,34 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void deleteClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+    private void updateClassData(String query, Connection connection, String className, int classId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, classGroup.getId());
+            stmt.setString(1, className);
+            stmt.setInt(2, classId);
+            stmt.executeUpdate();
+        }
+    }
+
+
+
+    @Override
+    public void removeClass(int classId) {
+        String questsDataQuery = "DELETE FROM classes WHERE id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            deleteClassData(questsDataQuery, connection, classId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void deleteClassData(String query, Connection connection, int classId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, classId);
 
             stmt.executeUpdate();
         }
@@ -266,6 +289,34 @@ public class ClassSQL implements IClassDao {
             stmt.setInt(2, classId);
 
             stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<Student> getAllStudentsFromClass(int classId) {
+        List<Student> students = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            addStudents(students, connection, classId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return students;
+    }
+
+    private void addStudents(List<Student> students, Connection connection, int classId) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT users.id, users.type, users.first_name, users.last_name,\n" +
+                        "users.email, cred.login, cred.password, profile.coins, profile.experience,\n" +
+                        "profile.class_id FROM users\n" +
+                        "JOIN user_credentials AS cred ON users.id = cred.user_id\n" +
+                        "JOIN students_profiles AS profile on users.id = profile.student_id\n" +
+                        "WHERE profile.class_id = ?")) {
+            stmt.setInt(1, classId);
+            addStudentToList(stmt, students);
         }
     }
 
