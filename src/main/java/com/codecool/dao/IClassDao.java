@@ -11,7 +11,7 @@ public interface IClassDao {
     public void updateClass(ClassGroup classGroup);
     public void removeClass(ClassGroup classGroup);
     public List<ClassGroup> getAllClasses();
-    public List<ClassGroup> getAllMentorClassesAndWithNoMentorClasses(int mentorId);
+    public List<ClassGroup> getAllUnassignedClasses();
     List<ClassGroup> getMentorClasses(int mentorId);
     public ClassGroup getClass(int classId);
     public String getClassName(Student student);
