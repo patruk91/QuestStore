@@ -148,6 +148,23 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
+    public List<ClassGroup> getMentorClasses(int mentorId) {
+        List<ClassGroup> listOfClasses = new ArrayList<>();
+        String query = "SELECT * FROM classes WHERE mentor_id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareClassesListQuery(listOfClasses, query, connection, mentorId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfClasses;
+    }
+
+    @Override
     public ClassGroup getClass(int classId) {
         String query = "SELECT * FROM classes WHERE id = ?";
         ClassGroup classGroup = null;
