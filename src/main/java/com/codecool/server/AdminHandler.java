@@ -17,6 +17,7 @@ import org.jtwig.JtwigTemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.net.URI;
 
@@ -114,7 +115,6 @@ public class AdminHandler implements HttpHandler {
         return response;
     }
 
-
     private String index(int userId) {
         String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
                 mentorDao.getMentor(userId).getLastName());
@@ -188,8 +188,9 @@ public class AdminHandler implements HttpHandler {
     return response;
     }
 
-    private String edit(int mentorId, String method, HttpExchange httpExchange) {
-        return "";
+    private String edit(int mentorId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        return response;
     }
 
     private String delete(int mentorId, HttpExchange httpExchange) {
