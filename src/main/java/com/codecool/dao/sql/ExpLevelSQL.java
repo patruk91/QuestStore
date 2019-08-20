@@ -59,22 +59,19 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void updateExpLevelData(Connection connection, ExpLevel expLevel) throws SQLException {
         try (PreparedStatement stmtUpdateExpLevelData = connection.prepareStatement(
-                "UPDATE experience_levels SET exp_amount_at_start = ?, exp_amount_at_end = ? WHERE name = ?")) {
-            updateExpLevelInDatabase(stmtUpdateExpLevelData, expLevel);
+                "UPDATE experience_levels SET exp_amount_at_start = ?, exp_amount_at_end = ? WHERE name = ? ")) {
+            stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmountAtStart());
+            stmtUpdateExpLevelData.setInt(2, expLevel.getExpAmountAtEnd());
+            stmtUpdateExpLevelData.setString(3, expLevel.getName());
+            stmtUpdateExpLevelData.executeUpdate();
         }
     }
 
-    private void updateExpLevelInDatabase(PreparedStatement stmtUpdateExpLevelData, ExpLevel expLevel) throws SQLException {
-        stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmountAtStart());
-        stmtUpdateExpLevelData.setInt(2, expLevel.getExpAmountAtEnd());
-        stmtUpdateExpLevelData.setString(3, expLevel.getName());
-    }
-
     @Override
-    public void removeLastExpLevel() {
+    public void removeLastExpLevel(String expLevelName) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeLevelFromDatabase(connection);
+            removeLevelFromDatabase(connection, expLevelName);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -83,11 +80,9 @@ public class ExpLevelSQL implements IExpLevelDao {
         }
     }
 
-    private void removeLevelFromDatabase(Connection connection) throws SQLException {
-        try(PreparedStatement stmt = connection.prepareStatement(
-                "DELETE FROM experience_levels  WHERE exp_id = (SELECT * FROM experience_levels\n" +
-                        "ORDER BY exp_id DESC\n" +
-                        "LIMIT 1)")) {
+    private void removeLevelFromDatabase(Connection connection, String expLevelName) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement("DELETE FROM experience_levels  WHERE name = ?")) {
+            stmt.setString(1, expLevelName);
             stmt.executeUpdate();
         }
     }
@@ -109,7 +104,7 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void addExpLevels(List<ExpLevel> expLevels, Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM experience_levels")) {
+                "SELECT * FROM experience_levels ORDER BY exp_amount_at_start")) {
             addExpLevelToList(stmt, expLevels);
         }
     }

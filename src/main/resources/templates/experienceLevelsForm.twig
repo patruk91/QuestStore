@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Experience Data</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} </p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/admin">Mentors</a></li>
+                <li><a href="/classes">Classes</a></li>
+                <li><a href="/experienceLevels">Experience level</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            <div class="item">
+                <form method="POST">
+                    <label for="experienceLevelName">Name</label>
+                    <input type="text" name="experienceLevelName" id="experienceLevelName" value="{{ expLevel.getName() }}" {{ disabled }} {{ operationDisabled }}>
+                    <label for="expLevelStart">Level experience start</label>
+                    <input type="number" min="1" name="expLevelStart" id="expLevelStart" value={{ expLevel.getExpAmountAtStart() }} {{ disabled }}>
+                    <label for="expLevelEnd">Level experience end</label>
+                    <input type="number" min="1" name="expLevelEnd" id="expLevelEnd" value={{ expLevel.getExpAmountAtEnd() }} {{ disabled }}>
+                    <button type="submit" formaction="/experienceLevels/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='/experienceLevels'">Cancel</button>
+                </form>
+            </div>
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html> 
