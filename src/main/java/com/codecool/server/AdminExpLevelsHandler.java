@@ -1,25 +1,33 @@
 package com.codecool.server;
 
 import com.codecool.dao.IExpLevelDao;
+import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.ExpLevel;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
+
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public class AdminExpLevelsHandler implements HttpHandler {
     private IExpLevelDao expLevelDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IMentorDao mentorDao;
 
-    public AdminExpLevelsHandler(IExpLevelDao expLevelDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+    public AdminExpLevelsHandler(IExpLevelDao expLevelDao, ISessionDao sessionDao, CommonHelper commonHelper, IMentorDao mentorDao) {
         this.expLevelDao = expLevelDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.mentorDao = mentorDao;
     }
 
     @Override
@@ -52,7 +60,7 @@ public class AdminExpLevelsHandler implements HttpHandler {
         String expLevelName = "";
         if(!parsedUri.isEmpty()) {
             action = parsedUri.keySet().iterator().next();
-            expLevelName = (parsedUri.get(action);
+            expLevelName = (parsedUri.get(action));
         }
         switch (action) {
             case "index":
@@ -60,21 +68,34 @@ public class AdminExpLevelsHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "add":
-                response = add(method, httpExchange);
+//                response = add(method, httpExchange);
                 break;
             case "view":
-                response = view(expLevelName, httpExchange);
+//                response = view(expLevelName, httpExchange);
                 break;
             case "edit":
-                response = edit(expLevelName, method, httpExchange);
+//                response = edit(expLevelName, method, httpExchange);
                 break;
             case "delete":
-                delete(expLevelName, httpExchange);
+//                delete(expLevelName, httpExchange);
                 break;
             default:
                 response = index(userId);
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
         }
+        return response;
+    }
+
+    private String index(int userId) {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/experienceLevels.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<ExpLevel> expLevels = expLevelDao.getAllExpLevels();
+        model.with("expLevels", expLevels);
+        model.with("fullName", fullName);
+        String response = template.render(model);
         return response;
     }
 }
