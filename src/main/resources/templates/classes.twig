@@ -25,8 +25,8 @@
         <nav>
             <ul class="menu">
                 <li><a href="/admin">Mentors</a></li>
-                <li><a href="/admin/classes">Classes</a></li>
-                <li><a href="/admin/experienceLevels">Experience level</a></li>
+                <li><a href="/classes">Classes</a></li>
+                <li><a href="/experienceLevels">Experience level</a></li>
             </ul>
         </nav>
         <section id="tools">
@@ -39,9 +39,9 @@
             {% for class in classes %}
             <div class="item wider">
                 <div class="edit-options">
-                    <a href="/admin/classes/add/{{ classes.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
-                    <a href="/admin/classes/edit/{{ classes.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                    <a href="/admin/classes/view/{{ classes.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
+                    <a href="/classes/add/{{ classes.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
+                    <a href="/classes/edit/{{ classes.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
+                    <a href="/classes/view/{{ classes.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
                 </div>
                 <aside>
                     <p class="class-name">{{ class.getClassName() }}</p>
