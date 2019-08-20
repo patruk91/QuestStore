@@ -110,13 +110,14 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
-    public List<ClassGroup> getAllMentorClassesAndWithNoMentorClasses(int mentorId) {
+    public List<ClassGroup> getAllUnassignedClasses() {
         List<ClassGroup> listOfClasses = new ArrayList<>();
-        String query = "SELECT * FROM classes WHERE mentor_id = ? OR mentor_id is null";
+        String query = "SELECT * FROM classes WHERE mentor_id is null";
 
         try {
             Connection connection = connectionPool.getConnection();
-            prepareClassesListQuery(listOfClasses, query, connection, mentorId);
+            PreparedStatement stmt = connection.prepareStatement(query);
+            executeClassesListQuery(listOfClasses, stmt);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -281,6 +282,42 @@ public class ClassSQL implements IClassDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
         return students;
+    }
+
+    @Override
+    public void updateMentorClasses(int mentorId, List<Integer> classesId) {
+        String updateMentorIdQuery = "UPDATE classes SET mentor_id = ? WHERE id = ?";
+        String removeMentoIdQuery = "UPDATE classes SET mentor_id = null WHERE mentor_id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            removeMentorId(connection, removeMentoIdQuery, mentorId);
+            updateMentorId(connection, updateMentorIdQuery, mentorId, classesId);
+
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void updateMentorId(Connection connection, String updateMentorIdQuery, int mentorId, List<Integer> classesId) throws SQLException {
+        for(int classId : classesId){
+            try (PreparedStatement stmt = connection.prepareStatement(updateMentorIdQuery)) {
+                stmt.setInt(1, mentorId);
+                stmt.setInt(2, classId);
+                stmt.executeUpdate();
+            }
+        }
+    }
+
+    private void removeMentorId(Connection connection, String removeMentoIdQuery, int mentorId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(removeMentoIdQuery)) {
+            stmt.setInt(1, mentorId);
+
+            stmt.executeUpdate();
+        }
     }
 
     private void addStudents(List<Student> students, Connection connection, Mentor mentor) throws SQLException {

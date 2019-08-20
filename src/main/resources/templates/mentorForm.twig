@@ -47,9 +47,9 @@
 
                         <div id="mentor-login" class="item">
                             <label for="mentorLogin">Login</label>
-                            <input type="text" name="mentorLogin" id="mentorLogin" value="{{ mentor.getLogin() }}" {{ disabled }}>
+                            <input type="text" name="mentorLogin" id="mentorLogin" value="{{ mentor.getLogin() }}" {{ disabled }} {{ operationDisabled }}>
                             <label for="mentorPassword">Password</label>
-                            <input type="password" name="mentorPassword" id="mentorPassword" {{ disabled }}>
+                            <input type="password" name="mentorPassword" id="mentorPassword" {{ disabled }} {{ operationDisabled }}>
                             <label for="email">Email</label>
                             <input type="email" name="email" id="email" value="{{ mentor.getEmail() }}" {{ disabled }}>
                         </div>
@@ -57,13 +57,21 @@
 
                     <div class="item" id="classes">
                         <label for="classes-id">Classes</label>
-                        {% for class in classes %}
-                            <input type="checkbox" name="class{{ class.getId() }}" value="{{ class.getId() }}" id="classes-id" {{ disabled }}> {{ class.getClassName() }}
-                        {% endfor %}
+                        {% if (mentorClasses.size() != 0) %}
+                            {% for class in mentorClasses %}
+                                <input type="checkbox" name="class{{ class.getId() }}" value="{{ class.getId() }}" id="classes-id" {{ disabled }} {{ checked }}> {{ class.getClassName() }}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if (emptyClasses.size() != 0) %}
+                            {% for class in emptyClasses %}
+                                <input type="checkbox" name="class{{ class.getId() }}" value="{{ class.getId() }}" id="classes-id" {{ disabled }}> {{ class.getClassName() }}
+                            {% endfor %}
+                        {% endif %}
                     </div>
 
                     <div class="edit-options" id="form-button-mentor">
-                        <button type="submit" formaction="/admin/add" {{ disabled }}>Submit</button>
+                        <button type="submit" formaction="/admin/{{ operation }}" {{ disabled }}>Submit</button>
                         <button type="reset" value="Reset" {{ disabled }}>Reset</button>
                         <button type="button" value="Cancel" onclick="location.href='/admin'">Cancel</button>
 

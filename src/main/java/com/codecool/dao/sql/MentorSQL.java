@@ -129,11 +129,10 @@ public class MentorSQL implements IMentorDao {
     @Override
     public void updateMentor(Mentor mentor) {
         String usersQuery = "UPDATE users SET type = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?";
-        String credentialsQUery = "Update user_credentials SET password = ? WHERE login = ?";
+
         try {
             Connection connection = connectionPool.getConnection();
             updateMentorInUsersQuery(usersQuery, connection, mentor);
-            updateMentorInCredentialsQuery(credentialsQUery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -141,15 +140,6 @@ public class MentorSQL implements IMentorDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
 
-    }
-
-    private void updateMentorInCredentialsQuery(String credentialsQUery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(credentialsQUery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
-
-            stmt.executeUpdate();
-        }
     }
 
     private void updateMentorInUsersQuery(String query, Connection connection, Mentor mentor) throws SQLException {
@@ -201,6 +191,24 @@ public class MentorSQL implements IMentorDao {
             stmt.setString(1, mentor.getLogin());
             stmt.setString(2,salt);
             stmt.setString(3, mentor.getPassword());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    @Override
+    public void updateMentorCredentials(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "UPDATE user_credentials SET salt = ?, password = ? WHERE user_id = ?";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, salt);
+            stmt.setString(2, mentor.getPassword());
+            stmt.setInt(3, mentor.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {

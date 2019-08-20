@@ -17,6 +17,7 @@ import org.jtwig.JtwigTemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.net.URI;
 
@@ -100,12 +101,11 @@ public class AdminHandler implements HttpHandler {
         String response = "";
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
         JtwigModel model = JtwigModel.newModel();
-        final int EMPTY_MENTOR = -1;
         String disabled = "disabled";
         Mentor mentor = mentorDao.getMentor(mentorId);
         List<Student> students = classDao.getAllStudentsFromClass(mentor);
-        List<ClassGroup> classes = classDao.getMentorClasses(mentorId);
-        model.with("classes", classes);
+        List<ClassGroup> mentorClasses = classDao.getMentorClasses(mentorId);
+        model.with("mentorClasses", mentorClasses);
         model.with("mentor", mentor);
         model.with("students", students);
         model.with("disabled", disabled);
@@ -113,7 +113,6 @@ public class AdminHandler implements HttpHandler {
         response = template.render(model);
         return response;
     }
-
 
     private String index(int userId) {
         String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
@@ -140,9 +139,11 @@ public class AdminHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
         JtwigModel model = JtwigModel.newModel();
         final int EMPTY_MENTOR = -1;
-        List<ClassGroup> classes = classDao.getAllMentorClassesAndWithNoMentorClasses(EMPTY_MENTOR);
-        model.with("classes", classes);
+        List<ClassGroup> emptyClasses = classDao.getAllUnassignedClasses();
+        model.with("emptyClasses", emptyClasses);
         if (method.equals("GET")) {
+            String operation = "add";
+            model.with("operation", operation);
             httpExchange.sendResponseHeaders(200, response.length());
             response = template.render(model);
         }
@@ -188,8 +189,58 @@ public class AdminHandler implements HttpHandler {
     return response;
     }
 
-    private String edit(int mentorId, String method, HttpExchange httpExchange) {
-        return "";
+    private String edit(int mentorId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            Mentor mentor = mentorDao.getMentor(mentorId);
+            List<Student> students = classDao.getAllStudentsFromClass(mentor);
+            List<ClassGroup> mentorClasses = classDao.getMentorClasses(mentorId);
+            List<ClassGroup> emptyClasses = classDao.getAllUnassignedClasses();
+            String operationDisabled = "disabled";
+            String checked = "checked";
+            String operation = "edit/" + mentorId;
+            model.with("mentorClasses", mentorClasses);
+            model.with("emptyClasses", emptyClasses);
+            model.with("mentor", mentor);
+            model.with("students", students);
+            model.with("operationDisabled", operationDisabled);
+            model.with("checked", checked);
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            List<Integer> mentorClasses = new ArrayList<>();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+            for (Map.Entry<String, String> entry : inputs.entrySet()) {
+                if (entry.getKey().matches("class.")) {
+                    mentorClasses.add(Integer.parseInt(entry.getValue()));
+                }
+            }
+
+            String firstName = inputs.get("firstName");
+            String lastName = inputs.get("lastName");
+            String type = inputs.get("type");
+            String email = inputs.get("email");
+
+            Mentor mentor = new Mentor.MentorBuilder()
+                    .setId(mentorId)
+                    .setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setType(type)
+                    .setEmail(email).build();
+            mentorDao.updateMentor(mentor);
+
+            classDao.updateMentorClasses(mentorId, mentorClasses);
+            commonHelper.redirectToUserPage(httpExchange, "/admin");
+        }
+        return response;
     }
 
     private String delete(int mentorId, HttpExchange httpExchange) {

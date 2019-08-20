@@ -13,4 +13,5 @@ public interface IMentorDao {
     public void removeMentor(Mentor mentor);
     public int getNewMentorId();
     public void insertMentorInCredentialsQuery(Mentor mentor, String salt);
+    public void updateMentorCredentials(Mentor mentor, String salt);
 }
