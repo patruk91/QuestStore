@@ -88,7 +88,9 @@ public class AdminClassesHandler implements HttpHandler {
         return response;
     }
 
-    private void delete(int classesId, HttpExchange httpExchange) {
+    private void delete(int classesId, HttpExchange httpExchange) throws IOException {
+        classDao.removeClass(classesId);
+        commonHelper.redirectToUserPage(httpExchange, "/classes");
     }
 
     private String edit(int classesId, String method, HttpExchange httpExchange) throws IOException {

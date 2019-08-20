@@ -91,12 +91,12 @@ public class ClassSQL implements IClassDao {
 
 
     @Override
-    public void removeClass(ClassGroup classGroup) {
+    public void removeClass(int classId) {
         String questsDataQuery = "DELETE FROM classes WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            deleteClassData(questsDataQuery, connection, classGroup);
+            deleteClassData(questsDataQuery, connection, classId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -105,9 +105,9 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void deleteClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+    private void deleteClassData(String query, Connection connection, int classId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, classGroup.getId());
+            stmt.setInt(1, classId);
 
             stmt.executeUpdate();
         }
