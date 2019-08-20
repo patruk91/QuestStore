@@ -59,15 +59,12 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void updateExpLevelData(Connection connection, ExpLevel expLevel) throws SQLException {
         try (PreparedStatement stmtUpdateExpLevelData = connection.prepareStatement(
-                "UPDATE experience_levels SET exp_amount_at_start = ?, exp_amount_at_end = ? WHERE name = ?")) {
-            updateExpLevelInDatabase(stmtUpdateExpLevelData, expLevel);
+                "UPDATE experience_levels SET exp_amount_at_start = ?, exp_amount_at_end = ? WHERE name = ? ")) {
+            stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmountAtStart());
+            stmtUpdateExpLevelData.setInt(2, expLevel.getExpAmountAtEnd());
+            stmtUpdateExpLevelData.setString(3, expLevel.getName());
+            stmtUpdateExpLevelData.executeUpdate();
         }
-    }
-
-    private void updateExpLevelInDatabase(PreparedStatement stmtUpdateExpLevelData, ExpLevel expLevel) throws SQLException {
-        stmtUpdateExpLevelData.setInt(1, expLevel.getExpAmountAtStart());
-        stmtUpdateExpLevelData.setInt(2, expLevel.getExpAmountAtEnd());
-        stmtUpdateExpLevelData.setString(3, expLevel.getName());
     }
 
     @Override
@@ -107,7 +104,7 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private void addExpLevels(List<ExpLevel> expLevels, Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM experience_levels")) {
+                "SELECT * FROM experience_levels ORDER BY exp_amount_at_start")) {
             addExpLevelToList(stmt, expLevels);
         }
     }

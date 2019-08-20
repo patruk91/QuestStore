@@ -32,7 +32,7 @@
             <div class="item">
                 <form method="POST">
                     <label for="experienceLevelName">Name</label>
-                    <input type="text" name="experienceLevelName" id="experienceLevelName" value="{{ expLevel.getName() }}" {{ disabled }}>
+                    <input type="text" name="experienceLevelName" id="experienceLevelName" value="{{ expLevel.getName() }}" {{ disabled }} {{ operationDisabled }}>
                     <label for="expLevelStart">Level experience start</label>
                     <input type="number" min="1" name="expLevelStart" id="expLevelStart" value={{ expLevel.getExpAmountAtStart() }} {{ disabled }}>
                     <label for="expLevelEnd">Level experience end</label>

@@ -76,7 +76,7 @@ public class AdminExpLevelsHandler implements HttpHandler {
                 response = view(expLevelName, httpExchange);
                 break;
             case "edit":
-//                response = edit(expLevelName, method, httpExchange);
+                response = edit(expLevelName, method, httpExchange);
                 break;
             case "delete":
                 delete(expLevelName, httpExchange);
@@ -143,7 +143,39 @@ public class AdminExpLevelsHandler implements HttpHandler {
             ExpLevel expLevel = new ExpLevel(expLevelName, expLevelStart, expLevelEnd);
             expLevelDao.addExpLevel(expLevel);
 
-            int mentorId = mentorDao.getNewMentorId();
+            commonHelper.redirectToUserPage(httpExchange, "/experienceLevels");
+        }
+        return response;
+    }
+
+    private String edit(String expLevelName, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/experienceLevelsForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            ExpLevel expLevel = expLevelDao.getExpLevel(expLevelName);
+            String operation = "edit/" + expLevelName;
+            String operationDisabled = "disabled";
+            model.with("expLevel", expLevel);
+            model.with("operation", operation);
+            model.with("operationDisabled", operationDisabled);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+            int newExpLevelStart = Integer.parseInt(inputs.get("expLevelStart"));
+            int neWExpLevelEnd = Integer.parseInt(inputs.get("expLevelEnd"));
+
+            ExpLevel expLevel = new ExpLevel(expLevelName, newExpLevelStart, neWExpLevelEnd);
+            expLevelDao.updateExpLevel(expLevel);
+
             commonHelper.redirectToUserPage(httpExchange, "/experienceLevels");
         }
         return response;
