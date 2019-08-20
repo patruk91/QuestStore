@@ -283,6 +283,42 @@ public class ClassSQL implements IClassDao {
         return students;
     }
 
+    @Override
+    public void updateMentorClasses(int mentorId, List<Integer> classesId) {
+        String updateMentorIdQuery = "UPDATE classes SET mentor_id = ? WHERE id = ?";
+        String removeMentoIdQuery = "UPDATE classes SET mentor_id = null WHERE mentor_id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            removeMentorId(connection, removeMentoIdQuery, mentorId);
+            updateMentorId(connection, updateMentorIdQuery, mentorId, classesId);
+
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void updateMentorId(Connection connection, String updateMentorIdQuery, int mentorId, List<Integer> classesId) throws SQLException {
+        for(int classId : classesId){
+            try (PreparedStatement stmt = connection.prepareStatement(updateMentorIdQuery)) {
+                stmt.setInt(1, mentorId);
+                stmt.setInt(2, classId);
+                stmt.executeUpdate();
+            }
+        }
+    }
+
+    private void removeMentorId(Connection connection, String removeMentoIdQuery, int mentorId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(removeMentoIdQuery)) {
+            stmt.setInt(1, mentorId);
+
+            stmt.executeUpdate();
+        }
+    }
+
     private void addStudents(List<Student> students, Connection connection, Mentor mentor) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "SELECT users.id, users.type, users.first_name, users.last_name,\n" +
