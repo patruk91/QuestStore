@@ -34,10 +34,10 @@
                     <label for="experienceLevelName">Name</label>
                     <input type="text" name="experienceLevelName" id="experienceLevelName" value="{{ expLevel.getName() }}" {{ disabled }}>
                     <label for="expLevelStart">Level experience start</label>
-                    <input type="number" min="1" name=expLevelStart" id="expLevelStart" value={{ expLevel.getExpAmountAtStart() }} {{ disabled }}>
+                    <input type="number" min="1" name="expLevelStart" id="expLevelStart" value={{ expLevel.getExpAmountAtStart() }} {{ disabled }}>
                     <label for="expLevelEnd">Level experience end</label>
                     <input type="number" min="1" name="expLevelEnd" id="expLevelEnd" value={{ expLevel.getExpAmountAtEnd() }} {{ disabled }}>
-                    <button type="submit" value="accept" formaction="/experienceLevels/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="submit" formaction="/experienceLevels/{{ operation }}" {{ disabled }}>Submit</button>
                     <button type="button" value="Cancel" onclick="location.href='/experienceLevels'">Cancel</button>
                 </form>
             </div>
