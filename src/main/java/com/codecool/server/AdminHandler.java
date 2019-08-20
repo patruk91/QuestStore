@@ -101,12 +101,14 @@ public class AdminHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
         JtwigModel model = JtwigModel.newModel();
         final int EMPTY_MENTOR = -1;
+        String disabled = "disabled";
         Mentor mentor = mentorDao.getMentor(mentorId);
         List<Student> students = classDao.getAllStudentsFromClass(mentor);
         List<ClassGroup> classes = classDao.getMentorClasses(mentorId);
         model.with("classes", classes);
         model.with("mentor", mentor);
         model.with("students", students);
+        model.with("disabled", disabled);
         httpExchange.sendResponseHeaders(200, response.length());
         response = template.render(model);
         return response;
