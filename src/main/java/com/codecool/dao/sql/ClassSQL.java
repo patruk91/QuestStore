@@ -270,6 +270,34 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
+    public List<Student> getAllStudentsFromClass(int classId) {
+        List<Student> students = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            addStudents(students, connection, classId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return students;
+    }
+
+    private void addStudents(List<Student> students, Connection connection, int classId) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement(
+                "SELECT users.id, users.type, users.first_name, users.last_name,\n" +
+                        "users.email, cred.login, cred.password, profile.coins, profile.experience,\n" +
+                        "profile.class_id FROM users\n" +
+                        "JOIN user_credentials AS cred ON users.id = cred.user_id\n" +
+                        "JOIN students_profiles AS profile on users.id = profile.student_id\n" +
+                        "WHERE profile.class_id = ?")) {
+            stmt.setInt(1, classId);
+            addStudentToList(stmt, students);
+        }
+    }
+
+    @Override
     public List<Student> getAllStudentsFromClass(Mentor mentor) {
         List<Student> students = new ArrayList<>();
         try {

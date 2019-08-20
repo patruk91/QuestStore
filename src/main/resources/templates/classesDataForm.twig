@@ -7,7 +7,7 @@
     <meta name="description" content="Quest Store">
     <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
-    <title>Quest Store | Classes</title>
+    <title>Quest Store | Classes Form</title>
     <link rel="stylesheet" href="/static/css/style.css">
 
 </head>
@@ -29,25 +29,23 @@
                 <li><a href="/experienceLevels">Experience level</a></li>
             </ul>
         </nav>
-        <section id="tools">
-            <form method="GET">
-                <button type="submit" formaction="/classes/add">+</button>
-            </form>
-        </section>
 
         <section id="content">
-            {% for class in classes %}
-            <div class="item wider">
-                <div class="edit-options">
-                    <a href="/classes/view/{{ class.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
-                    <a href="/classes/edit/{{ class.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                    <a href="/classes/delete/{{ class.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
-                </div>
-                <aside>
-                    <p class="class-name">{{ class.getClassName() }}</p>
-                </aside>
+            <div class="item">
+                <form method="POST">
+                    <label for="class-name">Name</label>
+                    <input class="full-frame-width" type="text" name="class-name" id="class-name" value=" {{ class.getClassName() }}" {{ disabled }}>
+                    <button type="submit" formaction="/classes/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='/classes'">Cancel</button>
+                </form>
+
+                <section class="results" id="results">
+                    <h3>Codecoolers in class:</h3>
+                    {% for student in students %}
+                        <p>{{ student.getFirstName() }}</p>
+                    {% endfor %}
+                </section>
             </div>
-            {% endfor %}
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>

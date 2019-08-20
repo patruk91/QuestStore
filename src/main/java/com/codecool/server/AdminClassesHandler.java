@@ -5,6 +5,7 @@ import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.model.ClassGroup;
 import com.codecool.model.Mentor;
+import com.codecool.model.Student;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -92,8 +93,19 @@ public class AdminClassesHandler implements HttpHandler {
         return "";
     }
 
-    private String view(int classesId, HttpExchange httpExchange) {
-        return "";
+    private String view(int classesId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/classesDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        String disabled = "disabled";
+        List<Student> students = classDao.getAllStudentsFromClass(classesId);
+        ClassGroup classGroup = classDao.getClass(classesId);
+        model.with("students", students);
+        model.with("class", classGroup);
+        model.with("disabled", disabled);
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
+        return response;
     }
 
     private String add(String method, HttpExchange httpExchange) {
