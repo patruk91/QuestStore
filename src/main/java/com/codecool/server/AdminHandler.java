@@ -98,7 +98,7 @@ public class AdminHandler implements HttpHandler {
 
     private String view(int mentorId, HttpExchange httpExchange) throws IOException {
         String response = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
         JtwigModel model = JtwigModel.newModel();
         final int EMPTY_MENTOR = -1;
         String disabled = "disabled";
@@ -137,7 +137,7 @@ public class AdminHandler implements HttpHandler {
 
     private String add(String method, HttpExchange httpExchange) throws IOException {
         String response = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorAdd.twig");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
         JtwigModel model = JtwigModel.newModel();
         final int EMPTY_MENTOR = -1;
         List<ClassGroup> classes = classDao.getAllMentorClassesAndWithNoMentorClasses(EMPTY_MENTOR);
