@@ -20,12 +20,12 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
-    public void addClass(ClassGroup classGroup) {
+    public void addClass(String className) {
         String query = "INSERT INTO classes (class_name) VALUES (?)";
 
         try {
             Connection connection = connectionPool.getConnection();
-            insertClassData(query, connection, classGroup);
+            insertClassData(query, connection, className);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -34,10 +34,9 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void insertClassData(String query, Connection connection, ClassGroup classGroup) throws SQLException {
+    private void insertClassData(String query, Connection connection, String className) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, classGroup.getClassName());
-
+            stmt.setString(1, className);
             stmt.executeUpdate();
         }
     }

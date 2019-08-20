@@ -33,18 +33,20 @@
         <section id="content">
             <div class="item">
                 <form method="POST">
-                    <label for="class-name">Name</label>
-                    <input class="full-frame-width" type="text" name="class-name" id="class-name" value=" {{ class.getClassName() }}" {{ disabled }}>
+                    <label for="className">Name</label>
+                    <input class="full-frame-width" type="text" name="className" id="className" value=" {{ class.getClassName() }}" {{ disabled }}>
                     <button type="submit" formaction="/classes/{{ operation }}" {{ disabled }}>Submit</button>
                     <button type="button" value="Cancel" onclick="location.href='/classes'">Cancel</button>
                 </form>
 
-                <section class="results" id="results">
-                    <h3>Codecoolers in class:</h3>
-                    {% for student in students %}
-                        <p>{{ student.getFirstName() }}</p>
-                    {% endfor %}
-                </section>
+                {% if (students.size() != 0) %}
+                    <section class="results" id="results">
+                        <h3>Codecoolers in class:</h3>
+                        {% for student in students %}
+                            <p>{{ student.getFirstName() }}</p>
+                        {% endfor %}
+                    </section>
+                {% endif %}
             </div>
         </section>
         <footer>

@@ -12,7 +12,9 @@ import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
@@ -108,8 +110,27 @@ public class AdminClassesHandler implements HttpHandler {
         return response;
     }
 
-    private String add(String method, HttpExchange httpExchange) {
-        return "";
+    private String add(String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/classesDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            String operation = "add";
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+            String className = inputs.get("className");
+            classDao.addClass(className);
+            commonHelper.redirectToUserPage(httpExchange, "/classes");
+        }
+        return response;
     }
 
     private String index(int userId) {
