@@ -41,7 +41,7 @@ public class Server {
         server.createContext("/static", new StaticHandler());
 
         server.createContext("/admin", new AdminHandler(mentorDao, sessionDao, commonHelper, classDao));
-        server.createContext("/admin/classes", new AdminClassesHandler(classDao, sessionDao, commonHelper));
+        server.createContext("/admin/classes", new AdminClassesHandler(classDao, sessionDao, commonHelper, mentorDao));
         server.createContext("/admin/explevels", new AdminExpLevelsHandler(expLevelDao, sessionDao, commonHelper));
 
         server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao));

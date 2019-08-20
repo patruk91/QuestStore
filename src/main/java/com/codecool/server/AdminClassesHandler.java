@@ -1,25 +1,33 @@
 package com.codecool.server;
 
 import com.codecool.dao.IClassDao;
+import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.ClassGroup;
+import com.codecool.model.Mentor;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public class AdminClassesHandler implements HttpHandler {
     private IClassDao classDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IMentorDao mentorDao;
 
-    public AdminClassesHandler(IClassDao classDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+    public AdminClassesHandler(IClassDao classDao, ISessionDao sessionDao, CommonHelper commonHelper, IMentorDao mentorDao) {
         this.classDao = classDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.mentorDao = mentorDao;
     }
 
     @Override
@@ -71,6 +79,7 @@ public class AdminClassesHandler implements HttpHandler {
                 break;
             default:
                 response = index(userId);
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
         }
         return response;
@@ -80,14 +89,26 @@ public class AdminClassesHandler implements HttpHandler {
     }
 
     private String edit(int classesId, String method, HttpExchange httpExchange) {
+        return "";
     }
 
     private String view(int classesId, HttpExchange httpExchange) {
+        return "";
     }
 
     private String add(String method, HttpExchange httpExchange) {
+        return "";
     }
 
     private String index(int userId) {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/classes.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<ClassGroup> classes = classDao.getAllClasses();
+        model.with("classes", classes);
+        model.with("fullName", fullName);
+        String response = template.render(model);
+        return response;
     }
 }
