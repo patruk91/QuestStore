@@ -10,7 +10,7 @@ public interface IMentorDao {
     public Mentor getMentor(int id);
     public void updateMentor(Mentor mentor);
     public void addMentor(Mentor mentor);
-    public void removeMentor(Mentor mentor);
+    public void removeMentor(int mentorId);
     public int getNewMentorId();
     public void insertMentorInCredentialsQuery(Mentor mentor, String salt);
     public void updateMentorCredentials(Mentor mentor, String salt);

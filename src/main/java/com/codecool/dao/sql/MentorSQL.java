@@ -219,12 +219,12 @@ public class MentorSQL implements IMentorDao {
     }
 
     @Override
-    public void removeMentor(Mentor mentor) {
+    public void removeMentor(int mentorId) {
         String removeMentorFromUsers = "DELETE FROM users WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            removeMentorFromUsersQuery(removeMentorFromUsers, connection, mentor);
+            removeMentorFromUsersQuery(removeMentorFromUsers, connection, mentorId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -252,9 +252,9 @@ public class MentorSQL implements IMentorDao {
         return id;
     }
 
-    private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
+    private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, int mentorId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromUsers)) {
-            stmt.setInt(1, mentor.getId());
+            stmt.setInt(1, mentorId);
 
             stmt.executeUpdate();
         }
