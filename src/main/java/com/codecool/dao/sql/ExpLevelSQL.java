@@ -71,10 +71,10 @@ public class ExpLevelSQL implements IExpLevelDao {
     }
 
     @Override
-    public void removeLastExpLevel() {
+    public void removeLastExpLevel(String expLevelName) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeLevelFromDatabase(connection);
+            removeLevelFromDatabase(connection, expLevelName);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -83,11 +83,9 @@ public class ExpLevelSQL implements IExpLevelDao {
         }
     }
 
-    private void removeLevelFromDatabase(Connection connection) throws SQLException {
-        try(PreparedStatement stmt = connection.prepareStatement(
-                "DELETE FROM experience_levels  WHERE exp_id = (SELECT * FROM experience_levels\n" +
-                        "ORDER BY exp_id DESC\n" +
-                        "LIMIT 1)")) {
+    private void removeLevelFromDatabase(Connection connection, String expLevelName) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement("DELETE FROM experience_levels  WHERE name = ?")) {
+            stmt.setString(1, expLevelName);
             stmt.executeUpdate();
         }
     }

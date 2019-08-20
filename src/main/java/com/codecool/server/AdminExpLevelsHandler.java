@@ -77,7 +77,7 @@ public class AdminExpLevelsHandler implements HttpHandler {
 //                response = edit(expLevelName, method, httpExchange);
                 break;
             case "delete":
-//                delete(expLevelName, httpExchange);
+                delete(expLevelName, httpExchange);
                 break;
             default:
                 response = index(userId);
@@ -110,5 +110,10 @@ public class AdminExpLevelsHandler implements HttpHandler {
         httpExchange.sendResponseHeaders(200, response.length());
         response = template.render(model);
         return response;
+    }
+
+    private void delete(String expLevelName, HttpExchange httpExchange) throws IOException {
+        expLevelDao.removeLastExpLevel(expLevelName);
+        commonHelper.redirectToUserPage(httpExchange, "/experienceLevels");
     }
 }
