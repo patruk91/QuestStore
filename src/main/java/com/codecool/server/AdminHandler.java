@@ -126,14 +126,6 @@ public class AdminHandler implements HttpHandler {
         return response;
     }
 
-    private String classes() {
-        return "";
-    }
-
-    private String experienceLevels() {
-        return "";
-    }
-
     private String add(String method, HttpExchange httpExchange) throws IOException {
         String response = "";
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentorForm.twig");
