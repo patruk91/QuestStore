@@ -211,6 +211,24 @@ public class MentorSQL implements IMentorDao {
     }
 
     @Override
+    public void updateMentorCredentials(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "UPDATE user_credentials SET salt = ?, password = ? WHERE user_id = ?";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, salt);
+            stmt.setString(2, mentor.getPassword());
+            stmt.setInt(3, mentor.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    @Override
     public void removeMentor(Mentor mentor) {
         String removeMentorFromUsers = "DELETE FROM users WHERE id = ?";
 
