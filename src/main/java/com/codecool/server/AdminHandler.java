@@ -243,8 +243,9 @@ public class AdminHandler implements HttpHandler {
         return response;
     }
 
-    private String delete(int mentorId, HttpExchange httpExchange) {
-        return "";
+    private void delete(int mentorId, HttpExchange httpExchange) throws IOException {
+        mentorDao.removeMentor(mentorId);
+        commonHelper.redirectToUserPage(httpExchange, "/admin");
     }
 
 }
