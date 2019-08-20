@@ -79,6 +79,9 @@ public class AdminHandler implements HttpHandler {
             case "add":
                 response = add(method, httpExchange);
                 break;
+            case "view":
+                response = view(mentorId, httpExchange);
+                break;
             case "edit":
                 response = edit(mentorId, method, httpExchange);
                 break;
@@ -90,6 +93,10 @@ public class AdminHandler implements HttpHandler {
                 break;
         }
         return response;
+    }
+
+    private String view(int mentorId, HttpExchange httpExchange) throws IOException {
+        
     }
 
 
