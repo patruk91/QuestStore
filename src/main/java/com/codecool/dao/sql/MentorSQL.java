@@ -129,11 +129,10 @@ public class MentorSQL implements IMentorDao {
     @Override
     public void updateMentor(Mentor mentor) {
         String usersQuery = "UPDATE users SET type = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?";
-        String credentialsQUery = "Update user_credentials SET password = ? WHERE login = ?";
+
         try {
             Connection connection = connectionPool.getConnection();
             updateMentorInUsersQuery(usersQuery, connection, mentor);
-            updateMentorInCredentialsQuery(credentialsQUery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -141,15 +140,6 @@ public class MentorSQL implements IMentorDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
 
-    }
-
-    private void updateMentorInCredentialsQuery(String credentialsQUery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(credentialsQUery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
-
-            stmt.executeUpdate();
-        }
     }
 
     private void updateMentorInUsersQuery(String query, Connection connection, Mentor mentor) throws SQLException {
