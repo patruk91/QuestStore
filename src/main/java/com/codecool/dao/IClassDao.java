@@ -20,4 +20,5 @@ public interface IClassDao {
     public List<Student> getAllStudentsFromClass(Mentor mentor);
     public void updateMentorClasses(int mentorId, List<Integer> classesId);
     List<Student> getAllStudentsFromClass(int classId);
+    void updateClass(String className, int classId);
 }

@@ -61,10 +61,34 @@ public class ClassSQL implements IClassDao {
             stmt.setInt(1, classGroup.getMentorId());
             stmt.setString(2, classGroup.getClassName());
             stmt.setInt(3, classGroup.getId());
-
             stmt.executeUpdate();
         }
     }
+
+    @Override
+    public void updateClass(String className, int classId) {
+        String query = "UPDATE classes SET class_name = ? WHERE id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            updateClassData(query, connection, className, classId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    private void updateClassData(String query, Connection connection, String className, int classId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, className);
+            stmt.setInt(2, classId);
+            stmt.executeUpdate();
+        }
+    }
+
+
 
     @Override
     public void removeClass(ClassGroup classGroup) {

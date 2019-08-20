@@ -91,8 +91,32 @@ public class AdminClassesHandler implements HttpHandler {
     private void delete(int classesId, HttpExchange httpExchange) {
     }
 
-    private String edit(int classesId, String method, HttpExchange httpExchange) {
-        return "";
+    private String edit(int classesId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/classesDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            String operation = "edit/" + classesId;
+            model.with("operation", operation);
+            List<Student> students = classDao.getAllStudentsFromClass(classesId);
+            ClassGroup classGroup = classDao.getClass(classesId);
+            model.with("students", students);
+            model.with("class", classGroup);
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+            String className = inputs.get("className");
+            classDao.updateClass(className, classesId);
+            commonHelper.redirectToUserPage(httpExchange, "/classes");
+        }
+        return response;
     }
 
     private String view(int classesId, HttpExchange httpExchange) throws IOException {
