@@ -114,7 +114,7 @@ public class ArtifactSQL implements IArtifactDao {
 
     private void addArtifacts(List<Artifact> artifacts, Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM artifacts")) {
+                "SELECT * FROM artifacts ORDER BY id")) {
             addArtifactsToList(stmt, artifacts);
         }
     }
