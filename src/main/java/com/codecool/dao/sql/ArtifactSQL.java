@@ -18,16 +18,16 @@ public class ArtifactSQL implements IArtifactDao {
     }
 
     @Override
-    public List<Artifact> getAllArtifactsByStudentId(int studentId) {
+    public List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state) {
         List<Artifact> listOfQuests = new ArrayList<>();
         String query = "SELECT * FROM artifacts\n" +
                 "JOIN user_artifacts\n" +
                 "ON artifacts.id = user_artifacts.artifact_id\n" +
-                "WHERE user_id = ?";
+                "WHERE user_id = ? AND state = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            prepareQuestsForArtifactListQuery(listOfQuests, query, connection, studentId);
+            prepareQuestsForArtifactListQuery(listOfQuests, query, connection, studentId, state);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -37,9 +37,10 @@ public class ArtifactSQL implements IArtifactDao {
         return listOfQuests;
     }
 
-    private void prepareQuestsForArtifactListQuery(List<Artifact> listOfQuests, String query, Connection connection, int studentId) throws SQLException {
+    private void prepareQuestsForArtifactListQuery(List<Artifact> listOfQuests, String query, Connection connection, int studentId, boolean state) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, studentId);
+            stmt.setBoolean(2, state);
             executeArtifactsListQuery(listOfQuests, stmt);
         }
     }

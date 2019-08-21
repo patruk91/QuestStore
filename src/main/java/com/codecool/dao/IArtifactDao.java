@@ -14,5 +14,5 @@ public interface IArtifactDao {
     public Artifact getArtifact(int id);
     public void buyArtifact(Student student, int artifactId);
     public void useArtifact(Student student, int artifactId);
-    List<Artifact> getAllArtifactsByStudentId(int studentId);
+    List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state);
 }
