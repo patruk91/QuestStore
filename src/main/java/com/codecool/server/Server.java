@@ -46,7 +46,7 @@ public class Server {
 
 
         server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao));
-        server.createContext("/quest", new MentorQuestHandler(questDao, sessionDao, commonHelper));
+        server.createContext("/quest", new MentorQuestHandler(questDao, sessionDao, commonHelper, mentorDao));
         server.createContext("/artifact", new MentorArtifactHandler(artifactDao, sessionDao, commonHelper));
 
         server.createContext("/student", new StudentHandler(artifactDao, sessionDao, commonHelper, studentDao));
