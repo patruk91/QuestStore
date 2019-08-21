@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Artifact | Form</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} </p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/mentor">Codecooler</a></li>
+                <li><a href="/quest">Quest</a></li>
+                <li><a href="/artifact">Artifact</a></li>
+            </ul>
+        </nav>
+        <div id="content">
+            <aside class="item column-full" id="mentor-aside">
+                <div class="mentor-pic">
+                    <img src="{{ defaultImage }}{{ artifact.getImageLink() }}" alt="{{ artifact.getName() }}">
+                </div>
+            </aside>
+
+            <div class="form-fields item">
+                <form action="#" method="POST">
+                    <label for="artifactName">Artifact name</label>
+                    <input type="text" name="artifactName" id="artifactName" value="{{ artifact.getName() }}" {{ disabled }}>
+                    <label for="category">Category</label>
+                    <input type="text" name="category" id="category" value="{{ artifact.getCategory() }}" {{ disabled }}>
+                    <label for="coins">Coins</label>
+                    <input type="number" name="coins" id="coins" value="{{ artifact.getPrice() }}" {{ disabled }}>
+                    <label for="artifactDescription">Description</label>
+                    <textarea name="artifactDescription" id="artifactDescription" {{ disabled }}>{{ artifact.getDescription() }}</textarea>
+
+                    <div class="edit-options sipmle" id="form-button-mentor">
+                        <button type="submit" formaction="/artifact/{{ operation }}" {{ disabled }}>Submit</button>
+                        <button type="reset" value="Reset" {{ disabled }}>Reset</button>
+                        <button type="button" value="Cancel" onclick="location.href='/artifact'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
