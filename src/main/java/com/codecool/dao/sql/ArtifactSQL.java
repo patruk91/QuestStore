@@ -77,10 +77,10 @@ public class ArtifactSQL implements IArtifactDao {
     }
 
     @Override
-    public void deleteArtifact(Artifact artifact) {
+    public void deleteArtifact(int artifactId) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeArtifactFromDatabase(connection, artifact);
+            removeArtifactFromDatabase(connection, artifactId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -89,10 +89,10 @@ public class ArtifactSQL implements IArtifactDao {
         }
     }
 
-    private void removeArtifactFromDatabase(Connection connection, Artifact artifact) throws SQLException {
+    private void removeArtifactFromDatabase(Connection connection, int artifactId) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM artifacts WHERE id = ?")) {
-            stmt.setInt(1, artifact.getId());
+            stmt.setInt(1, artifactId);
             stmt.executeUpdate();
         }
     }
