@@ -178,8 +178,9 @@ public class ExpLevelSQL implements IExpLevelDao {
 
     private String getName(Connection connection, int expAmount) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT name FROM experience_levels WHERE ? BETWEEN exp_amount_at_start AND exp_amount_at_end;")) {
+                "SELECT name FROM experience_levels WHERE exp_amount_at_start <= ? AND exp_amount_at_end >= ?;")) {
             stmt.setInt(1, expAmount);
+            stmt.setInt(2, expAmount);
             return getNameFromDataBase(stmt);
         }
     }
