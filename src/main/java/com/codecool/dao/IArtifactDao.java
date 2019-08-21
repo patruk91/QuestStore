@@ -9,7 +9,7 @@ import java.util.List;
 public interface IArtifactDao {
     public void addArtifact(Artifact artifact);
     public void updateArtifact(Artifact artifact);
-    public void deleteArtifact(Artifact artifact);
+    public void deleteArtifact(int artifactId);
     public List<Artifact> getAllArtifacts();
     public Artifact getArtifact(int id);
     public void buyArtifact(Student student, int artifactId);

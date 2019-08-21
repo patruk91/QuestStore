@@ -17,6 +17,24 @@ public class Quest {
         this.category = category;
     }
 
+    public Quest(String name, String description, int price, QuestCategoryEnum category) {
+        this.id = 0;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageLink = "/static/images/quest.jpg";
+        this.category = category;
+    }
+
+    public Quest(int id, String name, String description, int price, QuestCategoryEnum category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageLink = "/static/images/quest.jpg";
+        this.category = category;
+    }
+
     public int getId() {
         return id;
     }
