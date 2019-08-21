@@ -17,7 +17,7 @@ class UserBuilder {
         UserCredentials userCredentials = new UserCredentials(login, password);
         int coins = resultSet.getInt("coins");
         int experience = resultSet.getInt("experience");
-        int classId = resultSet.getInt("experience");
+        int classId = resultSet.getInt("class_id");
         StudentProfile studentProfile = new StudentProfile(coins, experience, classId);
 
         Student.StudentBuilder studentBuilder = new Student.StudentBuilder();

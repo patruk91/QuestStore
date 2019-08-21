@@ -17,6 +17,24 @@ public class Artifact {
         this.category = category;
     }
 
+    public Artifact(String name, String description, int price, ArtifactCategoryEnum category) {
+        this.id = 0;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageLink = "/static/images/artifact.jpg";
+        this.category = category;
+    }
+
+    public Artifact(int id, String name, String description, int price, ArtifactCategoryEnum category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageLink = "/static/images/artifact.jpg";
+        this.category = category;
+    }
+
     public int getId() {
         return id;
     }

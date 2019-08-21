@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Quest Store | Mentor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} </p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/mentor">Mentors</a></li>
+                <li><a href="/quest">Classes</a></li>
+                <li><a href="/artifact">Experience level</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            <div class="item wider">
+                <form method="POST">
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" id="firstName" value="{{ student.getFirstName() }}" {{ disabled }}>
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name="lastName" id="lastName" value="{{ student.getLastName() }}" {{ disabled }}>
+                    {% if ( addCredentials.equals("addCredentials") ) %}
+                        <label for="login">Login</label>
+                        <input type="text" name="login" id="login">
+                        <label for="password">Password</label>
+                        <input type="text" name="password" id="password">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email">
+                    {% endif %}
+                    <label for="className">Class</label>
+                    <select name="className" id="className">
+                        <option value="none" selected disabled hidden>Class</option>
+                        {% for class in classes %}
+                            {% if ( defaultClassName.equals(class.getClassName()) ) %}
+                                <option value="{{ class.getClassName() }}" selected="{{ class.getClassName() }}" {{ disabled }}>{{ class.getClassName() }}</option>
+                            {% else %}
+                                <option value="{{ class.getClassName() }}" {{ disabled }}>{{ class.getClassName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    {% if not( disabledAdd.equals("disabledAdd") ) %}
+                        <label for="quests">Achieved quests</label>
+                        <select name="quests" id="quests">
+                            <option value="none" selected disabled hidden>Quests</option>
+                            {% for quest in quests %}
+                                <option value="{{ quest.getName() }}" {{ disabled }}>{{  quest.getName() }}</option>
+                            {% endfor %}
+                            <option value="None" {{ disabled }}>None</option>
+
+                        </select>
+
+                        <label for="artifacts">Bought artifacts</label>
+                        <select name="artifacts" id="artifacts">
+                            <option value="none" selected disabled hidden>Artifacts</option>
+                            {% for artifact in artifacts %}
+                                <option value="{{ artifact.getName() }}" {{ disabled }}>{{  artifact.getName() }}</option>
+                            {% endfor %}
+                            <option value="None" {{ disabled }}>None</option>
+                        </select>
+                    {% endif %}
+                    <button type="submit" formaction="/mentor/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='/mentor'">Cancel</button>
+                </form>
+            </div>
+
+            {% if not( disabledAdd.equals("disabledAdd") ) %}
+                <section class="results item" id="results">
+                    <h3>Codecooler transactions:</h3>
+                    {% for artifact in artifacts %}
+                        <p {{ artifact.getName() }} {{ disabled }}>{{  artifact.getName() }}</p>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
