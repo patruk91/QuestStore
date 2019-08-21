@@ -1,17 +1,16 @@
 package com.codecool.server;
 
 import com.codecool.dao.*;
-import com.codecool.model.Artifact;
-import com.codecool.model.ClassGroup;
-import com.codecool.model.Quest;
-import com.codecool.model.Student;
+import com.codecool.model.*;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.ArrayList;
@@ -119,8 +118,50 @@ public class MentorHandler implements HttpHandler {
         return response;
     }
 
-    private String add(String method, HttpExchange httpExchange) {
-        return "";
+    private String add(String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/codecoolerDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            String operation = "add";
+            String disabledAdd = "disabledAdd";
+            String addCredentials = "addCredentials";
+            List<ClassGroup> classes = classDao.getAllClasses();
+            List<Quest> quests = questDao.getAllQuests();
+            model.with("classes", classes);
+            model.with("quests", quests);
+            model.with("operation", operation);
+            model.with("addCredentials", addCredentials);
+            model.with("disabledAdd", disabledAdd);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+
+            String firstName = inputs.get("firstName");
+            String lastName = inputs.get("lastName");
+            String className = inputs.get("className");
+            String login = inputs.get("login");
+            String password = inputs.get("password");
+            UserCredentials userCredentials = new UserCredentials(login, password);
+            Student student = new Student.StudentBuilder()
+                    .setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setUserCredentials(userCredentials).build();
+
+            int newStudentId = studentDao.getNewStudentId();
+            studentDao.addStudent(student);
+            int classId = classDao.getClassId(className);
+            classDao.addStudentToClass(newStudentId, classId);
+            commonHelper.redirectToUserPage(httpExchange, "/mentor");
+        }
+        return response;
     }
 
     private String view(int studentId, HttpExchange httpExchange) throws IOException {
