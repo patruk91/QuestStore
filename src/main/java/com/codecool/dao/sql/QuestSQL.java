@@ -128,7 +128,7 @@ public class QuestSQL implements IQuestDao {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 int price = rs.getInt("price");
-                String imageLink = rs.getString("imageLink");
+                String imageLink = rs.getString("image_link");
                 QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("category"));
 
                 Quest quest = new Quest(id, name, description, price, imageLink, category);
@@ -153,6 +153,33 @@ public class QuestSQL implements IQuestDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
         throw  new RuntimeException("No quest by that id");
+    }
+
+    @Override
+    public List<Quest> getAllQuestsByStudentId(int studentId) {
+        List<Quest> listOfQuests = new ArrayList<>();
+        String query = "SELECT * FROM quests \n" +
+                "JOIN granted_quests \n" +
+                "ON quests.id = granted_quests.quest_id\n" +
+                "WHERE student_id = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareQuestsForStudentListQuery(listOfQuests, query, connection, studentId);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfQuests;
+    }
+
+    private void prepareQuestsForStudentListQuery(List<Quest> listOfQuests, String query, Connection connection, int studentId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, studentId);
+            executeQuestsListQuery(listOfQuests, stmt);
+        }
     }
 
     private Quest prepareMentorByIdQuery(Quest quest, String query, Connection connection, int quest_id) throws SQLException {
