@@ -4,13 +4,16 @@ import com.codecool.dao.IArtifactDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.model.Artifact;
+import com.codecool.model.ArtifactCategoryEnum;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
@@ -66,7 +69,7 @@ public class MentorArtifactHandler implements HttpHandler {
                 response = index(userId, httpExchange);
                 break;
             case "add":
-//                response = add(method, httpExchange);
+                response = add(method, httpExchange);
                 break;
             case "view":
 //                response = view(artifactId, httpExchange);
@@ -75,7 +78,7 @@ public class MentorArtifactHandler implements HttpHandler {
 //                response = edit(artifactId, method, httpExchange);
                 break;
             case "delete":
-//                delete(artifactId, httpExchange);
+                delete(artifactId, httpExchange);
                 break;
             default:
                 response = index(userId, httpExchange);
@@ -95,5 +98,10 @@ public class MentorArtifactHandler implements HttpHandler {
         String response = template.render(model);
         httpExchange.sendResponseHeaders(200, response.getBytes().length);
         return response;
+    }
+
+    private void delete(int artifactId, HttpExchange httpExchange) throws IOException {
+        artifactDao.deleteArtifact(artifactId);
+        commonHelper.redirectToUserPage(httpExchange, "/artifact");
     }
 }
