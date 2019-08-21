@@ -220,6 +220,32 @@ public class ArtifactSQL implements IArtifactDao {
     }
 
     @Override
+    public Artifact getArtifact(String artifactName) {
+        Artifact artifact = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            artifact = getSingleArtifact(connection, artifactName);
+            connectionPool.releaseConnection(connection);
+            return artifact;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw new RuntimeException("No artifact by that id");
+
+    }
+
+    private Artifact getSingleArtifact(Connection connection, String artifactName) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM artifacts WHERE name = ?")) {
+            stmt.setString(1, artifactName);
+            return getSingleArtifactData(stmt);
+        }
+    }
+
+
+    @Override
     public void buyArtifact(Student student, int artifactId) {
         try {
             Connection connection = connectionPool.getConnection();
@@ -269,8 +295,9 @@ public class ArtifactSQL implements IArtifactDao {
 
     private void updateStateInDatabase(PreparedStatement stmtArtifactData, Student student, int artifactId) throws SQLException {
         stmtArtifactData.setBoolean(1, true);
-        stmtArtifactData.setInt(2, student.getId());
-        stmtArtifactData.setInt(3, artifactId);
+        stmtArtifactData.setInt(2, artifactId);
+        stmtArtifactData.setInt(3, student.getId());
+        stmtArtifactData.executeUpdate();
     }
 }
 

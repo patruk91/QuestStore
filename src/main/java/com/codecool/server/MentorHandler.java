@@ -197,10 +197,68 @@ public class MentorHandler implements HttpHandler {
         return response;
     }
 
-    private String edit(int studentId, String method, HttpExchange httpExchange) {
-        return "";
+    private String edit(int studentId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/codecoolerDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            Student student = studentDao.getStudent(studentId);
+            String defaultClassName = classDao.getClassName(student);
+            List<ClassGroup> classes = classDao.getAllClasses();
+            List<Quest> quests = questDao.getAllQuests();
+            List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(studentId, false);
+            String operation = "edit/" + studentId;
+            model.with("student", student);
+            model.with("classes", classes);
+            model.with("quests", quests);
+            model.with("artifacts", artifacts);
+            model.with("defaultClassName", defaultClassName);
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+
+            String firstName = inputs.get("firstName");
+            String lastName = inputs.get("lastName");
+            String className = inputs.get("className");
+            String questName = inputs.get("quests");
+            String artifactName = inputs.get("artifacts");
+            int classId = classDao.getClassId(className);
+
+            Student student = studentDao.getStudent(studentId);
+            student.setFirstName(firstName);
+            student.setLastName(lastName);
+            student.setClassId(classId);
+
+            if (questName != null &&!questName.equals("none")) {
+               Quest chooseQuest = questDao.getQuest(questName);
+               int price = chooseQuest.getPrice();
+               int exp = chooseQuest.getPrice();
+               student.setCoins(student.getCoins() + price);
+               student.setExperience(student.getExperience() + exp);
+            }
+
+            if (artifactName != null && !artifactName.equals("none")) {
+                Artifact artifact = artifactDao.getArtifact(artifactName);
+                artifactDao.useArtifact(student, artifact.getId());
+            }
+
+            studentDao.updateStudent(student);
+            classDao.addStudentToClass(studentId, classId);
+            commonHelper.redirectToUserPage(httpExchange, "/mentor");
+        }
+        return response;
     }
 
-    private void delete(int studentId, HttpExchange httpExchange) {
+    private void delete(int studentId, HttpExchange httpExchange) throws IOException {
+        studentDao.deleteStudent(studentId);
+        commonHelper.redirectToUserPage(httpExchange, "/mentor");
     }
 }
