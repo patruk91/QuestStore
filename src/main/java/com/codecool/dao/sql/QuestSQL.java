@@ -98,7 +98,7 @@ public class QuestSQL implements IQuestDao {
     @Override
     public List<Quest> getAllQuests() {
         List<Quest> listOfQuests = new ArrayList<>();
-        String query = "SELECT * FROM quests";
+        String query = "SELECT * FROM quests ORDER BY id";
 
         try {
             Connection connection = connectionPool.getConnection();
