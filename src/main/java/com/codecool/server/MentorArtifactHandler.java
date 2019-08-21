@@ -75,7 +75,7 @@ public class MentorArtifactHandler implements HttpHandler {
                 response = view(artifactId, httpExchange);
                 break;
             case "edit":
-//                response = edit(artifactId, method, httpExchange);
+                response = edit(artifactId, method, httpExchange);
                 break;
             case "delete":
                 delete(artifactId, httpExchange);
@@ -143,6 +143,40 @@ public class MentorArtifactHandler implements HttpHandler {
 
             Artifact artifact = new Artifact(questName, questDescription, coins, category);
             artifactDao.addArtifact(artifact);
+
+            commonHelper.redirectToUserPage(httpExchange, "/artifact");
+        }
+        return response;
+    }
+
+    private String edit(int artifactId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/artifactForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            Artifact artifact = artifactDao.getArtifact(artifactId);
+            String operation = "edit/" + artifactId;
+            String operationDisabled = "disabled";
+            model.with("artifact", artifact);
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+            String questName = inputs.get("artifactName");
+            int coins = Integer.parseInt(inputs.get("coins"));
+            ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(inputs.get("category"));
+            String questDescription = inputs.get("artifactDescription");
+
+            Artifact artifact = new Artifact(artifactId, questName, questDescription, coins, category);
+            artifactDao.updateArtifact(artifact);
 
             commonHelper.redirectToUserPage(httpExchange, "/artifact");
         }
