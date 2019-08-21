@@ -1,25 +1,32 @@
 package com.codecool.server;
 
+import com.codecool.dao.IMentorDao;
 import com.codecool.dao.IQuestDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.Quest;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public class MentorQuestHandler implements HttpHandler {
     private IQuestDao questDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IMentorDao mentorDao;
 
-    public MentorQuestHandler(IQuestDao questDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+    public MentorQuestHandler(IQuestDao questDao, ISessionDao sessionDao, CommonHelper commonHelper, IMentorDao mentorDao) {
         this.questDao = questDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.mentorDao = mentorDao;
     }
 
     @Override
@@ -76,6 +83,18 @@ public class MentorQuestHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
         }
+        return response;
+    }
+
+    private String index(int userId) {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/quests.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<Quest> quests = questDao.getAllQuests();
+        model.with("quests", quests);
+        model.with("fullName", fullName);
+        String response = template.render(model);
         return response;
     }
 }
