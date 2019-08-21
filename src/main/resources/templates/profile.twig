@@ -30,12 +30,13 @@
         </nav>
         <section id="content">
             <div class="user-stats item wider">
-               <p id="level">{{ className }}</p>
+               <p id="level">{{ expLevelName }}</p>
                <div class="progress-border">
-                    <div class="progress-bar" style="width: {{ expPercentageAnount }}%" id="collectionID_1">{{ expPercentageAnount }}%</div>
+                    <div class="progress-bar" style="width: {{ expPercentageAnount }}%"
+                         id="collectionID_1">{{ expPercentageAnount }}%</div>
                 </div>
-                <p id="exp-need">{{ expPercentageNeed }}%, steel needs {{ expPointsNeed }} exp</p>
-                <p id="total-ext">Total exp: {{ expPointAnount }}</p>
+                <p id="exp-need">Steel need {{ expPointsNeed }} exp</p>
+                <p id="total-ext">Total experience: {{ expPointAmount }}</p>
             </div>
             
             <div class="results item" id="result">
