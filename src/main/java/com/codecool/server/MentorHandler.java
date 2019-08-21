@@ -1,10 +1,9 @@
 package com.codecool.server;
 
-import com.codecool.dao.IClassDao;
-import com.codecool.dao.IMentorDao;
-import com.codecool.dao.ISessionDao;
-import com.codecool.dao.IStudentDao;
+import com.codecool.dao.*;
+import com.codecool.model.Artifact;
 import com.codecool.model.ClassGroup;
+import com.codecool.model.Quest;
 import com.codecool.model.Student;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -26,17 +25,23 @@ public class MentorHandler implements HttpHandler {
     private CommonHelper commonHelper;
     private IMentorDao mentorDao;
     private IClassDao classDao;
+    private IQuestDao questDao;
+    private IArtifactDao artifactDao;
 
     public MentorHandler(IStudentDao studentDao,
                          ISessionDao sessionDao,
                          CommonHelper commonHelper,
                          IMentorDao mentorDao,
-                         IClassDao classDao) {
+                         IClassDao classDao,
+                         IQuestDao questDao,
+                         IArtifactDao artifactDao) {
         this.studentDao = studentDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.mentorDao = mentorDao;
         this.classDao = classDao;
+        this.questDao = questDao;
+        this.artifactDao = artifactDao;
     }
 
     @Override
@@ -118,8 +123,28 @@ public class MentorHandler implements HttpHandler {
         return "";
     }
 
-    private String view(int studentId, HttpExchange httpExchange) {
-        
+    private String view(int studentId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/codecoolerDataForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        String disabled = "disabled";
+        Student student = studentDao.getStudent(studentId);
+        String defaultClassName = classDao.getClassName(student);
+        List<ClassGroup> classes = classDao.getAllClasses();
+        List<Quest> quests = questDao.getAllQuests();
+        List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(studentId);
+
+        model.with("student", student);
+        model.with("classes", classes);
+        model.with("quests", quests);
+        model.with("artifacts", artifacts);
+        model.with("defaultClassName", defaultClassName);
+        model.with("disabled", disabled);
+
+
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
+        return response;
     }
 
     private String edit(int studentId, String method, HttpExchange httpExchange) {
