@@ -111,8 +111,8 @@ public class StudentSQL implements IStudentDao{
 
     private void updateStudentProfile(PreparedStatement stmtUpdateStudentProfile, Student student) throws SQLException {
         stmtUpdateStudentProfile.setInt(1, student.getClassId());
-        stmtUpdateStudentProfile.setInt(1, student.getCoins());
-        stmtUpdateStudentProfile.setInt(1, student.getExperience());
+        stmtUpdateStudentProfile.setInt(2, student.getCoins());
+        stmtUpdateStudentProfile.setInt(3, student.getExperience());
         stmtUpdateStudentProfile.setInt(4, student.getId());
         stmtUpdateStudentProfile.executeUpdate();
     }
