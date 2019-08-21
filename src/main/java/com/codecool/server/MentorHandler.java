@@ -1,8 +1,10 @@
 package com.codecool.server;
 
+import com.codecool.dao.IClassDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.dao.IStudentDao;
+import com.codecool.model.ClassGroup;
 import com.codecool.model.Student;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -13,6 +15,8 @@ import org.jtwig.JtwigTemplate;
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,12 +25,18 @@ public class MentorHandler implements HttpHandler {
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
     private IMentorDao mentorDao;
+    private IClassDao classDao;
 
-    public MentorHandler(IStudentDao studentDao, ISessionDao sessionDao, CommonHelper commonHelper, IMentorDao mentorDao) {
+    public MentorHandler(IStudentDao studentDao,
+                         ISessionDao sessionDao,
+                         CommonHelper commonHelper,
+                         IMentorDao mentorDao,
+                         IClassDao classDao) {
         this.studentDao = studentDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.mentorDao = mentorDao;
+        this.classDao = classDao;
     }
 
     @Override
@@ -88,18 +98,17 @@ public class MentorHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/mentor.twig");
         JtwigModel model = JtwigModel.newModel();
         List<Student> students = studentDao.getAllStudents();
+        HashMap<Integer, String> classesNames = new HashMap<>();
+        for (Student student: students) {
+            int id = student.getId();
+            String className = classDao.getClassName(student);
+            classesNames.put(id, className);
+        }
         model.with("students", students);
         model.with("fullName", fullName);
+        model.with("classesNames", classesNames);
         String response = template.render(model);
         return response;
-    }
-
-    private String quests() {
-        return "";
-    }
-
-    private String artifacts() {
-        return "";
     }
 
     private String add(String method, HttpExchange httpExchange) {

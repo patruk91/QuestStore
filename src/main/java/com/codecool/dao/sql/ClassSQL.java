@@ -229,7 +229,7 @@ public class ClassSQL implements IClassDao {
 
     @Override
     public String getClassName(Student student) {
-        String query = "SELECT class_name WHERE id = ?";
+        String query = "SELECT * FROM classes WHERE id = ?";
         ClassGroup classGroup = null;
         try {
             Connection connection = connectionPool.getConnection();

@@ -44,7 +44,7 @@
                     <aside>
                         <p class="name">First name: {{ student.getFirstName() }}</p>
                         <p class="last-name">Last Name: {{ student.getLastName() }}</p>
-                        <p class="class">Class: {{ student.getClassId() }} </p>
+                        <p class="class">Class: {{ classesNames.get(student.getId()) }} </p>
                     </aside>
                     <div class="coins"><p>{{ student.getCoins() }}</p></div>
                 </div>
