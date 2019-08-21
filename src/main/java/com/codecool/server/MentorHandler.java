@@ -257,6 +257,8 @@ public class MentorHandler implements HttpHandler {
         return response;
     }
 
-    private void delete(int studentId, HttpExchange httpExchange) {
+    private void delete(int studentId, HttpExchange httpExchange) throws IOException {
+        studentDao.deleteStudent(studentId);
+        commonHelper.redirectToUserPage(httpExchange, "/mentor");
     }
 }

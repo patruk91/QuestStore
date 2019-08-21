@@ -118,10 +118,10 @@ public class StudentSQL implements IStudentDao{
     }
 
     @Override
-    public void deleteStudent(Student student) {
+    public void deleteStudent(int studentId) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeStudentFromDatabase(connection, student);
+            removeStudentFromDatabase(connection, studentId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -130,10 +130,10 @@ public class StudentSQL implements IStudentDao{
         }
     }
 
-    private void removeStudentFromDatabase(Connection connection, Student student) throws SQLException {
+    private void removeStudentFromDatabase(Connection connection, int studentId) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM users  WHERE id = ?")) {
-            stmt.setInt(1, student.getId());
+            stmt.setInt(1, studentId);
             stmt.executeUpdate();
         }
     }
