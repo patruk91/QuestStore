@@ -35,6 +35,7 @@
             </form>
         </section>
         <section id="content">
+            {% for artifact in artifacts %}
             <div class="item wider">
                 <div class="edit-options">
                     <a href="/artifact/view/{{ artifact.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
@@ -55,6 +56,7 @@
                     <p>{{ artifact.getDescription() }}</p>
                 </section>
             </div>
+            {% endfor %}
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>

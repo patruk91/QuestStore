@@ -3,13 +3,17 @@ package com.codecool.server;
 import com.codecool.dao.IArtifactDao;
 import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.model.Artifact;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public class MentorArtifactHandler implements HttpHandler {
@@ -59,7 +63,7 @@ public class MentorArtifactHandler implements HttpHandler {
         }
         switch (action) {
             case "index":
-//                response = index(userId, httpExchange);
+                response = index(userId, httpExchange);
                 break;
             case "add":
 //                response = add(method, httpExchange);
@@ -74,9 +78,22 @@ public class MentorArtifactHandler implements HttpHandler {
 //                delete(artifactId, httpExchange);
                 break;
             default:
-//                response = index(userId, httpExchange);
+                response = index(userId, httpExchange);
                 break;
         }
+        return response;
+    }
+
+    private String index(int userId, HttpExchange httpExchange) throws IOException {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/artifacts.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<Artifact> artifacts = artifactDao.getAllArtifacts();
+        model.with("artifacts", artifacts);
+        model.with("fullName", fullName);
+        String response = template.render(model);
+        httpExchange.sendResponseHeaders(200, response.getBytes().length);
         return response;
     }
 }
