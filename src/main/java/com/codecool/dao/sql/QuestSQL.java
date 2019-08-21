@@ -47,7 +47,7 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public void updateQuest(Quest quest) {
-        String query = "UPDATE quests SET name = ?, description = ?, price = ?, image_link = ?, category = ? WHERE id = ?";
+        String query = "UPDATE quests SET name = ?, description = ?, price = ?, category = ? WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
@@ -65,21 +65,20 @@ public class QuestSQL implements IQuestDao {
             stmt.setString(1, quest.getName());
             stmt.setString(2, quest.getDescription());
             stmt.setInt(3, quest.getPrice());
-            stmt.setString(4, quest.getImageLink());
-            stmt.setString(5, quest.getCategory().toString());
-            stmt.setInt(6, quest.getId());
+            stmt.setString(4, quest.getCategory().toString());
+            stmt.setInt(5, quest.getId());
 
             stmt.executeUpdate();
         }
     }
 
     @Override
-    public void deleteQuest(Quest quest) {
+    public void deleteQuest(int questId) {
         String questsDataQuery = "DELETE FROM quests WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            deleteQuestDataFromQuests(questsDataQuery, connection, quest);
+            deleteQuestDataFromQuests(questsDataQuery, connection, questId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -88,9 +87,9 @@ public class QuestSQL implements IQuestDao {
         }
     }
 
-    private void deleteQuestDataFromQuests(String query, Connection connection, Quest quest) throws SQLException {
+    private void deleteQuestDataFromQuests(String query, Connection connection, int questId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, quest.getId());
+            stmt.setInt(1, questId);
 
             stmt.executeUpdate();
         }
@@ -99,7 +98,7 @@ public class QuestSQL implements IQuestDao {
     @Override
     public List<Quest> getAllQuests() {
         List<Quest> listOfQuests = new ArrayList<>();
-        String query = "SELECT * FROM quests";
+        String query = "SELECT * FROM quests ORDER BY id";
 
         try {
             Connection connection = connectionPool.getConnection();
@@ -166,7 +165,7 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public Quest getQuest(int id) {
-        String query = "SELECT * WHERE id = ?";
+        String query = "SELECT * FROM quests WHERE id = ?";
         Quest quest = null;
         try {
             Connection connection = connectionPool.getConnection();
