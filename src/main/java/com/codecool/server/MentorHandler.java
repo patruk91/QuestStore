@@ -79,6 +79,9 @@ public class MentorHandler implements HttpHandler {
             case "add":
                 response = add(method, httpExchange);
                 break;
+            case "view":
+                response = view(studentId, httpExchange);
+                break;
             case "edit":
                 response = edit(studentId, method, httpExchange);
                 break;
@@ -115,11 +118,14 @@ public class MentorHandler implements HttpHandler {
         return "";
     }
 
+    private String view(int studentId, HttpExchange httpExchange) {
+        
+    }
+
     private String edit(int studentId, String method, HttpExchange httpExchange) {
         return "";
     }
 
-    private String delete(int studentId, HttpExchange httpExchange) {
-        return "";
+    private void delete(int studentId, HttpExchange httpExchange) {
     }
 }
