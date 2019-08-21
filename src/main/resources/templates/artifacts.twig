@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Artifact | View</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} </p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+        <header>
+            <h1 >Quest Store</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/mentor">Codecooler</a></li>
+                <li><a href="/quest">Quest</a></li>
+                <li><a href="/artifact">Artifact</a></li>
+            </ul>
+        </nav>
+        <section id="tools">
+            <form method="GET">
+                <button type="submit" formaction="/artifact/add">+</button>
+            </form>
+        </section>
+        <section id="content">
+            <div class="item wider">
+                <div class="edit-options">
+                    <a href="/artifact/view/{{ artifact.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
+                    <a href="/artifact/edit/{{ artifact.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
+                    <a href="/artifact/delete/{{ artifact.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
+                </div>
+                <section class="artifact-head">
+                    <h2>{{ artifact.getName() }}</h2>
+                    <div class="coins"><p>{{ artifact.getPrice() }}</p></div>
+                    <img src="{{ artifact.getImageLink() }}" alt="{{ artifact.getName() }}" class="center">
+                    {% if (artifact.getCategory() == "NORMAL") %}
+                        <span class="category-solo"></span>
+                    {% else %}
+                        <span class="category-group"></span>
+                    {% endif %}
+                </section>
+                <section class="quest-description">
+                    <p>{{ artifact.getDescription() }}</p>
+                </section>
+            </div>
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>
