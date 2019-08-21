@@ -76,7 +76,7 @@ public class MentorQuestHandler implements HttpHandler {
 //                response = edit(questId, method, httpExchange);
                 break;
             case "delete":
-//                delete(questId, httpExchange);
+                delete(questId, httpExchange);
                 break;
             default:
                 response = index(userId);
@@ -109,5 +109,10 @@ public class MentorQuestHandler implements HttpHandler {
         httpExchange.sendResponseHeaders(200, response.length());
         response = template.render(model);
         return response;
+    }
+
+    private void delete(int questId, HttpExchange httpExchange) throws IOException {
+        questDao.deleteQuest(questId);
+        commonHelper.redirectToUserPage(httpExchange, "/quest");
     }
 }
