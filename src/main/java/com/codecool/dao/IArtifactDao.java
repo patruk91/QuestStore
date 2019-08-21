@@ -12,6 +12,7 @@ public interface IArtifactDao {
     public void deleteArtifact(Artifact artifact);
     public List<Artifact> getAllArtifacts();
     public Artifact getArtifact(int id);
+    Artifact getArtifact(String artifactName);
     public void buyArtifact(Student student, int artifactId);
     public void useArtifact(Student student, int artifactId);
     List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state);
