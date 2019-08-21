@@ -140,7 +140,7 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public Quest getQuest(int id) {
-        String query = "SELECT * WHERE id = ?";
+        String query = "SELECT * FROM quests WHERE id = ?";
         Quest quest = null;
         try {
             Connection connection = connectionPool.getConnection();
