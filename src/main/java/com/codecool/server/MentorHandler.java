@@ -1,6 +1,7 @@
 package com.codecool.server;
 
 import com.codecool.dao.*;
+import com.codecool.hasher.PasswordHasher;
 import com.codecool.model.*;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -26,6 +27,7 @@ public class MentorHandler implements HttpHandler {
     private IClassDao classDao;
     private IQuestDao questDao;
     private IArtifactDao artifactDao;
+    private PasswordHasher passwordHasher;
 
     public MentorHandler(IStudentDao studentDao,
                          ISessionDao sessionDao,
@@ -41,6 +43,8 @@ public class MentorHandler implements HttpHandler {
         this.classDao = classDao;
         this.questDao = questDao;
         this.artifactDao = artifactDao;
+        this.passwordHasher = new PasswordHasher();
+
     }
 
     @Override
@@ -49,18 +53,16 @@ public class MentorHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET")) {
-            if (cookieStr != null) {
-                cookie = HttpCookie.parse(cookieStr).get(0);
-                if (sessionDao.isCurrentSession(cookie.getValue())) {
-                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    response = handleRequest(httpExchange, userId, method);
-                } else {
-                    commonHelper.redirectToUserPage(httpExchange, "/");
-                }
+        if (cookieStr != null) {
+            cookie = HttpCookie.parse(cookieStr).get(0);
+            if (sessionDao.isCurrentSession(cookie.getValue())) {
+                int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                response = handleRequest(httpExchange, userId, method);
             } else {
                 commonHelper.redirectToUserPage(httpExchange, "/");
             }
+        } else {
+            commonHelper.redirectToUserPage(httpExchange, "/");
         }
         commonHelper.sendResponse(httpExchange, response);
     }
@@ -146,18 +148,25 @@ public class MentorHandler implements HttpHandler {
 
             String firstName = inputs.get("firstName");
             String lastName = inputs.get("lastName");
+            String email = inputs.get("email");
             String className = inputs.get("className");
             String login = inputs.get("login");
-            String password = inputs.get("password");
-            UserCredentials userCredentials = new UserCredentials(login, password);
+            String studentPassword = inputs.get("password");
+            String salt = passwordHasher.getRandomSalt();
+            studentPassword = passwordHasher.hashPassword(studentPassword + salt);
+            int classId = classDao.getClassId(className);
+
+            StudentProfile studentProfile = new StudentProfile(0, 0, classId);
+            UserCredentials userCredentials = new UserCredentials(login, studentPassword);
             Student student = new Student.StudentBuilder()
                     .setFirstName(firstName)
                     .setLastName(lastName)
+                    .setType("student")
+                    .setEmail(email)
+                    .setStudentProfile(studentProfile)
                     .setUserCredentials(userCredentials).build();
-
+            studentDao.addStudent(student, salt);
             int newStudentId = studentDao.getNewStudentId();
-            studentDao.addStudent(student);
-            int classId = classDao.getClassId(className);
             classDao.addStudentToClass(newStudentId, classId);
             commonHelper.redirectToUserPage(httpExchange, "/mentor");
         }
@@ -173,7 +182,7 @@ public class MentorHandler implements HttpHandler {
         String defaultClassName = classDao.getClassName(student);
         List<ClassGroup> classes = classDao.getAllClasses();
         List<Quest> quests = questDao.getAllQuests();
-        List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(studentId);
+        List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(studentId, false);
 
         model.with("student", student);
         model.with("classes", classes);
