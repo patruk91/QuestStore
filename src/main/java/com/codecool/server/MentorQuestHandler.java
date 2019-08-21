@@ -70,7 +70,7 @@ public class MentorQuestHandler implements HttpHandler {
 //                response = add(method, httpExchange);
                 break;
             case "view":
-//                response = view(questId, httpExchange);
+                response = view(questId, httpExchange);
                 break;
             case "edit":
 //                response = edit(questId, method, httpExchange);
@@ -95,6 +95,19 @@ public class MentorQuestHandler implements HttpHandler {
         model.with("quests", quests);
         model.with("fullName", fullName);
         String response = template.render(model);
+        return response;
+    }
+
+    private String view(int questId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/questForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        String disabled = "disabled";
+        Quest quest = questDao.getQuest(questId);
+        model.with("quest", quest);
+        model.with("disabled", disabled);
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
         return response;
     }
 }
