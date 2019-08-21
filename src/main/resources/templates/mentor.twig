@@ -24,8 +24,8 @@
         <nav>
             <ul class="menu">
                 <li><a href="/mentor">Codecooler</a></li>
-                <li><a href="mentor/quest">Quest</a></li>
-                <li><a href="/mentor/artifact">Artifact</a></li>
+                <li><a href="/quest">Quest</a></li>
+                <li><a href="/artifact">Artifact</a></li>
             </ul>
         </nav>
         <section id="tools">
@@ -39,7 +39,7 @@
                         <div class="edit-options">
                                 <a href="/mentor/view/{{ student.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
                                 <a href="/mentor/edit/{{ student.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                                <a href="/delete/view/{{ student.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
+                                <a href="/mentor/delete/{{ student.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
                             </div>
                     <aside>
                         <p class="name">First name: {{ student.getFirstName() }}</p>
