@@ -72,7 +72,7 @@ public class MentorArtifactHandler implements HttpHandler {
                 response = add(method, httpExchange);
                 break;
             case "view":
-//                response = view(artifactId, httpExchange);
+                response = view(artifactId, httpExchange);
                 break;
             case "edit":
 //                response = edit(artifactId, method, httpExchange);
@@ -97,6 +97,19 @@ public class MentorArtifactHandler implements HttpHandler {
         model.with("fullName", fullName);
         String response = template.render(model);
         httpExchange.sendResponseHeaders(200, response.getBytes().length);
+        return response;
+    }
+
+    private String view(int artifactId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/artifactForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        String disabled = "disabled";
+        Artifact artifact = artifactDao.getArtifact(artifactId);
+        model.with("artifact", artifact);
+        model.with("disabled", disabled);
+        httpExchange.sendResponseHeaders(200, response.length());
+        response = template.render(model);
         return response;
     }
 
