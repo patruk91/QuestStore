@@ -76,7 +76,7 @@ public class MentorQuestHandler implements HttpHandler {
                 response = view(questId, httpExchange);
                 break;
             case "edit":
-//                response = edit(questId, method, httpExchange);
+                response = edit(questId, method, httpExchange);
                 break;
             case "delete":
                 delete(questId, httpExchange);
@@ -146,6 +146,41 @@ public class MentorQuestHandler implements HttpHandler {
 
             Quest quest = new Quest(defaultId, questName,questDescription, coins, defaultImage, category);
             questDao.addQuest(quest);
+
+            commonHelper.redirectToUserPage(httpExchange, "/quest");
+        }
+        return response;
+    }
+
+    private String edit(int questId, String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/questForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            Quest quest = questDao.getQuest(questId);
+            String operation = "edit/" + questId;
+            String operationDisabled = "disabled";
+            model.with("quest", quest);
+            model.with("operation", operation);
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+            String defaultImage = "/static/images/quest.jpg";
+            String questName = inputs.get("questName");
+            int coins = Integer.parseInt(inputs.get("coins"));
+            QuestCategoryEnum category = QuestCategoryEnum.valueOf(inputs.get("category"));
+            String questDescription = inputs.get("questDescription");
+
+            Quest quest = new Quest(questId, questName, questDescription, coins, defaultImage, category);
+            questDao.updateQuest(quest);
 
             commonHelper.redirectToUserPage(httpExchange, "/quest");
         }
