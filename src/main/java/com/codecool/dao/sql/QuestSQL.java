@@ -47,7 +47,7 @@ public class QuestSQL implements IQuestDao {
 
     @Override
     public void updateQuest(Quest quest) {
-        String query = "UPDATE quests SET name = ?, description = ?, price = ?, image_link = ?, category = ? WHERE id = ?";
+        String query = "UPDATE quests SET name = ?, description = ?, price = ?, category = ? WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
@@ -65,9 +65,8 @@ public class QuestSQL implements IQuestDao {
             stmt.setString(1, quest.getName());
             stmt.setString(2, quest.getDescription());
             stmt.setInt(3, quest.getPrice());
-            stmt.setString(4, quest.getImageLink());
-            stmt.setString(5, quest.getCategory().toString());
-            stmt.setInt(6, quest.getId());
+            stmt.setString(4, quest.getCategory().toString());
+            stmt.setInt(5, quest.getId());
 
             stmt.executeUpdate();
         }
