@@ -4,13 +4,16 @@ import com.codecool.dao.IMentorDao;
 import com.codecool.dao.IQuestDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.model.Quest;
+import com.codecool.model.QuestCategoryEnum;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
@@ -67,7 +70,7 @@ public class MentorQuestHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "add":
-//                response = add(method, httpExchange);
+                response = add(method, httpExchange);
                 break;
             case "view":
                 response = view(questId, httpExchange);
@@ -114,5 +117,38 @@ public class MentorQuestHandler implements HttpHandler {
     private void delete(int questId, HttpExchange httpExchange) throws IOException {
         questDao.deleteQuest(questId);
         commonHelper.redirectToUserPage(httpExchange, "/quest");
+    }
+
+    private String add(String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/questForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            String operation = "add";
+            model.with("operation", operation);
+            model.with("defaultImage", "/static/images/quest.jpg");
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+            int defaultId = 0;
+            String defaultImage = "/static/images/quest.jpg";
+            String questName = inputs.get("questName");
+            int coins = Integer.parseInt(inputs.get("coins"));
+            QuestCategoryEnum category = QuestCategoryEnum.valueOf(inputs.get("category"));
+            String questDescription = inputs.get("questDescription");
+
+            Quest quest = new Quest(defaultId, questName,questDescription, coins, defaultImage, category);
+            questDao.addQuest(quest);
+
+            commonHelper.redirectToUserPage(httpExchange, "/quest");
+        }
+        return response;
     }
 }

@@ -31,20 +31,20 @@
         <div id="content">
             <aside class="item column-full" id="mentor-aside">
                 <div class="mentor-pic">
-                    <img src="{{ quest.getImageLink() }}" alt="{{ quest.getName() }}">
+                    <img src="{{ defaultImage }}{{ quest.getImageLink() }}" alt="{{ quest.getName() }}">
                 </div>
             </aside>
 
             <div class="form-fields item">
                 <form method="POST">
-                    <label for="quest-name">Quest name</label>
-                    <input type="text" name="quest-name" id="quest-name" value="{{ quest.getName() }}" {{ disabled }}>
+                    <label for="questName">Quest name</label>
+                    <input type="text" name="questName" id="questName" value="{{ quest.getName() }}" {{ disabled }}>
                     <label for="category">Category</label>
                     <input type="text" name="category" id="category" value="{{ quest.getCategory() }}" {{ disabled }}>
                     <label for="coins">Coins</label>
                     <input type="number" name="coins" id="coins" value="{{ quest.getPrice() }}" {{ disabled }}>
-                    <label for="quest-description">Description</label>
-                    <textarea name="quest-description" id="quest-description" {{ disabled }}>{{ quest.getDescription() }}</textarea>
+                    <label for="questDescription">Description</label>
+                    <textarea name="questDescription" id="questDescription" {{ disabled }}>{{ quest.getDescription() }}</textarea>
 
                     <div class="edit-options sipmle" id="form-button-mentor">
                         <button type="submit" formaction="/quest/{{ operation }}" {{ disabled }}>Submit</button>
