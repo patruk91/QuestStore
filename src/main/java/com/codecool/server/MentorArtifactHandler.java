@@ -104,4 +104,35 @@ public class MentorArtifactHandler implements HttpHandler {
         artifactDao.deleteArtifact(artifactId);
         commonHelper.redirectToUserPage(httpExchange, "/artifact");
     }
+
+    private String add(String method, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/artifactForm.twig");
+        JtwigModel model = JtwigModel.newModel();
+        if (method.equals("GET")) {
+            String operation = "add";
+            model.with("operation", operation);
+            model.with("defaultImage", "/static/images/artifact.jpg");
+            httpExchange.sendResponseHeaders(200, response.length());
+            response = template.render(model);
+        }
+
+        if (method.equals("POST")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String formData = bufferedReader.readLine();
+            Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+            String questName = inputs.get("artifactName");
+            int coins = Integer.parseInt(inputs.get("coins"));
+            ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(inputs.get("category"));
+            String questDescription = inputs.get("artifactDescription");
+
+            Artifact artifact = new Artifact(questName, questDescription, coins, category);
+            artifactDao.addArtifact(artifact);
+
+            commonHelper.redirectToUserPage(httpExchange, "/artifact");
+        }
+        return response;
+    }
 }
