@@ -32,17 +32,17 @@
             <div class="user-stats item wider">
                <p id="level">{{ expLevelName }}</p>
                <div class="progress-border">
-                    <div class="progress-bar" style="width: {{ expPercentageAnount }}%"
-                         id="collectionID_1">{{ expPercentageAnount }}%</div>
+                    <div class="progress-bar" style="width: {{ expPercentageAmount }}%"
+                         id="collectionID_1">{{ expPercentageAmount }}%</div>
                 </div>
-                <p id="exp-need">Steel need {{ expPointsNeed }} exp</p>
-                <p id="total-ext">Total experience: {{ expPointAmount }}</p>
+                <p id="exp-need">Exp to next level: {{ expPointsNeed }}</p>
+                <p id="total-ext">Total exp: {{ expPointAmount }}</p>
             </div>
             
             <div class="results item" id="result">
                 <h3>Artifacts userd</h3>
                 {% for artifact in artifacts %}
-                <p>{{ index }}. {{ artifact.getName() }}</p>
+                <p>{{ loop.index }}. {{ artifact.getName() }}</p>
                 {% endfor %}
             </div>
         </section>
