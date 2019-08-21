@@ -29,7 +29,9 @@
             </ul>
         </nav>
         <section id="tools">
-            <button type="button" onclick="location.href='questData.html'">+</button>
+            <form method="GET">
+                <button type="submit" formaction="/quest/add">+</button>
+            </form>
         </section>
         <section id="content">
             {% for quest in quests %}
