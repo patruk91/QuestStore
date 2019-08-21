@@ -13,4 +13,5 @@ public interface IQuestDao {
     public List<Quest> getAllQuests();
     public Quest getQuest(int id);
     public void assignQuest(Student student, Mentor mentor, int questId);
+    List<Quest> getAllQuestsByStudentId(int studentId);
 }

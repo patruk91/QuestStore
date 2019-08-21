@@ -1,6 +1,7 @@
 package com.codecool.dao;
 
 import com.codecool.model.Artifact;
+import com.codecool.model.Quest;
 import com.codecool.model.Student;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface IArtifactDao {
     public Artifact getArtifact(int id);
     public void buyArtifact(Student student, int artifactId);
     public void useArtifact(Student student, int artifactId);
+    List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state);
 }

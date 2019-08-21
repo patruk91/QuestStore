@@ -229,7 +229,7 @@ public class ClassSQL implements IClassDao {
 
     @Override
     public String getClassName(Student student) {
-        String query = "SELECT class_name WHERE id = ?";
+        String query = "SELECT * FROM classes WHERE id = ?";
         ClassGroup classGroup = null;
         try {
             Connection connection = connectionPool.getConnection();
@@ -245,12 +245,12 @@ public class ClassSQL implements IClassDao {
     }
 
     @Override
-    public void addStudentToClass(Student student, ClassGroup classGroup) {
+    public void addStudentToClass(int studentId, int classId) {
         String query = "UPDATE students_profiles SET class_id = ? WHERE student_id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            updateMentorIdInClass(query, connection, classGroup, student);
+            updateStudentIdInClass(query, connection, studentId, classId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -259,11 +259,10 @@ public class ClassSQL implements IClassDao {
         }
     }
 
-    private void updateMentorIdInClass(String query, Connection connection, ClassGroup classGroup, Student student) throws SQLException {
+    private void updateStudentIdInClass(String query, Connection connection, int classId, int studentId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, classGroup.getId());
-            stmt.setInt(2, student.getId());
-
+            stmt.setInt(1, classId);
+            stmt.setInt(2, studentId);
             stmt.executeUpdate();
         }
     }
@@ -396,5 +395,39 @@ public class ClassSQL implements IClassDao {
     private Student buildSingleStudent(ResultSet resultSet) throws SQLException {
         UserBuilder userBuilder = new UserBuilder();
         return userBuilder.buildSingleStudent(resultSet);
+    }
+
+    @Override
+    public int getClassId(String className) {
+        String query = "SELECT * FROM classes WHERE class_name = ?";
+        int classId = 0;
+        try {
+            Connection connection = connectionPool.getConnection();
+            classId = prepareClassId(classId, query, connection, className);
+            connectionPool.releaseConnection(connection);
+            return classId;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw  new RuntimeException("No class by that name");
+    }
+
+    private int prepareClassId(int classId, String query, Connection connection, String className) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, className);
+            classId = executeMentorByIdQuery(classId, stmt);
+        }
+        return classId;
+    }
+
+    private int executeMentorByIdQuery(int classId, PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                classId = rs.getInt("id");
+            }
+            return classId;
+        }
     }
 }

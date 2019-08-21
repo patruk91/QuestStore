@@ -45,7 +45,7 @@ public class Server {
         server.createContext("/experienceLevels", new AdminExpLevelsHandler(expLevelDao, sessionDao, commonHelper, mentorDao));
 
 
-        server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao));
+        server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao, classDao, questDao, artifactDao));
         server.createContext("/quest", new MentorQuestHandler(questDao, sessionDao, commonHelper, mentorDao));
         server.createContext("/artifact", new MentorArtifactHandler(artifactDao, sessionDao, commonHelper, mentorDao));
 

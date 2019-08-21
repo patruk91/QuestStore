@@ -3,6 +3,7 @@ package com.codecool.dao.sql;
 import com.codecool.dao.IArtifactDao;
 import com.codecool.model.Artifact;
 import com.codecool.model.ArtifactCategoryEnum;
+import com.codecool.model.QuestCategoryEnum;
 import com.codecool.model.Student;
 
 import java.sql.*;
@@ -14,6 +15,51 @@ public class ArtifactSQL implements IArtifactDao {
 
     public ArtifactSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
+    }
+
+    @Override
+    public List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state) {
+        List<Artifact> listOfQuests = new ArrayList<>();
+        String query = "SELECT * FROM artifacts\n" +
+                "JOIN user_artifacts\n" +
+                "ON artifacts.id = user_artifacts.artifact_id\n" +
+                "WHERE user_id = ? AND state = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareQuestsForArtifactListQuery(listOfQuests, query, connection, studentId, state);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfQuests;
+    }
+
+    private void prepareQuestsForArtifactListQuery(List<Artifact> listOfQuests, String query, Connection connection, int studentId, boolean state) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, studentId);
+            stmt.setBoolean(2, state);
+            executeArtifactsListQuery(listOfQuests, stmt);
+        }
+    }
+
+    private void executeArtifactsListQuery(List<Artifact> listOfQuests, PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                int price = rs.getInt("price");
+                String imageLink = rs.getString("image_link");
+                ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(rs.getString("category"));
+
+                Artifact quest = new Artifact(id, name, description, price, imageLink, category);
+
+                listOfQuests.add(quest);
+            }
+        }
     }
 
     @Override
