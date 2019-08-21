@@ -74,12 +74,12 @@ public class QuestSQL implements IQuestDao {
     }
 
     @Override
-    public void deleteQuest(Quest quest) {
+    public void deleteQuest(int questId) {
         String questsDataQuery = "DELETE FROM quests WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            deleteQuestDataFromQuests(questsDataQuery, connection, quest);
+            deleteQuestDataFromQuests(questsDataQuery, connection, questId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -88,9 +88,9 @@ public class QuestSQL implements IQuestDao {
         }
     }
 
-    private void deleteQuestDataFromQuests(String query, Connection connection, Quest quest) throws SQLException {
+    private void deleteQuestDataFromQuests(String query, Connection connection, int questId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, quest.getId());
+            stmt.setInt(1, questId);
 
             stmt.executeUpdate();
         }
