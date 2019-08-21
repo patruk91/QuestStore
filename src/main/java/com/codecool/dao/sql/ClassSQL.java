@@ -250,7 +250,7 @@ public class ClassSQL implements IClassDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            updateStudentIdInClass(query, connection, studentId, classId);
+            updateStudentIdInClass(query, connection,  classId, studentId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
