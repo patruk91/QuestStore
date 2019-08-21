@@ -139,6 +139,32 @@ public class QuestSQL implements IQuestDao {
     }
 
     @Override
+    public Quest getQuest(String questName) {
+        String query = "SELECT * FROM quests WHERE name = ?";
+        Quest quest = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            quest = prepareMentorByIdQuery(quest, query, connection, questName);
+            connectionPool.releaseConnection(connection);
+            return quest;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw  new RuntimeException("No quest by that id");
+    }
+
+    private Quest prepareMentorByIdQuery(Quest quest, String query, Connection connection, String questName) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, questName);
+            quest = executeMentorByIdQuery(quest, stmt);
+        }
+        return quest;
+    }
+
+
+    @Override
     public Quest getQuest(int id) {
         String query = "SELECT * WHERE id = ?";
         Quest quest = null;
@@ -197,7 +223,7 @@ public class QuestSQL implements IQuestDao {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 int price = rs.getInt("price");
-                String imageLink = rs.getString("imageLink");
+                String imageLink = rs.getString("image_link");
                 QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("category"));
 
 
