@@ -66,8 +66,7 @@ public class MentorQuestHandler implements HttpHandler {
         }
         switch (action) {
             case "index":
-                response = index(userId);
-                httpExchange.sendResponseHeaders(200, response.getBytes().length);
+                response = index(userId, httpExchange);
                 break;
             case "add":
                 response = add(method, httpExchange);
@@ -82,14 +81,13 @@ public class MentorQuestHandler implements HttpHandler {
                 delete(questId, httpExchange);
                 break;
             default:
-                response = index(userId);
-                httpExchange.sendResponseHeaders(200, response.getBytes().length);
+                response = index(userId, httpExchange);
                 break;
         }
         return response;
     }
 
-    private String index(int userId) {
+    private String index(int userId, HttpExchange httpExchange) throws IOException {
         String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
                 mentorDao.getMentor(userId).getLastName());
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/quests.twig");
@@ -98,6 +96,7 @@ public class MentorQuestHandler implements HttpHandler {
         model.with("quests", quests);
         model.with("fullName", fullName);
         String response = template.render(model);
+        httpExchange.sendResponseHeaders(200, response.getBytes().length);
         return response;
     }
 
@@ -137,14 +136,12 @@ public class MentorQuestHandler implements HttpHandler {
             String formData = bufferedReader.readLine();
             Map<String, String> inputs = commonHelper.parseFormData(formData);
 
-            int defaultId = 0;
-            String defaultImage = "/static/images/quest.jpg";
             String questName = inputs.get("questName");
             int coins = Integer.parseInt(inputs.get("coins"));
             QuestCategoryEnum category = QuestCategoryEnum.valueOf(inputs.get("category"));
             String questDescription = inputs.get("questDescription");
 
-            Quest quest = new Quest(defaultId, questName,questDescription, coins, defaultImage, category);
+            Quest quest = new Quest(questName, questDescription, coins, category);
             questDao.addQuest(quest);
 
             commonHelper.redirectToUserPage(httpExchange, "/quest");
@@ -173,13 +170,12 @@ public class MentorQuestHandler implements HttpHandler {
 
             Map<String, String> inputs = commonHelper.parseFormData(formData);
 
-            String defaultImage = "/static/images/quest.jpg";
             String questName = inputs.get("questName");
             int coins = Integer.parseInt(inputs.get("coins"));
             QuestCategoryEnum category = QuestCategoryEnum.valueOf(inputs.get("category"));
             String questDescription = inputs.get("questDescription");
 
-            Quest quest = new Quest(questId, questName, questDescription, coins, defaultImage, category);
+            Quest quest = new Quest(questId, questName, questDescription, coins, category);
             questDao.updateQuest(quest);
 
             commonHelper.redirectToUserPage(httpExchange, "/quest");
