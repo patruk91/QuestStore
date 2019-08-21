@@ -6,7 +6,7 @@ import com.codecool.model.Student;
 import java.util.List;
 
 public interface IStudentDao {
-    public void addStudent(Student student);
+    public void addStudent(Student student, String salt);
     public void updateStudent(Student student);
     public void deleteStudent(Student student);
     public List<Student> getAllStudents();

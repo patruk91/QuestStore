@@ -18,10 +18,10 @@ public class StudentSQL implements IStudentDao{
     }
 
     @Override
-    public void addStudent(Student student) {
+    public void addStudent(Student student, String salt) {
         try {
             Connection connection = connectionPool.getConnection();
-            addStudentToDatabase(student, connection);
+            addStudentToDatabase(student, connection, salt);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -30,38 +30,41 @@ public class StudentSQL implements IStudentDao{
         }
     }
 
-    private void addStudentToDatabase(Student student, Connection connection) throws SQLException {
+    private void addStudentToDatabase(Student student, Connection connection, String salt) throws SQLException {
         try (PreparedStatement stmtInsertUserData = connection.prepareStatement(
-            "INSERT INTO users(type, first_name, last_name, email) VALUES(?, ?, ?, ?) returning id");
+            "INSERT INTO users(type, first_name, last_name, email) VALUES(?, ?, ?, ?)");
              PreparedStatement stmtInsertUserCredentials = connection.prepareStatement(
-                     "INSERT INTO user_credentials(user_id, login, password) VALUES(?, ?, ?)");
+                     "INSERT INTO user_credentials(user_id, login, salt, password) VALUES(?, ?, ?, ?)");
              PreparedStatement stmtInsertStudentProfiles = connection.prepareStatement(
-                     "INSERT INTO students_profiles(class_id, coins, experience) VALUES(?, ?, ?)")) {
-            int newUserId = insertUserData(stmtInsertUserData, student);
-             stmtInsertUserCredentials(stmtInsertUserCredentials, student, newUserId);
-            insertStudentProfiles(stmtInsertStudentProfiles, student);
+                     "INSERT INTO students_profiles(student_id, class_id, coins, experience) VALUES(?, ?, ?, ?)")) {
+            insertUserData(stmtInsertUserData, student);
+            int newUserId = getNewStudentId();
+            stmtInsertUserCredentials(stmtInsertUserCredentials, student, newUserId, salt);
+            insertStudentProfiles(stmtInsertStudentProfiles, student, newUserId);
         }
     }
 
-    private int insertUserData(PreparedStatement stmtInsertUserData, Student student) throws SQLException {
+    private void insertUserData(PreparedStatement stmtInsertUserData, Student student) throws SQLException {
         stmtInsertUserData.setString(1, student.getType());
         stmtInsertUserData.setString(2, student.getFirstName());
         stmtInsertUserData.setString(3, student.getLastName());
         stmtInsertUserData.setString(4, student.getEmail());
-        return stmtInsertUserData.executeUpdate();
+        stmtInsertUserData.executeUpdate();
     }
 
-    private void stmtInsertUserCredentials(PreparedStatement stmtInsertUserCredentials, Student student, int newUserId) throws SQLException {
+    private void stmtInsertUserCredentials(PreparedStatement stmtInsertUserCredentials, Student student, int newUserId, String salt) throws SQLException {
         stmtInsertUserCredentials.setInt(1, newUserId);
         stmtInsertUserCredentials.setString(2, student.getLogin());
         stmtInsertUserCredentials.setString(3, student.getPassword());
+        stmtInsertUserCredentials.setString(4, salt);
         stmtInsertUserCredentials.executeUpdate();
     }
 
-    private void insertStudentProfiles(PreparedStatement stmtInsertStudentProfiles, Student student) throws SQLException {
-        stmtInsertStudentProfiles.setInt(1, student.getClassId());
-        stmtInsertStudentProfiles.setInt(2, student.getCoins());
-        stmtInsertStudentProfiles.setInt(3, student.getExperience());
+    private void insertStudentProfiles(PreparedStatement stmtInsertStudentProfiles, Student student, int newUserId) throws SQLException {
+        stmtInsertStudentProfiles.setInt(1, newUserId);
+        stmtInsertStudentProfiles.setInt(2, student.getClassId());
+        stmtInsertStudentProfiles.setInt(3, student.getCoins());
+        stmtInsertStudentProfiles.setInt(4, student.getExperience());
         stmtInsertStudentProfiles.executeUpdate();
     }
 
