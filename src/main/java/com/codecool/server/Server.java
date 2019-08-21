@@ -51,7 +51,8 @@ public class Server {
 
         server.createContext("/student", new StudentHandler(artifactDao, sessionDao, commonHelper, studentDao));
         server.createContext("/collection", new StudentCollectionHandler(collectionGroupDao, sessionDao, commonHelper));
-        server.createContext("/profile", new StudentProfileHandler(expLevelDao, sessionDao, commonHelper));
+        server.createContext("/profile", new StudentProfileHandler(expLevelDao, sessionDao, commonHelper,
+                mentorDao, studentDao, classDao, artifactDao));
 
         server.createContext("/logout", new LogoutHandler(sessionDao, commonHelper));
         server.setExecutor(null);
