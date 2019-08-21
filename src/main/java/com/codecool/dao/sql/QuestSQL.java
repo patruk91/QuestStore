@@ -128,7 +128,7 @@ public class QuestSQL implements IQuestDao {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
                 int price = rs.getInt("price");
-                String imageLink = rs.getString("imageLink");
+                String imageLink = rs.getString("image_link");
                 QuestCategoryEnum category = QuestCategoryEnum.valueOf(rs.getString("category"));
 
                 Quest quest = new Quest(id, name, description, price, imageLink, category);
