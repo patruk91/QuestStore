@@ -11,4 +11,5 @@ public interface IStudentDao {
     public void deleteStudent(Student student);
     public List<Student> getAllStudents();
     public Student getStudent(int id);
+    int getNewStudentId();
 }
