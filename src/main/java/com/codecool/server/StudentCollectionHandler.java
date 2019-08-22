@@ -106,7 +106,10 @@ public class StudentCollectionHandler implements HttpHandler {
 
         int collectionId = Integer.parseInt(inputs.get("collectionId"));
         int donationAmount = Integer.parseInt(inputs.get("donationAmount"));
-        collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
+
+        if(studentDao.canStudentAfford(userId, donationAmount)){
+            collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
+        }
 
         commonHelper.redirectToUserPage(httpExchange, "/collection");
         return response;
