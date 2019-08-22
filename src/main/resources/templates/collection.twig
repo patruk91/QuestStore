@@ -37,7 +37,7 @@
                     <p class="coins">{{ collection.getArtifact().getPrice() }}</p>
                     <img src="{{ collection.getArtifact().getImageLink() }}" alt="{{ collection.getArtifact().getName() }}">
                     <div class="progress-border">
-                        {% set coinsPercentageAmount = collection.getCoinsCollected() * 100 / collection.getArtifact().getPrice() %}
+                        {% set coinsPercentageAmount = round(collection.getCoinsCollected() * 100 / collection.getArtifact().getPrice()) %}
                         <div class="progress-bar" style="width: {{ coinsPercentageAmount }}%" id="collectionID_1">{{ coinsPercentageAmount }}%</div>
                     </div>
                     <p>coins {{ collection.getCoinsCollected() }} collected</p>
