@@ -101,44 +101,33 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
 
         try {
             Connection connection = connectionPool.getConnection();
-            insertNewCollection(query, connection, collection);
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, collection.getCollectionId());
+            stmt.setString(2, collection.getNameOfCollection());
+            stmt.executeUpdate();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
-        }
-    }
-
-    private void insertNewCollection(String query, Connection connection, CollectionGroup collection) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, collection.getCollectionId());
-            stmt.setString(2, collection.getNameOfCollection());
-
-            stmt.executeUpdate();
         }
     }
 
     @Override
-    public void removeCollection(CollectionGroup collection) {
+    public void removeCollection(int collectionId) {
         String query = "DELETE FROM collections WHERE  id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            deleteCollectionData(query, connection, collection);
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            stmt.setInt(1, collectionId);
+            stmt.executeUpdate();
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
                     + "\nVendorError: " + e.getErrorCode());
-        }
-    }
-
-    private void deleteCollectionData(String query, Connection connection, CollectionGroup collection) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, collection.getCollectionId());
-
-            stmt.executeUpdate();
         }
     }
 }
