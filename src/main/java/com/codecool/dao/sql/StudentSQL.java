@@ -256,4 +256,10 @@ public class StudentSQL implements IStudentDao{
         }
         return coins;
     }
+
+    @Override
+    public boolean canStudentAfford(int studentId, int purchasePrice) {
+        int studentCoins = getStudentCoins(studentId);
+        return studentCoins >= purchasePrice;
+    }
 }
