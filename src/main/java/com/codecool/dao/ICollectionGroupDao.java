@@ -12,4 +12,5 @@ public interface ICollectionGroupDao {
     void removeCollection(int collectionId);
     CollectionGroup getCollection(int collectionId);
     Set<Integer> getDonators(int collectionId);
+    int getNewCollectionId();
 }
