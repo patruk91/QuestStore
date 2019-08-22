@@ -61,10 +61,8 @@ public class StudentCollectionHandler implements HttpHandler {
         URI uri = httpExchange.getRequestURI();
         Map<String, String> parsedUri = commonHelper.parseURI(uri.getPath());
         String action = "index";
-        int collectionId = 0;
         if(!parsedUri.isEmpty()) {
             action = parsedUri.keySet().iterator().next();
-            collectionId = Integer.parseInt(parsedUri.get(action));
         }
         switch (action) {
             case "index":
