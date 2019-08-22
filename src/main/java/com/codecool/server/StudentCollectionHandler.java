@@ -12,9 +12,12 @@ import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +73,7 @@ public class StudentCollectionHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "donate":
-//                response = donate(collectionId, method, httpExchange);
+                response = donate(userId, httpExchange);
                 break;
             default:
                 response = index(userId);
@@ -91,6 +94,21 @@ public class StudentCollectionHandler implements HttpHandler {
         model.with("fullName", fullName);
         model.with("collections", collections);
         String response = template.render(model);
+        return response;
+    }
+
+    private String donate(int userId, HttpExchange httpExchange) throws IOException {
+        String response = "";
+        InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String formData = bufferedReader.readLine();
+        Map<String, String> inputs = commonHelper.parseFormData(formData);
+
+        int collectionId = Integer.parseInt(inputs.get("collectionId"));
+        int donationAmount = Integer.parseInt(inputs.get("donationAmount"));
+        collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
+
+        commonHelper.redirectToUserPage(httpExchange, "/collection");
         return response;
     }
 }
