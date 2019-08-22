@@ -83,6 +83,9 @@ public class StudentHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/student.twig");
         JtwigModel model = JtwigModel.newModel();
         List<Artifact> artifacts = artifactDao.getAllArtifacts();
+        int coins = studentDao.getStudentCoins(userId);
+
+        model.with("coins", coins);
         model.with("artifacts", artifacts);
         model.with("fullName", fullName);
         String response = template.render(model);

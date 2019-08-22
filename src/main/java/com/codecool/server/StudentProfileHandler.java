@@ -44,18 +44,16 @@ public class StudentProfileHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET") || method.equals("POST")) {
-            if (cookieStr != null) {
-                cookie = HttpCookie.parse(cookieStr).get(0);
-                if (sessionDao.isCurrentSession(cookie.getValue())) {
-                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    response = handleRequest(httpExchange, userId, method);
-                } else {
-                    commonHelper.redirectToUserPage(httpExchange, "/");
-                }
+        if (cookieStr != null) {
+            cookie = HttpCookie.parse(cookieStr).get(0);
+            if (sessionDao.isCurrentSession(cookie.getValue())) {
+                int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                response = handleRequest(httpExchange, userId, method);
             } else {
                 commonHelper.redirectToUserPage(httpExchange, "/");
             }
+        } else {
+            commonHelper.redirectToUserPage(httpExchange, "/");
         }
         commonHelper.sendResponse(httpExchange, response);
     }
@@ -73,9 +71,11 @@ public class StudentProfileHandler implements HttpHandler {
         int expPointsNeed = expLevel.getExpAmountAtEnd() - expAmountHave;
         int expPercentageAmount = expAmountHave * 100 / expLevel.getExpAmountAtEnd();
         List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(userId, true);
+        int coins = studentDao.getStudentCoins(userId);
 
         model.with("fullName", fullName);
         model.with("artifacts", artifacts);
+        model.with("coins", coins);
         model.with("expPercentageAmount", expPercentageAmount);
         model.with("expPointAmount", student.getExperience());
         model.with("expPointsNeed", expPointsNeed);
