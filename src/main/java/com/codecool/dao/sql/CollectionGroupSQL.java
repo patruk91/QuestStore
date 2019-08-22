@@ -130,4 +130,42 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
     }
+
+    @Override
+    public CollectionGroup getCollection(int collectionId) {
+        String query = "SELECT c.id, c.description, (SELECT SUM(donate_amount) FROM collection_donations " +
+                "WHERE collection_id = c.id) AS coins_collected, a.id AS artifact_id, a.name, " +
+                "a.description AS artifact_description, a.price, a.image_link, a.category " +
+                "FROM collections AS c JOIN artifacts AS a ON c.artifact_id = a.id WHERE c.id = ? ORDER BY c.id";
+
+        CollectionGroup collectionGroup = null;
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            stmt.setInt(1, collectionId);
+            try (ResultSet rs = stmt.executeQuery()){
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String description = rs.getString("description");
+                    int coinsCollected = rs.getInt("coins_collected");
+                    int artifactId = rs.getInt("artifact_id");
+                    String artifactName = rs.getString("name");
+                    String artifactDescription = rs.getString("artifact_description");
+                    int artifactPrice = rs.getInt("price");
+                    String imageLink = rs.getString("image_link");
+                    ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(rs.getString("category"));
+
+                    Artifact artifact = new Artifact(artifactId, artifactName, artifactDescription, artifactPrice, imageLink, category);
+                    collectionGroup = new CollectionGroup(id, coinsCollected, artifact, description);
+                }
+            }
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return collectionGroup;
+    }
 }
