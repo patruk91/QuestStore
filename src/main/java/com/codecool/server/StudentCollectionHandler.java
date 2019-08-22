@@ -108,6 +108,9 @@ public class StudentCollectionHandler implements HttpHandler {
         int donationAmount = Integer.parseInt(inputs.get("donationAmount"));
 
         if(studentDao.canStudentAfford(userId, donationAmount)){
+            int studentCoins = studentDao.getStudentCoins(userId);
+            int newCoinsAmount = studentCoins - donationAmount;
+            studentDao.setCoinsAmountForStudent(userId, newCoinsAmount);
             collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
         }
 
