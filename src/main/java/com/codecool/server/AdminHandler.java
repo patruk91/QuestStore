@@ -47,18 +47,16 @@ public class AdminHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET") || method.equals("POST")) {
-            if (cookieStr != null) {
-                cookie = HttpCookie.parse(cookieStr).get(0);
-                if (sessionDao.isCurrentSession(cookie.getValue())) {
-                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    response = handleRequest(httpExchange, userId, method);
-                } else {
-                    commonHelper.redirectToUserPage(httpExchange, "/");
-                }
+        if (cookieStr != null) {
+            cookie = HttpCookie.parse(cookieStr).get(0);
+            if (sessionDao.isCurrentSession(cookie.getValue())) {
+                int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                response = handleRequest(httpExchange, userId, method);
             } else {
                 commonHelper.redirectToUserPage(httpExchange, "/");
             }
+        } else {
+            commonHelper.redirectToUserPage(httpExchange, "/");
         }
         commonHelper.sendResponse(httpExchange, response);
     }

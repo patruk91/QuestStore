@@ -12,4 +12,5 @@ public interface IStudentDao {
     public List<Student> getAllStudents();
     public Student getStudent(int id);
     int getNewStudentId();
+    int getStudentCoins(int studentId);
 }

@@ -236,4 +236,24 @@ public class StudentSQL implements IStudentDao{
         }
         return id;
     }
+
+    @Override
+    public int getStudentCoins(int studentId) {
+        int coins = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT coins FROM students_profiles WHERE student_id = ?")) {
+            stmt.setInt(1, studentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    coins = rs.getInt("coins");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return coins;
+    }
 }
