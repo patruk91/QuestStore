@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CollectionGroupSQL implements ICollectionGroupDao {
     private ConnectionPool connectionPool;
@@ -167,5 +169,27 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
         return collectionGroup;
+    }
+
+    @Override
+    public Set<Integer> getDonators(int collectionId) {
+        Set<Integer> donators = new HashSet<>();
+        String query = "SELECT user_id FROM collection_donations WHERE collection_id = ?";
+        try {
+            Connection connection = connectionPool.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, collectionId);
+            try(ResultSet rs = stmt.executeQuery()){
+                while(rs.next()) {
+                    int donatorId = rs.getInt("user_id");
+                    donators.add(donatorId);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return donators;
     }
 }
