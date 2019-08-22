@@ -1,9 +1,6 @@
 package com.codecool.server;
 
-import com.codecool.dao.ICollectionGroupDao;
-import com.codecool.dao.IMentorDao;
-import com.codecool.dao.ISessionDao;
-import com.codecool.dao.IStudentDao;
+import com.codecool.dao.*;
 import com.codecool.dao.sql.CollectionGroupSQL;
 import com.codecool.model.CollectionGroup;
 import com.codecool.server.helper.CommonHelper;
@@ -20,6 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class StudentCollectionHandler implements HttpHandler {
     private ICollectionGroupDao collectionGroupDao;
@@ -27,14 +25,17 @@ public class StudentCollectionHandler implements HttpHandler {
     private CommonHelper commonHelper;
     private IMentorDao mentorDao;
     private IStudentDao studentDao;
+    private IArtifactDao artifactDao;
 
     public StudentCollectionHandler(ICollectionGroupDao collectionGroupDao, ISessionDao sessionDao,
-                                    CommonHelper commonHelper, IMentorDao mentorDao, IStudentDao studentDao) {
+                                    CommonHelper commonHelper, IMentorDao mentorDao, IStudentDao studentDao,
+                                    IArtifactDao artifactDao) {
         this.collectionGroupDao = collectionGroupDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.mentorDao = mentorDao;
         this.studentDao = studentDao;
+        this.artifactDao = artifactDao;
     }
 
     @Override
@@ -108,13 +109,34 @@ public class StudentCollectionHandler implements HttpHandler {
         int donationAmount = Integer.parseInt(inputs.get("donationAmount"));
 
         if(studentDao.canStudentAfford(userId, donationAmount)){
-            int studentCoins = studentDao.getStudentCoins(userId);
-            int newCoinsAmount = studentCoins - donationAmount;
-            studentDao.setCoinsAmountForStudent(userId, newCoinsAmount);
+            substractUserCoins(userId, donationAmount);
             collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
+        }
+
+        if(isCollectionFinished(collectionId)){
+            finishCollection(collectionId);
         }
 
         commonHelper.redirectToUserPage(httpExchange, "/collection");
         return response;
+    }
+
+    private void finishCollection(int collectionId) {
+        CollectionGroup collectionGroup = collectionGroupDao.getCollection(collectionId);
+        Set<Integer> donators = collectionGroupDao.getDonators(collectionId);
+        for(int donatorId : donators) {
+            artifactDao.buyArtifact(donatorId, collectionGroup.getArtifact().getId());
+        }
+    }
+
+    private void substractUserCoins(int userId, int donationAmount) {
+        int studentCoins = studentDao.getStudentCoins(userId);
+        int newCoinsAmount = studentCoins - donationAmount;
+        studentDao.setCoinsAmountForStudent(userId, newCoinsAmount);
+    }
+
+    private boolean isCollectionFinished(int collectionId) {
+        CollectionGroup collectionGroup = collectionGroupDao.getCollection(collectionId);
+        return collectionGroup.getCoinsCollected() >= collectionGroup.getArtifact().getPrice();
     }
 }
