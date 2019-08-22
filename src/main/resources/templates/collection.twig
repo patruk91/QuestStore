@@ -43,7 +43,7 @@
                     <p>coins {{ collection.getCoinsCollected() }} collected</p>
                     <form method="POST">
                         <input type="hidden" id="collectionId" name="collectionId" value="{{ collection.getCollectionId() }}">
-                        <input type="number" name="donationAmount" id="donationAmount" placeholder="Coins amount">
+                        <input type="number" name="donationAmount" id="donationAmount" min="1" placeholder="Coins amount">
                         <button type="submit" formaction="/collection/donate">Donate</button>
                     </form>
                 </section>
