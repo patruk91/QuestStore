@@ -29,26 +29,29 @@
             </ul>
         </nav>
         <section id="content">
+            {% for collection in collections %}
             <div class="item wider">
                 <section class="artifact-head">
-                    <h2>{{ artifact.getName() }}</h2>
-                    <h3>{{ collectionDescription }}</h3>
-                    <p class="coins">{{ artifact.getPrice() }}</p>
-                    <img src="{{ artifact.getImageLink() }}" alt="{{ artifact.getName() }}">
+                    <h2>{{ collection.getArtifact().getName() }}</h2>
+                    <h3>{{ collection.getNameOfCollection() }}</h3>
+                    <p class="coins">{{ collection.getArtifact().getPrice() }}</p>
+                    <img src="{{ collection.getArtifact().getImageLink() }}" alt="{{ collection.getArtifact().getName() }}">
                     <div class="progress-border">
+                        {% set coinsPercentageAmount = collection.getCoinsCollected() * 100 / collection.getArtifact().getPrice() %}
                         <div class="progress-bar" style="width: {{ coinsPercentageAmount }}%" id="collectionID_1">{{ coinsPercentageAmount }}%</div>
                     </div>
-                    <p>{{ coinsCollected }} of {{ coinsTotal }} coins</p>
+                    <p>coins {{ collection.getCoinsCollected() }} collected</p>
                     <form method="POST">
-                        <input type="hidden" id="collectionId" name="collectionId" value="{{ collectionId }}">
+                        <input type="hidden" id="collectionId" name="collectionId" value="{{ collection.getCollectionId() }}">
                         <input type="number" name="donationAmount" id="donationAmount" placeholder="Coins amount">
-                        <button type="submit" formaction="/collection/{{ operation }}">Donate</button>
+                        <button type="submit" formaction="/collection/donate">Donate</button>
                     </form>
                 </section>
                 <section class="artifact-description">
-                    <p>{{ artifact.getDescription() }}</p>
+                    <p>{{ collection.getArtifact().getDescription() }}</p>
                 </section>
             </div>
+            {% endfor %}
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>
