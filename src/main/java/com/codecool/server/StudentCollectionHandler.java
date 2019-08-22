@@ -1,25 +1,37 @@
 package com.codecool.server;
 
 import com.codecool.dao.ICollectionGroupDao;
+import com.codecool.dao.IMentorDao;
 import com.codecool.dao.ISessionDao;
+import com.codecool.dao.IStudentDao;
+import com.codecool.dao.sql.CollectionGroupSQL;
+import com.codecool.model.CollectionGroup;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public class StudentCollectionHandler implements HttpHandler {
     private ICollectionGroupDao collectionGroupDao;
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
+    private IMentorDao mentorDao;
+    private IStudentDao studentDao;
 
-    public StudentCollectionHandler(ICollectionGroupDao collectionGroupDao, ISessionDao sessionDao, CommonHelper commonHelper) {
+    public StudentCollectionHandler(ICollectionGroupDao collectionGroupDao, ISessionDao sessionDao,
+                                    CommonHelper commonHelper, IMentorDao mentorDao, IStudentDao studentDao) {
         this.collectionGroupDao = collectionGroupDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
+        this.mentorDao = mentorDao;
+        this.studentDao = studentDao;
     }
 
     @Override
@@ -58,12 +70,27 @@ public class StudentCollectionHandler implements HttpHandler {
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
             case "donate":
-                response = donate(collectionId, method, httpExchange);
+//                response = donate(collectionId, method, httpExchange);
                 break;
             default:
                 response = index(userId);
                 break;
         }
+        return response;
+    }
+
+    private String index(int userId) {
+        String fullName = String.format("%s %s", mentorDao.getMentor(userId).getFirstName(),
+                mentorDao.getMentor(userId).getLastName());
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/collection.twig");
+        JtwigModel model = JtwigModel.newModel();
+        List<CollectionGroup> collections = collectionGroupDao.getAllCollection();
+        int coins = studentDao.getStudentCoins(userId);
+
+        model.with("coins", coins);
+        model.with("fullName", fullName);
+        model.with("collections", collections);
+        String response = template.render(model);
         return response;
     }
 }
