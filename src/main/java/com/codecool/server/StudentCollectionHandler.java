@@ -1,7 +1,6 @@
 package com.codecool.server;
 
 import com.codecool.dao.*;
-import com.codecool.dao.sql.CollectionGroupSQL;
 import com.codecool.model.CollectionGroup;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -109,7 +107,7 @@ public class StudentCollectionHandler implements HttpHandler {
         int donationAmount = Integer.parseInt(inputs.get("donationAmount"));
 
         if(studentDao.canStudentAfford(userId, donationAmount)){
-            substractUserCoins(userId, donationAmount);
+            subtractUserCoins(userId, donationAmount);
             collectionGroupDao.donateToCollection(donationAmount, collectionId, userId);
         }
 
@@ -127,9 +125,10 @@ public class StudentCollectionHandler implements HttpHandler {
         for(int donatorId : donators) {
             artifactDao.buyArtifact(donatorId, collectionGroup.getArtifact().getId());
         }
+        collectionGroupDao.removeCollection(collectionId);
     }
 
-    private void substractUserCoins(int userId, int donationAmount) {
+    private void subtractUserCoins(int userId, int donationAmount) {
         int studentCoins = studentDao.getStudentCoins(userId);
         int newCoinsAmount = studentCoins - donationAmount;
         studentDao.setCoinsAmountForStudent(userId, newCoinsAmount);
