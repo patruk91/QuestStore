@@ -270,6 +270,7 @@ public class StudentSQL implements IStudentDao{
                      "UPDATE students_profiles SET coins = ? WHERE student_id = ?")) {
             stmt.setInt(1, coins);
             stmt.setInt(2, studentId);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
                     + "\nSQLState: " + e.getSQLState()
