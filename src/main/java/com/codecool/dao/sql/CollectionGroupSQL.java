@@ -98,13 +98,32 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
     }
 
     @Override
+    public int getNewCollectionId() {
+        int id = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT id FROM collections ORDER BY id DESC limit 1")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return id;
+    }
+
+    @Override
     public void createCollection(CollectionGroup collection) {
         String query = "INSERT INTO collections (artifact_id, description) VALUES (?, ?)";
 
         try {
             Connection connection = connectionPool.getConnection();
             PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setInt(1, collection.getCollectionId());
+            stmt.setInt(1, collection.getArtifact().getId());
             stmt.setString(2, collection.getNameOfCollection());
             stmt.executeUpdate();
             connectionPool.releaseConnection(connection);

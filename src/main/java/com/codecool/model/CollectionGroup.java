@@ -6,11 +6,20 @@ public class CollectionGroup {
     private Artifact artifact;
     private String nameOfCollection;
 
-    public CollectionGroup(int collectionId, int coinsCollected, Artifact artifact, String nameOfCollection) {
-        this.collectionId = collectionId;
+    public CollectionGroup(Artifact artifact, String nameOfCollection) {
+        this.artifact = artifact;
+        this.nameOfCollection = nameOfCollection;
+    }
+
+    public CollectionGroup(int coinsCollected, Artifact artifact, String nameOfCollection) {
         this.coinsCollected = coinsCollected;
         this.artifact = artifact;
         this.nameOfCollection = nameOfCollection;
+    }
+
+    public CollectionGroup(int collectionId, int coinsCollected, Artifact artifact, String nameOfCollection) {
+        this(coinsCollected, artifact, nameOfCollection);
+        this.collectionId = collectionId;
     }
 
     public int getCollectionId() {

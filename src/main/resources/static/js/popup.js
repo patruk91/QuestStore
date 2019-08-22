@@ -1,15 +1,15 @@
-function displayPopUp() {
-    let modal = document.getElementById("modal");
+function displayPopUp(artifactId) {
+    let modal = document.getElementById("modal" + artifactId);
     modal.style.display = "block";
 }
 
-function closePopUp() {
-    let modal = document.getElementById("modal");
+function closePopUp(artifactId) {
+    let modal = document.getElementById("modal"+ artifactId);
     modal.style.display = "none";
 }
 
-function closePopUpAnywhere() {
-    let modal = document.getElementById("modal");
+function closePopUpAnywhere(artifactId) {
+    let modal = document.getElementById("modal"+ artifactId);
     window.onclick = function (ev) {
         if (ev.target === modal) {
             modal.style.display = "none"
