@@ -70,7 +70,7 @@ public class StudentProfileHandler implements HttpHandler {
         int expAmountHave = student.getExperience() - expLevel.getExpAmountAtStart();
         int expPointsNeed = expLevel.getExpAmountAtEnd() - expAmountHave;
         int expPercentageAmount = expAmountHave * 100 / expLevel.getExpAmountAtEnd();
-        List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(userId, true);
+        List<Artifact> artifacts = artifactDao.getAllArtifactsByStudentId(userId, false);
         int coins = studentDao.getStudentCoins(userId);
 
         model.with("fullName", fullName);
