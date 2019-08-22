@@ -14,4 +14,5 @@ public interface IStudentDao {
     int getNewStudentId();
     int getStudentCoins(int studentId);
     boolean canStudentAfford(int userId, int donationAmount);
+    void setCoinsAmountForStudent(int studentId, int coins);
 }
