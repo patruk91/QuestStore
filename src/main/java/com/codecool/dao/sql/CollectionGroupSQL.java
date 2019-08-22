@@ -26,7 +26,7 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
         String query = "SELECT c.id, c.description, (SELECT SUM(donate_amount) FROM collection_donations " +
                 "WHERE collection_id = c.id) AS coins_collected, a.id AS artifact_id, a.name, " +
                 "a.description AS artifact_description, a.price, a.image_link, a.category " +
-                "FROM collections AS c JOIN artifacts AS a ON c.artifact_id = a.id ORDER BY a.price";
+                "FROM collections AS c JOIN artifacts AS a ON c.artifact_id = a.id ORDER BY c.id";
 
         try {
             Connection connection = connectionPool.getConnection();
@@ -70,12 +70,12 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
     }
 
     @Override
-    public void donateToCollection(int amount, CollectionGroup collectionGroup, Student student) {
-        String query = "INSERT INTO collectionDonations (user_id, collection_id, donate_amount) VALUES (?, ?, ?)";
+    public void donateToCollection(int amount, int collectionGroupId, int studentId) {
+        String query = "INSERT INTO collection_donations (user_id, collection_id, donate_amount) VALUES (?, ?, ?)";
 
         try {
             Connection connection = connectionPool.getConnection();
-            insertNewDonation(query, connection, collectionGroup, student, amount);
+            insertNewDonation(query, connection, collectionGroupId, studentId, amount);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -84,11 +84,11 @@ public class CollectionGroupSQL implements ICollectionGroupDao {
         }
     }
 
-    private void insertNewDonation(String query, Connection connection, CollectionGroup collectionGroup,
-                                   Student student, int amount) throws SQLException {
+    private void insertNewDonation(String query, Connection connection, int collectionGroupId,
+                                   int studentId, int amount) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, student.getId());
-            stmt.setInt(2, collectionGroup.getCollectionId());
+            stmt.setInt(1, studentId);
+            stmt.setInt(2, collectionGroupId);
             stmt.setInt(3, amount);
 
             stmt.executeUpdate();

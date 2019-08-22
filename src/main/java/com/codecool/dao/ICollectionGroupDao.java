@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ICollectionGroupDao {
     List<CollectionGroup> getAllCollection();
-    void donateToCollection(int amount, CollectionGroup collectionGroup, Student student);
+    void donateToCollection(int amount, int collectionGroupId, int studentId);
     void createCollection(CollectionGroup collection);
     void removeCollection(CollectionGroup collection);
 }
