@@ -3,6 +3,7 @@ package com.codecool.dao.sql;
 import com.codecool.dao.IArtifactDao;
 import com.codecool.model.Artifact;
 import com.codecool.model.ArtifactCategoryEnum;
+import com.codecool.model.QuestCategoryEnum;
 import com.codecool.model.Student;
 
 import java.sql.*;
@@ -14,6 +15,51 @@ public class ArtifactSQL implements IArtifactDao {
 
     public ArtifactSQL(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
+    }
+
+    @Override
+    public List<Artifact> getAllArtifactsByStudentId(int studentId, boolean state) {
+        List<Artifact> listOfQuests = new ArrayList<>();
+        String query = "SELECT * FROM artifacts\n" +
+                "JOIN user_artifacts\n" +
+                "ON artifacts.id = user_artifacts.artifact_id\n" +
+                "WHERE user_id = ? AND state = ?";
+
+        try {
+            Connection connection = connectionPool.getConnection();
+            prepareQuestsForArtifactListQuery(listOfQuests, query, connection, studentId, state);
+            connectionPool.releaseConnection(connection);
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return listOfQuests;
+    }
+
+    private void prepareQuestsForArtifactListQuery(List<Artifact> listOfQuests, String query, Connection connection, int studentId, boolean state) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, studentId);
+            stmt.setBoolean(2, state);
+            executeArtifactsListQuery(listOfQuests, stmt);
+        }
+    }
+
+    private void executeArtifactsListQuery(List<Artifact> listOfQuests, PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                int price = rs.getInt("price");
+                String imageLink = rs.getString("image_link");
+                ArtifactCategoryEnum category = ArtifactCategoryEnum.valueOf(rs.getString("category"));
+
+                Artifact quest = new Artifact(id, name, description, price, imageLink, category);
+
+                listOfQuests.add(quest);
+            }
+        }
     }
 
     @Override
@@ -77,10 +123,10 @@ public class ArtifactSQL implements IArtifactDao {
     }
 
     @Override
-    public void deleteArtifact(Artifact artifact) {
+    public void deleteArtifact(int artifactId) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeArtifactFromDatabase(connection, artifact);
+            removeArtifactFromDatabase(connection, artifactId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -89,10 +135,10 @@ public class ArtifactSQL implements IArtifactDao {
         }
     }
 
-    private void removeArtifactFromDatabase(Connection connection, Artifact artifact) throws SQLException {
+    private void removeArtifactFromDatabase(Connection connection, int artifactId) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM artifacts WHERE id = ?")) {
-            stmt.setInt(1, artifact.getId());
+            stmt.setInt(1, artifactId);
             stmt.executeUpdate();
         }
     }
@@ -114,7 +160,7 @@ public class ArtifactSQL implements IArtifactDao {
 
     private void addArtifacts(List<Artifact> artifacts, Connection connection) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM artifacts")) {
+                "SELECT * FROM artifacts ORDER BY id")) {
             addArtifactsToList(stmt, artifacts);
         }
     }
@@ -174,10 +220,36 @@ public class ArtifactSQL implements IArtifactDao {
     }
 
     @Override
-    public void buyArtifact(Student student, int artifactId) {
+    public Artifact getArtifact(String artifactName) {
+        Artifact artifact = null;
         try {
             Connection connection = connectionPool.getConnection();
-            addArtifactToUserArtifacts(student, connection, artifactId);
+            artifact = getSingleArtifact(connection, artifactName);
+            connectionPool.releaseConnection(connection);
+            return artifact;
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        throw new RuntimeException("No artifact by that id");
+
+    }
+
+    private Artifact getSingleArtifact(Connection connection, String artifactName) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM artifacts WHERE name = ?")) {
+            stmt.setString(1, artifactName);
+            return getSingleArtifactData(stmt);
+        }
+    }
+
+
+    @Override
+    public void buyArtifact(int studentId, int artifactId) {
+        try {
+            Connection connection = connectionPool.getConnection();
+            addArtifactToUserArtifacts(studentId, connection, artifactId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -186,15 +258,15 @@ public class ArtifactSQL implements IArtifactDao {
         }
     }
 
-    private void addArtifactToUserArtifacts(Student student, Connection connection, int artifactId) throws SQLException {
+    private void addArtifactToUserArtifacts(int studentId, Connection connection, int artifactId) throws SQLException {
         try (PreparedStatement stmtInsertUserArtifactData = connection.prepareStatement(
                 "INSERT INTO user_artifacts(user_id, artifact_id, date, state) VALUES(?, ?, ?, ?)")) {
-            insertUserArtifactData(stmtInsertUserArtifactData, student, artifactId);
+            insertUserArtifactData(stmtInsertUserArtifactData, studentId, artifactId);
         }
     }
 
-    private void insertUserArtifactData(PreparedStatement stmtInsertUserArtifactData, Student student, int artifactId) throws SQLException {
-        stmtInsertUserArtifactData.setInt(1, student.getId());
+    private void insertUserArtifactData(PreparedStatement stmtInsertUserArtifactData, int studentId, int artifactId) throws SQLException {
+        stmtInsertUserArtifactData.setInt(1, studentId);
         stmtInsertUserArtifactData.setInt(2, artifactId);
         stmtInsertUserArtifactData.setDate(3, new Date(System.currentTimeMillis()));
         stmtInsertUserArtifactData.setBoolean(4, false);
@@ -223,8 +295,9 @@ public class ArtifactSQL implements IArtifactDao {
 
     private void updateStateInDatabase(PreparedStatement stmtArtifactData, Student student, int artifactId) throws SQLException {
         stmtArtifactData.setBoolean(1, true);
-        stmtArtifactData.setInt(2, student.getId());
-        stmtArtifactData.setInt(3, artifactId);
+        stmtArtifactData.setInt(2, artifactId);
+        stmtArtifactData.setInt(3, student.getId());
+        stmtArtifactData.executeUpdate();
     }
 }
 

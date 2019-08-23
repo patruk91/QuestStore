@@ -7,7 +7,7 @@
     <meta name="description" content="Quest Store">
     <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
-    <title>Quest Store | Admin</title>
+    <title>Quest Store | Classes</title>
     <link rel="stylesheet" href="/static/css/style.css">
 
 </head>
@@ -31,23 +31,22 @@
         </nav>
         <section id="tools">
             <form method="GET">
-                <button type="submit" formaction="/admin/add">+</button>
+                <button type="submit" formaction="/classes/add">+</button>
             </form>
         </section>
+
         <section id="content">
-            {% for mentor in mentors %}
-                <div class="item">
-                    <img class="avatar-image" src="/static/images/mentor.png" alt="Mentor XXX">
-                    <div class="edit-options">
-                        <a href="/admin/view/{{ mentor.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
-                        <a href="/admin/edit/{{ mentor.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                        <a href="/admin/delete/{{ mentor.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
-                    </div>
-                    <aside>
-                        <p class="name">First name: {{ mentor.getFirstName() }}</p>
-                        <p class="last-name">Last name: {{ mentor.getLastName() }}</p>
-                    </aside>
+            {% for class in classes %}
+            <div class="item wider">
+                <div class="edit-options">
+                    <a href="/classes/view/{{ class.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
+                    <a href="/classes/edit/{{ class.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
+                    <a href="/classes/delete/{{ class.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
                 </div>
+                <aside>
+                    <p class="class-name">{{ class.getClassName() }}</p>
+                </aside>
+            </div>
             {% endfor %}
         </section>
         <footer>

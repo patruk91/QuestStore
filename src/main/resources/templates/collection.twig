@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Quest Store">
+    <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
+    <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
+    <title>Collection | View</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="logout">
+            <p>Logged as: {{ fullName }} <span class="coins">{{ coins }}</span></p>
+            <form method="GET">
+                <button type="submit" formaction="/logout">Logout</button>
+            </form>
+        </div>
+            <header>
+                <h1 >Quest Store</h1>
+            </header>
+        <nav>
+            <ul class="menu">
+                <li><a href="/user">Store</a></li>
+                <li><a href="/collection">Collection</a></li>
+                <li><a href="/profile">Profile</a></li>
+            </ul>
+        </nav>
+        <section id="content">
+            {% for collection in collections %}
+            <div class="item wider">
+                <section class="artifact-head">
+                    <h2>{{ collection.getArtifact().getName() }}</h2>
+                    <h3>{{ collection.getNameOfCollection() }}</h3>
+                    <p class="coins">{{ collection.getArtifact().getPrice() }}</p>
+                    <img src="{{ collection.getArtifact().getImageLink() }}" alt="{{ collection.getArtifact().getName() }}">
+                    <div class="progress-border">
+                        {% set coinsPercentageAmount = round(collection.getCoinsCollected() * 100 / collection.getArtifact().getPrice()) %}
+                        <div class="progress-bar" style="width: {{ coinsPercentageAmount }}%" id="collectionID_1">{{ coinsPercentageAmount }}%</div>
+                    </div>
+                    <p>coins {{ collection.getCoinsCollected() }} collected</p>
+                    <form method="POST">
+                        <input type="hidden" id="collectionId" name="collectionId" value="{{ collection.getCollectionId() }}">
+                        <input type="number" name="donationAmount" id="donationAmount" min="1" placeholder="Coins amount">
+                        <button type="submit" formaction="/collection/donate">Donate</button>
+                    </form>
+                </section>
+                <section class="artifact-description">
+                    <p>{{ collection.getArtifact().getDescription() }}</p>
+                </section>
+            </div>
+            {% endfor %}
+        </section>
+        <footer>
+            <p>Chlur&Chlurs Company &copy; 2019</p>
+        </footer>
+    </div>
+</body>
+</html>

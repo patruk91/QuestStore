@@ -1,9 +1,12 @@
 package com.codecool.server;
 
 import com.codecool.dao.IArtifactDao;
+import com.codecool.dao.ICollectionGroupDao;
 import com.codecool.dao.ISessionDao;
 import com.codecool.dao.IStudentDao;
 import com.codecool.model.Artifact;
+import com.codecool.model.CollectionGroup;
+import com.codecool.model.Quest;
 import com.codecool.model.Student;
 import com.codecool.server.helper.CommonHelper;
 import com.sun.net.httpserver.HttpExchange;
@@ -11,7 +14,9 @@ import com.sun.net.httpserver.HttpHandler;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
@@ -22,12 +27,14 @@ public class StudentHandler implements HttpHandler {
     private ISessionDao sessionDao;
     private CommonHelper commonHelper;
     private IStudentDao studentDao;
+    private ICollectionGroupDao collectionGroupDao;
 
-    public StudentHandler(IArtifactDao artifactDao, ISessionDao sessionDao, CommonHelper commonHelper, IStudentDao studentDao) {
+    public StudentHandler(IArtifactDao artifactDao, ISessionDao sessionDao, CommonHelper commonHelper, IStudentDao studentDao, ICollectionGroupDao collectionGroupDao) {
         this.artifactDao = artifactDao;
         this.sessionDao = sessionDao;
         this.commonHelper = commonHelper;
         this.studentDao = studentDao;
+        this.collectionGroupDao = collectionGroupDao;
     }
 
     @Override
@@ -36,18 +43,16 @@ public class StudentHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
         String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
         HttpCookie cookie;
-        if (method.equals("GET")) {
-            if (cookieStr != null) {
-                cookie = HttpCookie.parse(cookieStr).get(0);
-                if (sessionDao.isCurrentSession(cookie.getValue())) {
-                    int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
-                    response = handleRequest(httpExchange, userId, method);
-                } else {
-                    commonHelper.redirectToUserPage(httpExchange, "/");
-                }
+        if (cookieStr != null) {
+            cookie = HttpCookie.parse(cookieStr).get(0);
+            if (sessionDao.isCurrentSession(cookie.getValue())) {
+                int userId = sessionDao.getUserIdBySessionId(cookie.getValue());
+                response = handleRequest(httpExchange, userId, method);
             } else {
                 commonHelper.redirectToUserPage(httpExchange, "/");
             }
+        } else {
+            commonHelper.redirectToUserPage(httpExchange, "/");
         }
         commonHelper.sendResponse(httpExchange, response);
     }
@@ -57,18 +62,22 @@ public class StudentHandler implements HttpHandler {
         URI uri = httpExchange.getRequestURI();
         Map<String, String> parsedUri = commonHelper.parseURI(uri.getPath());
         String action = "index";
-        int studentId = 0;
+        int artifactId = 0;
         if(!parsedUri.isEmpty()) {
             action = parsedUri.keySet().iterator().next();
-            studentId = Integer.parseInt(parsedUri.get(action));
+            artifactId = Integer.parseInt(parsedUri.get(action));
         }
         switch (action) {
             case "index":
                 response = index(userId);
                 httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 break;
-            case "add":
-                response = buy(method, httpExchange);
+            case "buy":
+                buy(artifactId, userId, method, httpExchange);
+                break;
+
+            case "group":
+                response ="";
                 break;
             default:
                 response = index(userId);
@@ -83,22 +92,43 @@ public class StudentHandler implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/student.twig");
         JtwigModel model = JtwigModel.newModel();
         List<Artifact> artifacts = artifactDao.getAllArtifacts();
+        int coins = studentDao.getStudentCoins(userId);
+
+        model.with("coins", coins);
         model.with("artifacts", artifacts);
         model.with("fullName", fullName);
         String response = template.render(model);
         return response;
     }
 
-    private String collection() {
-        return "";
-    }
+    private void buy(int artifactId, int userId, String method, HttpExchange httpExchange) throws IOException {
 
-    private String profile() {
-        return "";
-    }
+        if (method.equals("POST")) {
+            Artifact artifact = artifactDao.getArtifact(artifactId);
+            if (artifact.getCategory().toString().equals("NORMAL")
+                && studentDao.canStudentAfford(userId, artifact.getPrice())) {
 
-    private String buy(String method, HttpExchange httpExchange) {
-        return "";
-    }
+                int studentCoins = studentDao.getStudentCoins(userId);
+                int artifactPrice = artifact.getPrice();
+                studentDao.setCoinsAmountForStudent(userId, studentCoins - artifactPrice);
+                artifactDao.buyArtifact(userId, artifactId);
+            } else if (artifact.getCategory().toString().equals("GROUP")) {
 
+                InputStreamReader inputStreamReader = new InputStreamReader(httpExchange.getRequestBody(), "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String formData = bufferedReader.readLine();
+                Map<String, String> inputs = commonHelper.parseFormData(formData);
+                int donate = Integer.parseInt(inputs.get("donate"));
+                String nameOfCollection = inputs.get("nameOfCollection");
+                CollectionGroup collectionGroup = new CollectionGroup(artifact, nameOfCollection);
+                if (studentDao.canStudentAfford(userId, donate)) {
+                    collectionGroupDao.createCollection(collectionGroup);
+                    collectionGroupDao.donateToCollection(donate, collectionGroupDao.getNewCollectionId(), userId);
+                    studentDao.setCoinsAmountForStudent(userId, studentDao.getStudentCoins(userId) - donate);
+                }
+            }
+        }
+        commonHelper.redirectToUserPage(httpExchange, "/student");
+
+    }
 }

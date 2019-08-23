@@ -7,7 +7,7 @@
     <meta name="description" content="Quest Store">
     <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
-    <title>Quest Store | Admin</title>
+    <title>Quest Store | Classes Form</title>
     <link rel="stylesheet" href="/static/css/style.css">
 
 </head>
@@ -29,26 +29,25 @@
                 <li><a href="/experienceLevels">Experience level</a></li>
             </ul>
         </nav>
-        <section id="tools">
-            <form method="GET">
-                <button type="submit" formaction="/admin/add">+</button>
-            </form>
-        </section>
+
         <section id="content">
-            {% for mentor in mentors %}
-                <div class="item">
-                    <img class="avatar-image" src="/static/images/mentor.png" alt="Mentor XXX">
-                    <div class="edit-options">
-                        <a href="/admin/view/{{ mentor.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
-                        <a href="/admin/edit/{{ mentor.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                        <a href="/admin/delete/{{ mentor.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
-                    </div>
-                    <aside>
-                        <p class="name">First name: {{ mentor.getFirstName() }}</p>
-                        <p class="last-name">Last name: {{ mentor.getLastName() }}</p>
-                    </aside>
-                </div>
-            {% endfor %}
+            <div class="item">
+                <form method="POST">
+                    <label for="className">Name</label>
+                    <input class="full-frame-width" type="text" name="className" id="className" value=" {{ class.getClassName() }}" {{ disabled }}>
+                    <button type="submit" formaction="/classes/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='/classes'">Cancel</button>
+                </form>
+
+                {% if (students.size() != 0) %}
+                    <section class="results" id="results">
+                        <h3>Codecoolers in class:</h3>
+                        {% for student in students %}
+                            <p>{{ student.getFirstName() }}</p>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            </div>
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>

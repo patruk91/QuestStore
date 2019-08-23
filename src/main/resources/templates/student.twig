@@ -9,11 +9,12 @@
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
     <title>Quest Store | Codecooler</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script type="text/javascript" src="../static/js/popup.js"></script>
 </head>
 <body>
     <div class="container">
             <div id="logout">
-                <p>Logged as: {{ fullName }} </p>
+                <p>Logged as: {{ fullName }} <span class="coins">{{ coins }}</span> </p>
                 <form method="GET">
                     <button type="submit" formaction="/logout">Logout</button>
                 </form>
@@ -24,8 +25,8 @@
         <nav>
             <ul class="menu">
                 <li><a href="/student">Store</a></li>
-                <li><a href="student/collection">Collection</a></li>
-                <li><a href="/student/profile">Profile</a></li>
+                <li><a href="/collection">Collection</a></li>
+                <li><a href="/profile">Profile</a></li>
             </ul>
         </nav>
         <section id="content">
@@ -35,7 +36,29 @@
                         <h2>{{ artifact.getName() }}</h2>
                         <p class="coins">{{ artifact.getPrice() }}</p>
                         <img src="{{ artifact.getImageLink() }}"  alt="{{ artifact.getName() }}">
-                        <button id="button-popup" class="category"><a href="#">{{ artifact.getCategory() }}</a></button>
+                        <form method="POST">
+                            {% if (artifact.getCategory().toString.equals("NORMAL")) %}
+                                <button type="submit" id="button-popup" class="category" formaction="/student/buy/{{ artifact.getId() }}">Buy</button>
+                            {% endif %}
+                        </form>
+
+                        {% if (artifact.getCategory().toString.equals("GROUP")) %}
+                            <button id="button-popup" onclick="displayPopUp({{ artifact.getId() }})" formaction="/student/buy/{{ artifact.getId() }}">Buy</button>
+                            <div id="modal{{ artifact.getId() }}" class="popup" onclick="closePopUpAnywhere({{ artifact.getId() }})">
+                                <div class="popup-content">
+                                    <span class="close" onclick="closePopUp({{ artifact.getId() }})">&times;</span>
+                                    <form method="POST">
+                                        <label for="donate">Donate</label>
+                                        <input class="full-frame-width" type="number" name="donate" min="1" max="{{ student.getCoins() }}" id="donate">
+                                        <label for="nameOfCollection">Name of Collection</label>
+                                        <input class="full-frame-width" type="text" name="nameOfCollection" id="nameOfCollection">
+                                        <button type="submit" id="button-popup" class="category" formaction="/student/buy/{{ artifact.getId() }}">Start collection</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+
+
                     </section>
                     <section class="quest-description">
                         <p>{{ artifact.getDescription() }}</p>

@@ -40,17 +40,20 @@ public class Server {
         server.createContext("/", new LoginHandler(sessionDao, loginDao, commonHelper));
         server.createContext("/static", new StaticHandler());
 
-        server.createContext("/admin", new AdminHandler(mentorDao, sessionDao, commonHelper));
-        server.createContext("/admin/classes", new AdminClassesHandler(classDao, sessionDao, commonHelper));
-        server.createContext("/admin/explevels", new AdminExpLevelsHandler(expLevelDao, sessionDao, commonHelper));
+        server.createContext("/admin", new AdminHandler(mentorDao, sessionDao, commonHelper, classDao));
+        server.createContext("/classes", new AdminClassesHandler(classDao, sessionDao, commonHelper, mentorDao));
+        server.createContext("/experienceLevels", new AdminExpLevelsHandler(expLevelDao, sessionDao, commonHelper, mentorDao));
 
-        server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao));
-        server.createContext("/mentor/quest", new MentorQuestHandler(questDao, sessionDao, commonHelper));
-        server.createContext("/mentor/artifact", new MentorArtifactHandler(artifactDao, sessionDao, commonHelper));
 
-        server.createContext("/student", new StudentHandler(artifactDao, sessionDao, commonHelper, studentDao));
-        server.createContext("/student/collection", new StudentCollectionHandler(collectionGroupDao, sessionDao, commonHelper));
-        server.createContext("/student/profile", new StudentProfileHandler(expLevelDao, sessionDao, commonHelper));
+        server.createContext("/mentor", new MentorHandler(studentDao, sessionDao, commonHelper, mentorDao, classDao, questDao, artifactDao));
+        server.createContext("/quest", new MentorQuestHandler(questDao, sessionDao, commonHelper, mentorDao));
+        server.createContext("/artifact", new MentorArtifactHandler(artifactDao, sessionDao, commonHelper, mentorDao));
+
+        server.createContext("/student", new StudentHandler(artifactDao, sessionDao, commonHelper, studentDao, collectionGroupDao));
+        server.createContext("/collection", new StudentCollectionHandler(collectionGroupDao, sessionDao,
+                commonHelper, mentorDao, studentDao, artifactDao));
+        server.createContext("/profile", new StudentProfileHandler(expLevelDao, sessionDao, commonHelper,
+                mentorDao, studentDao, classDao, artifactDao));
 
         server.createContext("/logout", new LogoutHandler(sessionDao, commonHelper));
         server.setExecutor(null);

@@ -129,11 +129,10 @@ public class MentorSQL implements IMentorDao {
     @Override
     public void updateMentor(Mentor mentor) {
         String usersQuery = "UPDATE users SET type = ?, first_name = ?, last_name = ?, email = ? WHERE id = ?";
-        String credentialsQUery = "Update user_credentials SET password = ? WHERE login = ?";
+
         try {
             Connection connection = connectionPool.getConnection();
             updateMentorInUsersQuery(usersQuery, connection, mentor);
-            updateMentorInCredentialsQuery(credentialsQUery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -141,15 +140,6 @@ public class MentorSQL implements IMentorDao {
                     + "\nVendorError: " + e.getErrorCode());
         }
 
-    }
-
-    private void updateMentorInCredentialsQuery(String credentialsQUery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(credentialsQUery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
-
-            stmt.executeUpdate();
-        }
     }
 
     private void updateMentorInUsersQuery(String query, Connection connection, Mentor mentor) throws SQLException {
@@ -168,12 +158,12 @@ public class MentorSQL implements IMentorDao {
     public void addMentor(Mentor mentor) {
         String usersQuery = "INSERT INTO users (type, first_name, last_name, email)" +
                 "VALUES (?, ?, ?, ?)";
-        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, password) VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?)";
+
 
         try {
             Connection connection = connectionPool.getConnection();
             insertMentorInUsersQuery(usersQuery, connection, mentor);
-            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
+//            insertMentorInCredentialsQuery(usersCredentialsQuery, connection, mentor);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -192,22 +182,49 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void insertMentorInCredentialsQuery(String usersCredentialsQuery, Connection connection, Mentor mentor) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
-            stmt.setString(1, mentor.getPassword());
-            stmt.setString(2, mentor.getLogin());
+    public void insertMentorInCredentialsQuery(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "INSERT INTO user_credentials (user_id, login, salt, password) " +
+                "VALUES ((SELECT id FROM users ORDER BY id DESC LIMIT 1), ?, ?, ?)";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, mentor.getLogin());
+            stmt.setString(2,salt);
+            stmt.setString(3, mentor.getPassword());
 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
         }
     }
 
     @Override
-    public void removeMentor(Mentor mentor) {
+    public void updateMentorCredentials(Mentor mentor, String salt) {
+        String usersCredentialsQuery = "UPDATE user_credentials SET salt = ?, password = ? WHERE user_id = ?";
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(usersCredentialsQuery)) {
+            stmt.setString(1, salt);
+            stmt.setString(2, mentor.getPassword());
+            stmt.setInt(3, mentor.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+    }
+
+    @Override
+    public void removeMentor(int mentorId) {
         String removeMentorFromUsers = "DELETE FROM users WHERE id = ?";
 
         try {
             Connection connection = connectionPool.getConnection();
-            removeMentorFromUsersQuery(removeMentorFromUsers, connection, mentor);
+            removeMentorFromUsersQuery(removeMentorFromUsers, connection, mentorId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -216,9 +233,28 @@ public class MentorSQL implements IMentorDao {
         }
     }
 
-    private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, Mentor mentor) throws SQLException {
+    @Override
+    public int getNewMentorId() {
+        int id = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                "SELECT id FROM users ORDER BY id DESC limit 1")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return id;
+    }
+
+    private void removeMentorFromUsersQuery(String removeMentorFromUsers, Connection connection, int mentorId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(removeMentorFromUsers)) {
-            stmt.setInt(1, mentor.getId());
+            stmt.setInt(1, mentorId);
 
             stmt.executeUpdate();
         }

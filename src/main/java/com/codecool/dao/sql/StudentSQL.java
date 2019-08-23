@@ -18,10 +18,10 @@ public class StudentSQL implements IStudentDao{
     }
 
     @Override
-    public void addStudent(Student student) {
+    public void addStudent(Student student, String salt) {
         try {
             Connection connection = connectionPool.getConnection();
-            addStudentToDatabase(student, connection);
+            addStudentToDatabase(student, connection, salt);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -30,38 +30,41 @@ public class StudentSQL implements IStudentDao{
         }
     }
 
-    private void addStudentToDatabase(Student student, Connection connection) throws SQLException {
+    private void addStudentToDatabase(Student student, Connection connection, String salt) throws SQLException {
         try (PreparedStatement stmtInsertUserData = connection.prepareStatement(
-            "INSERT INTO users(type, first_name, last_name, email) VALUES(?, ?, ?, ?) returning id");
+            "INSERT INTO users(type, first_name, last_name, email) VALUES(?, ?, ?, ?)");
              PreparedStatement stmtInsertUserCredentials = connection.prepareStatement(
-                     "INSERT INTO user_credentials(user_id, login, password) VALUES(?, ?, ?)");
+                     "INSERT INTO user_credentials(user_id, login, salt, password) VALUES(?, ?, ?, ?)");
              PreparedStatement stmtInsertStudentProfiles = connection.prepareStatement(
-                     "INSERT INTO students_profiles(class_id, coins, experience) VALUES(?, ?, ?)")) {
-            int newUserId = insertUserData(stmtInsertUserData, student);
-             stmtInsertUserCredentials(stmtInsertUserCredentials, student, newUserId);
-            insertStudentProfiles(stmtInsertStudentProfiles, student);
+                     "INSERT INTO students_profiles(student_id, class_id, coins, experience) VALUES(?, ?, ?, ?)")) {
+            insertUserData(stmtInsertUserData, student);
+            int newUserId = getNewStudentId();
+            stmtInsertUserCredentials(stmtInsertUserCredentials, student, newUserId, salt);
+            insertStudentProfiles(stmtInsertStudentProfiles, student, newUserId);
         }
     }
 
-    private int insertUserData(PreparedStatement stmtInsertUserData, Student student) throws SQLException {
+    private void insertUserData(PreparedStatement stmtInsertUserData, Student student) throws SQLException {
         stmtInsertUserData.setString(1, student.getType());
         stmtInsertUserData.setString(2, student.getFirstName());
         stmtInsertUserData.setString(3, student.getLastName());
         stmtInsertUserData.setString(4, student.getEmail());
-        return stmtInsertUserData.executeUpdate();
+        stmtInsertUserData.executeUpdate();
     }
 
-    private void stmtInsertUserCredentials(PreparedStatement stmtInsertUserCredentials, Student student, int newUserId) throws SQLException {
+    private void stmtInsertUserCredentials(PreparedStatement stmtInsertUserCredentials, Student student, int newUserId, String salt) throws SQLException {
         stmtInsertUserCredentials.setInt(1, newUserId);
         stmtInsertUserCredentials.setString(2, student.getLogin());
         stmtInsertUserCredentials.setString(3, student.getPassword());
+        stmtInsertUserCredentials.setString(4, salt);
         stmtInsertUserCredentials.executeUpdate();
     }
 
-    private void insertStudentProfiles(PreparedStatement stmtInsertStudentProfiles, Student student) throws SQLException {
-        stmtInsertStudentProfiles.setInt(1, student.getClassId());
-        stmtInsertStudentProfiles.setInt(2, student.getCoins());
-        stmtInsertStudentProfiles.setInt(3, student.getExperience());
+    private void insertStudentProfiles(PreparedStatement stmtInsertStudentProfiles, Student student, int newUserId) throws SQLException {
+        stmtInsertStudentProfiles.setInt(1, newUserId);
+        stmtInsertStudentProfiles.setInt(2, student.getClassId());
+        stmtInsertStudentProfiles.setInt(3, student.getCoins());
+        stmtInsertStudentProfiles.setInt(4, student.getExperience());
         stmtInsertStudentProfiles.executeUpdate();
     }
 
@@ -108,17 +111,17 @@ public class StudentSQL implements IStudentDao{
 
     private void updateStudentProfile(PreparedStatement stmtUpdateStudentProfile, Student student) throws SQLException {
         stmtUpdateStudentProfile.setInt(1, student.getClassId());
-        stmtUpdateStudentProfile.setInt(1, student.getCoins());
-        stmtUpdateStudentProfile.setInt(1, student.getExperience());
+        stmtUpdateStudentProfile.setInt(2, student.getCoins());
+        stmtUpdateStudentProfile.setInt(3, student.getExperience());
         stmtUpdateStudentProfile.setInt(4, student.getId());
         stmtUpdateStudentProfile.executeUpdate();
     }
 
     @Override
-    public void deleteStudent(Student student) {
+    public void deleteStudent(int studentId) {
         try {
             Connection connection = connectionPool.getConnection();
-            removeStudentFromDatabase(connection, student);
+            removeStudentFromDatabase(connection, studentId);
             connectionPool.releaseConnection(connection);
         } catch (SQLException e) {
             System.err.println("SQLException: " + e.getMessage()
@@ -127,10 +130,10 @@ public class StudentSQL implements IStudentDao{
         }
     }
 
-    private void removeStudentFromDatabase(Connection connection, Student student) throws SQLException {
+    private void removeStudentFromDatabase(Connection connection, int studentId) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement(
                 "DELETE FROM users  WHERE id = ?")) {
-            stmt.setInt(1, student.getId());
+            stmt.setInt(1, studentId);
             stmt.executeUpdate();
         }
     }
@@ -212,6 +215,66 @@ public class StudentSQL implements IStudentDao{
                 student = buildSingleStudent(resultSet);
             }
             return student;
+        }
+    }
+
+    @Override
+    public int getNewStudentId() {
+        int id = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT id FROM users ORDER BY id DESC limit 1")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return id;
+    }
+
+    @Override
+    public int getStudentCoins(int studentId) {
+        int coins = 0;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT coins FROM students_profiles WHERE student_id = ?")) {
+            stmt.setInt(1, studentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    coins = rs.getInt("coins");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
+        }
+        return coins;
+    }
+
+    @Override
+    public boolean canStudentAfford(int studentId, int purchasePrice) {
+        int studentCoins = getStudentCoins(studentId);
+        return studentCoins >= purchasePrice;
+    }
+
+    @Override
+    public void setCoinsAmountForStudent(int studentId, int coins) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "UPDATE students_profiles SET coins = ? WHERE student_id = ?")) {
+            stmt.setInt(1, coins);
+            stmt.setInt(2, studentId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage()
+                    + "\nSQLState: " + e.getSQLState()
+                    + "\nVendorError: " + e.getErrorCode());
         }
     }
 }

@@ -7,9 +7,8 @@
     <meta name="description" content="Quest Store">
     <meta name="keywords" content="web, design, quest store, html, css, js, java, sql">
     <meta name="author" content="Patryk Lichwała, Krzysztof Czaja">
-    <title>Quest Store | Admin</title>
+    <title>Quest Store | Experience Data</title>
     <link rel="stylesheet" href="/static/css/style.css">
-
 </head>
 <body>
     <div class="container">
@@ -29,30 +28,23 @@
                 <li><a href="/experienceLevels">Experience level</a></li>
             </ul>
         </nav>
-        <section id="tools">
-            <form method="GET">
-                <button type="submit" formaction="/admin/add">+</button>
-            </form>
-        </section>
         <section id="content">
-            {% for mentor in mentors %}
-                <div class="item">
-                    <img class="avatar-image" src="/static/images/mentor.png" alt="Mentor XXX">
-                    <div class="edit-options">
-                        <a href="/admin/view/{{ mentor.getId() }}"><img class="eye" src="/static/images/eye.png" alt="View"></a>
-                        <a href="/admin/edit/{{ mentor.getId() }}"><img class="edit" src="/static/images/pencil.png" alt="Edit"></a>
-                        <a href="/admin/delete/{{ mentor.getId() }}"><img class="remove" src="/static/images/remove.png" alt="Delete"></a>
-                    </div>
-                    <aside>
-                        <p class="name">First name: {{ mentor.getFirstName() }}</p>
-                        <p class="last-name">Last name: {{ mentor.getLastName() }}</p>
-                    </aside>
-                </div>
-            {% endfor %}
+            <div class="item">
+                <form method="POST">
+                    <label for="experienceLevelName">Name</label>
+                    <input type="text" name="experienceLevelName" id="experienceLevelName" value="{{ expLevel.getName() }}" {{ disabled }} {{ operationDisabled }}>
+                    <label for="expLevelStart">Level experience start</label>
+                    <input type="number" min="1" name="expLevelStart" id="expLevelStart" value={{ expLevel.getExpAmountAtStart() }} {{ disabled }}>
+                    <label for="expLevelEnd">Level experience end</label>
+                    <input type="number" min="1" name="expLevelEnd" id="expLevelEnd" value={{ expLevel.getExpAmountAtEnd() }} {{ disabled }}>
+                    <button type="submit" formaction="/experienceLevels/{{ operation }}" {{ disabled }}>Submit</button>
+                    <button type="button" value="Cancel" onclick="location.href='/experienceLevels'">Cancel</button>
+                </form>
+            </div>
         </section>
         <footer>
             <p>Chlur&Chlurs Company &copy; 2019</p>
         </footer>
     </div>
 </body>
-</html>
+</html> 
